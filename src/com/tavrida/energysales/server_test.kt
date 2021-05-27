@@ -20,7 +20,7 @@ suspend fun main() {
             reading = 999.0,
             readingTime = LocalDateTime.now().let { ZonedDateTime.of(it, ZoneId.systemDefault()) }.toInstant()
                 .toEpochMilli(),
-            comment = ""
+            comment = null
         )
 
     )
