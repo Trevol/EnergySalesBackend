@@ -1,4 +1,4 @@
-package main.kotlin.com.tavrida.energysales.server
+package com.tavrida.energysales.server
 
 import io.ktor.application.*
 import io.ktor.features.*
@@ -8,9 +8,7 @@ import io.ktor.routing.*
 import io.ktor.serialization.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import main.kotlin.com.tavrida.energysales.data_contract.CounterReadingSyncItem
-import main.kotlin.com.tavrida.energysales.data_contract.CounterReadingSyncRequest
-import java.lang.Exception
+import com.tavrida.energysales.data_contract.CounterReadingSyncRequest
 
 internal fun Application.serverModule(counterReadingSynchronizer: () -> CounterReadingSynchronizer) {
     install(ContentNegotiation) { json() }

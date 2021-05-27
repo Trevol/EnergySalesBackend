@@ -1,13 +1,13 @@
-package main.kotlin.com.tavrida.energysales.apiClient
+package com.tavrida.energysales.apiClient
 
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.features.json.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import main.kotlin.com.tavrida.energysales.data_contract.CounterReadingIdMapping
-import main.kotlin.com.tavrida.energysales.data_contract.CounterReadingSyncItem
-import main.kotlin.com.tavrida.energysales.data_contract.CounterReadingSyncRequest
+import com.tavrida.energysales.data_contract.CounterReadingIdMapping
+import com.tavrida.energysales.data_contract.CounterReadingSyncItem
+import com.tavrida.energysales.data_contract.CounterReadingSyncRequest
 
 class CounterReadingSyncApiClient(
     private val serverHost: String,

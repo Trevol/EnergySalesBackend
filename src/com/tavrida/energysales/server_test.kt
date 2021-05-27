@@ -1,12 +1,10 @@
-package main.kotlin.com.tavrida.energysales
+package com.tavrida.energysales
 
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
-import main.kotlin.com.tavrida.energysales.apiClient.CounterReadingSyncApiClient
-import main.kotlin.com.tavrida.energysales.data_contract.CounterReadingSyncItem
-import main.kotlin.com.tavrida.energysales.server.CounterReadingSynchronizer
-import main.kotlin.com.tavrida.energysales.server.ServerApplication
-import main.kotlin.com.tavrida.utils.log
+import com.tavrida.energysales.apiClient.CounterReadingSyncApiClient
+import com.tavrida.energysales.data_contract.CounterReadingSyncItem
+import com.tavrida.energysales.server.CounterReadingSynchronizer
+import com.tavrida.energysales.server.ServerApplication
+import com.tavrida.utils.log
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime

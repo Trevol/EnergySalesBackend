@@ -1,4 +1,4 @@
-package main.kotlin.com.tavrida.energysales.server
+package com.tavrida.energysales.server
 
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*

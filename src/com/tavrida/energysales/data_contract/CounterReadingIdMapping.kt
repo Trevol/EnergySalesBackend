@@ -1,4 +1,4 @@
-package main.kotlin.com.tavrida.energysales.data_contract
+package com.tavrida.energysales.data_contract
 
 import kotlinx.serialization.Serializable
 

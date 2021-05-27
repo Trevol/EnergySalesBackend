@@ -1,4 +1,4 @@
-package main.kotlin.com.tavrida.utils
+package com.tavrida.utils
 
 import java.time.Instant
 
