@@ -32,8 +32,7 @@ class CounterReadingUIController(val db: Database) {
         call.respondOutputStream(
             contentType = xlsxContentType
         ) {
-            val inputStream = xlsxFile.inputStream()
-            inputStream.use {
+            xlsxFile.inputStream().use {
                 it.copyTo(this)
             }
         }
