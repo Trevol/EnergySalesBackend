@@ -9,14 +9,27 @@ import io.ktor.serialization.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import com.tavrida.energysales.data_contract.CounterReadingSyncRequest
+import io.ktor.html.*
+import java.io.File
 
-internal fun Application.serverModule(counterReadingSynchronizer: () -> CounterReadingSynchronizer) {
+internal fun Application.serverModule(
+    uiController: () -> CounterReadingUIController,
+    synchronizer: () -> CounterReadingSynchronizer
+) {
     install(ContentNegotiation) { json() }
     routing {
 
         route("/") {
             get {
-                call.respond("Сервер работает!")
+                call.respondHtml {
+                    uiController().indexView(this)
+                }
+            }
+        }
+
+        route("/download") {
+            get {
+                uiController().downloadAsXlsx(call)
             }
         }
 
@@ -25,7 +38,7 @@ internal fun Application.serverModule(counterReadingSynchronizer: () -> CounterR
                 post {
                     val data = call.receive<CounterReadingSyncRequest>()
                     val idMappings = withContext(Dispatchers.IO) {
-                        counterReadingSynchronizer().sync(data.items, data.testMode)
+                        synchronizer().sync(data.items, data.testMode)
                     }
                     call.respond(idMappings)
                 }

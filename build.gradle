@@ -61,5 +61,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
     implementation("org.slf4j:slf4j-simple:1.7.30")
 
+    implementation("org.apache.poi:poi-ooxml:5.0.0")
+
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
 }

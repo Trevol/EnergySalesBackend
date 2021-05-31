@@ -4,7 +4,9 @@ import com.tavrida.energysales.apiClient.CounterReadingSyncApiClient
 import com.tavrida.energysales.data_contract.CounterReadingSyncItem
 import com.tavrida.energysales.db.DatabaseInstance
 import com.tavrida.energysales.server.CounterReadingSynchronizer
+import com.tavrida.energysales.server.CounterReadingUIController
 import com.tavrida.energysales.server.ServerApplication
+import com.tavrida.energysales.server.serverModule
 import com.tavrida.utils.log
 import java.io.File
 import java.time.LocalDateTime
@@ -28,12 +30,17 @@ suspend fun main() {
     )
 
     val dbDir = File("db")
+    val db = DatabaseInstance.get(dbDir)
+
     val port = 8080
     ServerApplication(
         port,
         waitAfterStart = false,
-        counterReadingSynchronizer = {
-            CounterReadingSynchronizer(DatabaseInstance.get(dbDir))
+        module = {
+            serverModule(
+                uiController = { CounterReadingUIController(db) },
+                synchronizer = { CounterReadingSynchronizer(db) }
+            )
         }
     ).start().use {
         CounterReadingSyncApiClient("0.0.0.0", port).use {
