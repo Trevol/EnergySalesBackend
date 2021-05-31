@@ -1,5 +1,6 @@
 package com.tavrida.energysales.db
 
+import com.tavrida.energysales.data_access.dbmodel.tables.allTables
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -22,7 +23,7 @@ object DatabaseInstance {
             return this
         }
         transaction(this) {
-            // SchemaUtils.create(*allTables)
+            SchemaUtils.create(*allTables)
         }
         schemaInitialized = true
         return this

@@ -8,18 +8,13 @@ import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
 fun main() {
-    thread {
-        Thread.sleep(3000)
-        exitProcess(2)
-        // throw Exception("Fatal for server")
-    }
-
     val dbDir = File("db")
+    val db = DatabaseInstance.get(dbDir)
     ServerApplication(
         8080,
         waitAfterStart = true,
         counterReadingSynchronizer = {
-            CounterReadingSynchronizer(DatabaseInstance.get(dbDir))
+            CounterReadingSynchronizer(db)
         }
     ).start()
 }
