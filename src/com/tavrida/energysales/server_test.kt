@@ -2,9 +2,11 @@ package com.tavrida.energysales
 
 import com.tavrida.energysales.apiClient.CounterReadingSyncApiClient
 import com.tavrida.energysales.data_contract.CounterReadingSyncItem
+import com.tavrida.energysales.db.DatabaseInstance
 import com.tavrida.energysales.server.CounterReadingSynchronizer
 import com.tavrida.energysales.server.ServerApplication
 import com.tavrida.utils.log
+import java.io.File
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -24,12 +26,14 @@ suspend fun main() {
         )
 
     )
+
+    val dbDir = File("db")
     val port = 8080
     ServerApplication(
         port,
         waitAfterStart = false,
         counterReadingSynchronizer = {
-            CounterReadingSynchronizer()
+            CounterReadingSynchronizer(DatabaseInstance.get(dbDir))
         }
     ).start().use {
         CounterReadingSyncApiClient("0.0.0.0", port).use {

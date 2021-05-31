@@ -54,7 +54,12 @@ dependencies {
     implementation "io.ktor:ktor-client-serialization:$ktor_version"
     implementation "io.ktor:ktor-client-gson:$ktor_version"
 
-    implementation 'io.jsondb:jsondb-core:1.0.115-j11'
+    implementation "com.h2database:h2:1.4.200"
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
+    implementation("org.slf4j:slf4j-simple:1.7.30")
 
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
 }
