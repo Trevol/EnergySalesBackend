@@ -1,17 +1,14 @@
 package com.tavrida.energysales
 
-import com.tavrida.energysales.db.DatabaseInstance
+import com.tavrida.energysales.data_access.DatabaseInstance
 import com.tavrida.energysales.server.CounterReadingSynchronizer
 import com.tavrida.energysales.server.CounterReadingUIController
 import com.tavrida.energysales.server.ServerApplication
 import com.tavrida.energysales.server.serverModule
 import java.io.File
-import kotlin.concurrent.thread
-import kotlin.system.exitProcess
 
 fun main() {
-    println(12341245254)
-    /*val dbDir = File("db")
+    val dbDir = File("db")
     val db = DatabaseInstance.get(dbDir)
 
     ServerApplication(
@@ -23,5 +20,5 @@ fun main() {
                 synchronizer = { CounterReadingSynchronizer(db) }
             )
         }
-    ).start()*/
+    ).start()
 }

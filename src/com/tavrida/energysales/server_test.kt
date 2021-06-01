@@ -2,12 +2,13 @@ package com.tavrida.energysales
 
 import com.tavrida.energysales.apiClient.CounterReadingSyncApiClient
 import com.tavrida.energysales.data_contract.CounterReadingSyncItem
-import com.tavrida.energysales.db.DatabaseInstance
+import com.tavrida.energysales.data_access.DatabaseInstance
 import com.tavrida.energysales.server.CounterReadingSynchronizer
 import com.tavrida.energysales.server.CounterReadingUIController
 import com.tavrida.energysales.server.ServerApplication
 import com.tavrida.energysales.server.serverModule
 import com.tavrida.utils.log
+import com.tavrida.utils.toEpochMilli
 import java.io.File
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -22,8 +23,7 @@ suspend fun main() {
             user = "Саша",
             counterId = 1,
             reading = 999.0,
-            readingTime = LocalDateTime.now().let { ZonedDateTime.of(it, ZoneId.systemDefault()) }.toInstant()
-                .toEpochMilli(),
+            readingTime = LocalDateTime.now().toEpochMilli(),
             comment = null
         )
 

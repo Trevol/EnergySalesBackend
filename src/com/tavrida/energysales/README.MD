@@ -1,11 +1,6 @@
-**How to run:**
-java -jar EnergySalesBackend.jar
-
 **How to run in loop**
-
-while true; do java -jar EnergySalesBackend.jar; done
-
-
+tmux new
+while true; do java -jar EnergySalesBackend.jar; sleep 1; done
 
 
 
@@ -18,5 +13,5 @@ sudo chown -R backend_user .
 
 
 **How to copy:**
-scp out/artifacts/EnergySalesBackend_jar/EnergySalesBackend.jar backend_user@192.168.0.106:/home/trevol/EnergySalesBackend
-scp db backend_user@192.168.0.106:/home/trevol/EnergySalesBackend
+scp out/artifacts/EnergySalesBackend_jar/* trevol@192.168.87.8:/home/trevol/EnergySalesBackend
+scp db/* trevol@192.168.87.8:/home/trevol/EnergySalesBackend/db

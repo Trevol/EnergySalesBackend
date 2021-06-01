@@ -1,4 +1,4 @@
-package com.tavrida.energysales.db
+package com.tavrida.energysales.data_access
 
 import com.tavrida.energysales.data_access.dbmodel.tables.allTables
 import org.jetbrains.exposed.sql.Database
