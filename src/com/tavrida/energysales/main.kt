@@ -10,7 +10,8 @@ import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
 fun main() {
-    val dbDir = File("db")
+    println(12341245254)
+    /*val dbDir = File("db")
     val db = DatabaseInstance.get(dbDir)
 
     ServerApplication(
@@ -22,5 +23,5 @@ fun main() {
                 synchronizer = { CounterReadingSynchronizer(db) }
             )
         }
-    ).start()
+    ).start()*/
 }
