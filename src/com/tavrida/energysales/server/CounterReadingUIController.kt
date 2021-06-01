@@ -74,7 +74,7 @@ class CounterReadingUIController(db: Database) {
 
     private companion object {
         val xlsxContentType = ContentType("application", "vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-        val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
 
         private data class CounterReadingRecord(
             val importOrder: Int,

@@ -16,18 +16,17 @@ import java.time.ZonedDateTime
 
 suspend fun main() {
 
-
-    val items = listOf(
+    val items = (1..250).map {
         CounterReadingSyncItem(
             id = 1,
             user = "Саша",
-            counterId = 1,
+            counterId = it % 190+1,
             reading = 999.0,
             readingTime = LocalDateTime.now().toEpochMilli(),
             comment = null
         )
+    }
 
-    )
 
     val dbDir = File("db")
     val db = DatabaseInstance.get(dbDir)
@@ -44,7 +43,7 @@ suspend fun main() {
         }
     ).start().use {
         CounterReadingSyncApiClient("0.0.0.0", port).use {
-            it.sync(items, testMode = true).log()
+            it.sync(items, testMode = true)
         }
     }
 

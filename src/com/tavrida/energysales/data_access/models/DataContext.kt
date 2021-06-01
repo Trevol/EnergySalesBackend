@@ -184,6 +184,9 @@ class DataContext(val db: Database) : IDataContext {
             )
         }
     }
+
+    companion object{
+    }
 }
 
 fun <T> transaction(dc: DataContext, statement: Transaction.() -> T): T =
