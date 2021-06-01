@@ -39,10 +39,10 @@ class CounterReadingUIController(db: Database) {
                         style = "text-align:center"
                         it.currentReading
                     },
-                    "Время" to {
+                    /*"Время" to {
                         style = "text-align:center"
                         it.currentReadingDateTime
-                    },
+                    },*/
                     "Расход" to {
                         style = "text-align:center"
                         it.consumption
