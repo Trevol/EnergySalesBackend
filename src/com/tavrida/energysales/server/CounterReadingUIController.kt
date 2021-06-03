@@ -6,9 +6,10 @@ import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.response.*
 import kotlinx.html.*
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.jetbrains.exposed.sql.Database
-import java.io.File
 import java.time.format.DateTimeFormatter
+import kotlin.math.roundToInt
 
 class CounterReadingUIController(db: Database) {
     private val dataContext = DataContext(db)
@@ -43,9 +44,13 @@ class CounterReadingUIController(db: Database) {
                         style = "text-align:center"
                         it.currentReadingDateTime
                     },*/
-                    "Расход" to {
+                    "Расход [(Наст-Пред)*K]" to {
                         style = "text-align:center"
-                        it.consumption
+                        it.currentConsumption
+                    },
+                    "Пред. Расход" to {
+                        style = "text-align:center"
+                        it.prevConsumption
                     },
                     "Заводской № электросчетчика" to {
                         style = "text-align:center"
@@ -59,17 +64,60 @@ class CounterReadingUIController(db: Database) {
     }
 
     suspend fun downloadAsXlsx(call: ApplicationCall) {
-        // val xlsxFile = File("/hdd/TMP/Распределение 2021/import.xlsx")
-        val xlsxFile = File("/hdd/TMP/Распределение 2021/tmp.xlsx")
-        call.response.header("Content-Disposition", "attachment; filename=\"${xlsxFile.name}\"")
-
-        call.respondOutputStream(
-            contentType = xlsxContentType
-        ) {
-            xlsxFile.inputStream().use {
-                it.copyTo(this)
+        val fn = "Распределение.xlsx"
+        call.response.header("Content-Disposition", "attachment; filename=\"$fn\"")
+        readAllRecsAsWorkbook().use { wb ->
+            call.respondOutputStream(contentType = xlsxContentType) {
+                wb.write(this)
             }
         }
+    }
+
+    private fun readAllRecsAsWorkbook(): XSSFWorkbook {
+        val items = dataContext.loadReadings()
+        val wb = XSSFWorkbook()
+        val sheet = wb.createSheet("Распределение")
+
+        val config: List<Pair<String, (CounterReadingRecord) -> Any>> = listOf(
+            "#" to { it.importOrder },
+            "Наименование" to { it.consumerName },
+            "К трансф" to {
+                it.K
+            },
+            "Предыд. показ" to {
+                it.prevReading
+            },
+            "Настоящ. показ" to {
+                it.currentReading
+            },
+            /*"Время" to {
+                style = "text-align:center"
+                it.currentReadingDateTime
+            },*/
+            "Наст. Расход [(Наст-Пред)*K]" to {
+                it.currentConsumption
+            },
+            "Пред. Расход" to {
+                it.prevConsumption
+            },
+            "Заводской № электросчетчика" to {
+                it.serialNumber
+            },
+            "Примечание" to { it.comment }
+        )
+
+        val colRow = sheet.createRow(0)
+        config.map { (col, valFn) -> col }.forEachIndexed() { i, col ->
+            colRow.createCell(i).setCellValue(col)
+        }
+        val cellValues = config.map { (col, valFn) -> valFn }
+        items.forEachIndexed { rowIndex, rec ->
+            val row = sheet.createRow(rowIndex + 1)
+            cellValues.forEachIndexed { colIndex, cellValue ->
+                row.createCell(colIndex).setCellValue(cellValue(rec).toString())
+            }
+        }
+        return wb
     }
 
     private companion object {
@@ -83,7 +131,8 @@ class CounterReadingUIController(db: Database) {
             val currentReading: String,
             val currentReadingDateTime: String,
             val K: Int,
-            val consumption: String,
+            val currentConsumption: String,
+            val prevConsumption: String,
             val serialNumber: String,
             val comment: String
         )
@@ -109,17 +158,9 @@ class CounterReadingUIController(db: Database) {
                 currentReading = counter.lastReading?.reading.noTrailingZero(),
                 currentReadingDateTime = counter.lastReading?.readingTime?.format(dateTimeFormatter) ?: "",
                 K = counter.K.toInt(),
-                consumption = counter.lastConsumption().let {
-                    if (it == null) {
-                        ""
-                    } else {
-                        if (it < 0) {
-                            "${it.noTrailingZero()} (через 0)"
-                        } else {
-                            it.noTrailingZero()
-                        }
-                    }
-                },
+                currentConsumption = counter.currentConsumption()?.roundToInt()?.toString().orEmpty(),
+                prevConsumption = counter.prevReading.consumption.roundToInt().toString(),
+                //.toDouble().noTrailingZero(),
                 serialNumber = counter.serialNumber,
                 comment = counter.comment.orEmpty(),
             )

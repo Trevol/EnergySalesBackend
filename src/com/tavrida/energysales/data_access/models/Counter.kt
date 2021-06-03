@@ -1,5 +1,6 @@
 package com.tavrida.energysales.data_access.models
 
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -13,13 +14,13 @@ data class Counter(
     val comment: String? = null,
     val importOrder: Int
 ) {
-    fun lastConsumption(): Double? {
+    fun currentConsumption(): Double? {
         val last = lastReading?.reading
         return if (last == null) {
             null
         } else {
             val prev = prevReading.reading
-            last - prev
+            (last - prev) * K
         }
     }
 
