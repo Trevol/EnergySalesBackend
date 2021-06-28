@@ -38,7 +38,7 @@ internal fun Application.serverModule(
                 post {
                     val data = call.receive<CounterReadingSyncRequest>()
                     val idMappings = withContext(Dispatchers.IO) {
-                        synchronizer().sync(data.items, data.testMode)
+                        synchronizer().sync(data.items)
                     }
                     call.respond(idMappings)
                 }

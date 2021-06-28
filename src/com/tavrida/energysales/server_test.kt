@@ -43,7 +43,7 @@ suspend fun main() {
         }
     ).start().use {
         CounterReadingSyncApiClient("0.0.0.0", port).use {
-            it.sync(items, testMode = true)
+            it.sync(items)
         }
     }
 

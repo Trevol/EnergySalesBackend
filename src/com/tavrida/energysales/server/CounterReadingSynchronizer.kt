@@ -14,12 +14,8 @@ import java.time.LocalDateTime
 class CounterReadingSynchronizer(val db: Database) {
     private val dataContext = DataContext(db)
 
-    suspend fun sync(syncItems: List<CounterReadingSyncItem>, testMode: Boolean): List<CounterReadingIdMapping> {
-        return if (testMode) {
-            syncInTextMode(syncItems)
-        } else {
-            syncInRealMode(syncItems)
-        }
+    suspend fun sync(syncItems: List<CounterReadingSyncItem>): List<CounterReadingIdMapping> {
+        return syncInRealMode(syncItems)
     }
 
     private suspend fun syncInRealMode(items: List<CounterReadingSyncItem>): List<CounterReadingIdMapping> {
@@ -38,7 +34,7 @@ class CounterReadingSynchronizer(val db: Database) {
                 val duplicate =
                     counter.lastReading?.let { r -> r.reading == it.reading && r.readingTime == it.readingTimeAsDateTime }
                         ?: false
-                if (duplicate){
+                if (duplicate) {
                     return@forEach
                 }
                 val serverReadingId = CounterReadingsTable.insertAndGetId { tab ->
@@ -54,18 +50,6 @@ class CounterReadingSynchronizer(val db: Database) {
             resp
         }
 
-    }
-
-    private suspend fun syncInTextMode(items: List<CounterReadingSyncItem>): List<CounterReadingIdMapping> {
-        "syncInTextMode called. Items num: ${items.size}".log()
-        if (items.isEmpty()) {
-            return listOf()
-        }
-        val counters = dataContext.loadCounters()
-        return items.checkCounters(counters).map {
-            //return dummy server id
-            CounterReadingIdMapping(id = it.id, serverId = it.id * 10)
-        }
     }
 
     private companion object {
