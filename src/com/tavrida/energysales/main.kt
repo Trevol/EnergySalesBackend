@@ -9,7 +9,8 @@ import java.io.File
 
 fun main() {
     val dbDir = File("./databases")
-    val db = DatabaseInstance.get(dbDir)
+    val dbName = "ENERGY_SALES"
+    val db = DatabaseInstance.get(dbDir, dbName)
 
     ServerApplication(
         8080,

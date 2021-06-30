@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 
 private fun main() {
     val dbDir = "./databases/"
-    val dbName = "ENERGY_SALES_MOBILE_DUMMY"
+    val dbName = "ENERGY_SALES_SYNTHETIC"
     val consumers = syntheticData(500)
     insertAll(dbDir, dbName, consumers)
 }

@@ -7,18 +7,12 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
 
 object DatabaseInstance {
-    const val DB_NAME = "ENERGY_SALES"
+    const val DEFAULT_DB_NAME = "ENERGY_SALES"
 
-    fun get(directory: File) = dbUrl(directory).let {
+    fun get(directory: File, dbName: String = DEFAULT_DB_NAME) = dbUrl(directory, dbName).let {
         Database.connect(it)
-            //.initSchema()
+        //.initSchema()
     }
-
-    private fun dbUrl(directory: File) =
-        File(directory, DB_NAME)
-            .let { dbPath ->
-                "jdbc:h2:${dbPath.absolutePath}"
-            }
 
     private var schemaInitialized = false
     private fun Database.initSchema(): Database {
@@ -33,3 +27,9 @@ object DatabaseInstance {
     }
 
 }
+
+private fun dbUrl(directory: File, dbName: String) =
+    File(directory, dbName)
+        .let { dbPath ->
+            "jdbc:h2:${dbPath.absolutePath}"
+        }
