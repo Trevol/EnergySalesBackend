@@ -1,7 +1,8 @@
 package com.tavrida.energysales.data_contract
 
-import com.tavrida.utils.LocalDateTimeUtils
+import com.tavrida.utils.serializers.LocalDateTimeIso8601Serializer
 import kotlinx.serialization.Serializable
+import java.time.LocalDateTime
 
 @Serializable
 data class CounterReadingItem(
@@ -9,9 +10,8 @@ data class CounterReadingItem(
     val user: String,
     val counterId: Int,
     val reading: Double,
-    val readingTime: Long,
+    @Serializable(with = LocalDateTimeIso8601Serializer::class)
+    val readingTime: LocalDateTime,
     val comment: String? = null
-) {
-    val readingTimeAsDateTime get() = LocalDateTimeUtils.ofEpochMilli(readingTime)
-}
+)
 

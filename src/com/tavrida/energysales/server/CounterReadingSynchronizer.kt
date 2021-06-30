@@ -27,7 +27,7 @@ class CounterReadingSynchronizer(val db: Database) {
             items.forEach {
                 val counter = counters[it.counterId]!!
                 val duplicate =
-                    counter.lastReading?.let { r -> r.reading == it.reading && r.readingTime == it.readingTimeAsDateTime }
+                    counter.lastReading?.let { r -> r.reading == it.reading && r.readingTime == it.readingTime }
                         ?: false
                 if (duplicate) {
                     return@forEach
@@ -35,7 +35,7 @@ class CounterReadingSynchronizer(val db: Database) {
                 val serverReadingId = CounterReadingsTable.insertAndGetId { tab ->
                     tab[counterId] = it.counterId
                     tab[reading] = it.reading
-                    tab[readingTime] = it.readingTimeAsDateTime
+                    tab[readingTime] = it.readingTime
                     tab[user] = it.user
                     tab[comment] = it.comment
                     tab[synchronized] = true

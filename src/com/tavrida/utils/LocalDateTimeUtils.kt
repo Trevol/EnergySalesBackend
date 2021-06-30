@@ -1,5 +1,7 @@
 package com.tavrida.utils
 
+/*
+
 import java.text.SimpleDateFormat
 import java.time.*
 import java.util.*
@@ -17,4 +19,4 @@ object formatter {
     const val TIMESTAMP_FORMAT = "dd.MM.yyyy HH:mm"
     val dateFormatter = SimpleDateFormat(TIMESTAMP_FORMAT, Locale.ROOT)
     fun Long.formatAsDate() = dateFormatter.format(this)
-}
+}*/

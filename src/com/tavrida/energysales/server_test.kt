@@ -7,7 +7,6 @@ import com.tavrida.energysales.server.CounterReadingSynchronizer
 import com.tavrida.energysales.server.CounterReadingUIController
 import com.tavrida.energysales.server.ServerApplication
 import com.tavrida.energysales.server.serverModule
-import com.tavrida.utils.toEpochMilli
 import java.io.File
 import java.time.LocalDateTime
 
@@ -19,7 +18,7 @@ suspend fun main() {
             user = "Саша",
             counterId = it % 190+1,
             reading = 999.0,
-            readingTime = LocalDateTime.now().toEpochMilli(),
+            readingTime = LocalDateTime.now(),
             comment = null
         )
     }
