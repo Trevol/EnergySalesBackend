@@ -44,14 +44,6 @@ fun List<XlsRecord>.toConsumers(): List<Consumer> {
             serialNumber = rec.serialNumber,
             consumerId = -1,
             K = rec.K,
-            prevReading = PrevCounterReading(
-                id = -1,
-                counterId = -1,
-                reading = rec.currentReading, //за апрель - это уже предыдущие, собираем за май
-                consumption = rec.consumption, //потреблено за апрель - сравниваем с потреблением за май
-                readDate = aprilMonth,
-                comment = null
-            ),
             readings = listOf(
                 //текущих НЕТ - мы их только будем собирать
                 /*CounterReading(

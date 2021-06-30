@@ -3,7 +3,6 @@ package com.tavrida.energysales.data_access.models
 import com.tavrida.energysales.data_access.dbmodel.tables.ConsumersTable
 import com.tavrida.energysales.data_access.dbmodel.tables.CounterReadingsTable
 import com.tavrida.energysales.data_access.dbmodel.tables.CountersTable
-import com.tavrida.energysales.data_access.dbmodel.tables.PrevCounterReadingsTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -48,14 +47,6 @@ class DataContext(val db: Database) : IDataContext {
                             it[serverId] = reading.serverId
                         }
                     }
-
-                    PrevCounterReadingsTable.insert {
-                        it[this.counterId] = counterId
-                        it[reading] = counter.prevReading.reading
-                        it[consumption] = counter.prevReading.consumption
-                        it[readDate] = counter.prevReading.readDate
-                        it[comment] = counter.prevReading.comment
-                    }
                 }
             }
         }
@@ -72,8 +63,7 @@ class DataContext(val db: Database) : IDataContext {
                 .orderBy(CountersTable.importOrder)
                 .toList()
             val readingRows = CounterReadingsTable.selectAll().toList()
-            val prevReadingRows = PrevCounterReadingsTable.selectAll().toList()
-            connectConsumerEntities(consumerRows, counterRows, readingRows, prevReadingRows)
+            connectConsumerEntities(consumerRows, counterRows, readingRows)
         }
     }
 
@@ -124,26 +114,10 @@ class DataContext(val db: Database) : IDataContext {
     private fun connectConsumerEntities(
         consumerRows: List<ResultRow>,
         countersRows: List<ResultRow>,
-        readingRows: List<ResultRow>,
-        prevReadingRows: List<ResultRow>
+        readingRows: List<ResultRow>
     ): List<Consumer> {
         if (consumerRows.isEmpty())
             return listOf()
-
-        val prevReadingByCounterId = prevReadingRows.associateBy(
-            { it[PrevCounterReadingsTable.counterId].value },
-            {
-                val t = PrevCounterReadingsTable
-                PrevCounterReading(
-                    id = it[t.id].value,
-                    counterId = it[t.counterId].value,
-                    reading = it[t.reading],
-                    consumption = it[t.consumption],
-                    readDate = it[t.readDate],
-                    comment = it[t.comment]
-                )
-            }
-        )
 
         val readings = readingRows.map {
             val t = CounterReadingsTable
@@ -168,7 +142,6 @@ class DataContext(val db: Database) : IDataContext {
                 serialNumber = it[t.serialNumber],
                 consumerId = it[t.consumerId].value,
                 K = it[t.K],
-                prevReading = prevReadingByCounterId[counterId]!!,
                 readings = readings.filter { it.counterId == counterId },
                 comment = it[t.comment],
                 importOrder = it[t.importOrder]
@@ -186,9 +159,6 @@ class DataContext(val db: Database) : IDataContext {
                 importOrder = it[t.importOrder]
             )
         }
-    }
-
-    companion object {
     }
 }
 

@@ -9,17 +9,22 @@ data class Counter(
     val serialNumber: String,
     val consumerId: Int,
     val K: Double,
-    val prevReading: PrevCounterReading,
     val readings: List<CounterReading>,
     val comment: String? = null,
     val importOrder: Int
 ) {
+    fun prevReading(forDate: LocalDate): CounterReading? {
+        return readings.sortedByDescending { it.readingTime }
+            .firstOrNull { forDate.daysDiff(it.readingTime.toLocalDate()) >= 7 }
+    }
+
+
     fun currentConsumption(): Double? {
         val last = lastReading?.reading
         return if (last == null) {
             null
         } else {
-            val prev = prevReading.reading
+            val prev = prevReading(LocalDate.now())?.reading ?: return null
             (last - prev) * K
         }
     }
@@ -40,5 +45,7 @@ data class Counter(
             .let { now ->
                 year == now.year && monthValue == now.monthValue
             }
+
+        private fun LocalDate.daysDiff(older: LocalDate) = toEpochDay() - older.toEpochDay()
     }
 }

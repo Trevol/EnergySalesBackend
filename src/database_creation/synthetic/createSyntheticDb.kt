@@ -7,6 +7,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 private fun main() {
+    TODO()
     val currentDateStamp = currentDateStamp()
     val dbDir = "./databases/$currentDateStamp"
         .also {
@@ -27,12 +28,25 @@ private fun syntheticData(nOfConsumers: Int): List<Consumer> {
         counterPos: Int,
         serialNumber: String,
         K: Double
-    ): Pair<List<CounterReading>, PrevCounterReading> {
+    ): List<CounterReading> {
         val now = LocalDateTime.now()
         val monthAgo = now.minusMonths(1)
+        val twoMonthAgo = now.minusMonths(2)
+
         val readingMonthAgo = consumerPos * 100.0
         val readingDeltaForMonth = consumerPos * 10.0 + counterPos
         val readings = listOf(
+            CounterReading(
+                id = -1,
+                counterId = -1,
+                reading = readingMonthAgo - readingDeltaForMonth,
+                readingTime = twoMonthAgo,
+                user = user,
+                comment = "Это показания $twoMonthAgo",
+                synchronized = false,
+                syncTime = null,
+                serverId = null
+            ),
             CounterReading(
                 id = -1,
                 counterId = -1,
@@ -43,28 +57,9 @@ private fun syntheticData(nOfConsumers: Int): List<Consumer> {
                 synchronized = false,
                 syncTime = null,
                 serverId = null
-            ),
-            CounterReading(
-                id = -1,
-                counterId = -1,
-                reading = readingMonthAgo + readingDeltaForMonth,
-                readingTime = now,
-                user = user,
-                comment = "Это показания $now",
-                synchronized = false,
-                syncTime = null,
-                serverId = null
             )
         )
-        val prevReading = PrevCounterReading(
-            id = -1,
-            counterId = -1,
-            reading = readingMonthAgo,
-            consumption = readingDeltaForMonth * K,
-            readDate = monthAgo.toLocalDate(),
-            comment = "This is prev reading of $serialNumber"
-        )
-        return readings to prevReading
+        return readings
     }
 
     var counterImportPos = 0
@@ -76,13 +71,12 @@ private fun syntheticData(nOfConsumers: Int): List<Consumer> {
         val counters = oneOrTwo.map { counterPos ->
             val serialNumber = "${consumerPos}0$counterPos"
             val K = if (counterPos % 2 == 0) 1.0 else 50.0
-            val (readings, prevReading) = readings(consumerPos, counterPos, serialNumber, K)
+            val readings = readings(consumerPos, counterPos, serialNumber, K)
             Counter(
                 id = -1,
                 serialNumber = serialNumber,
                 consumerId = -1,
                 K = K,
-                prevReading = prevReading,
                 readings = readings,
                 comment = "Счетчик $serialNumber потребителя $consumerName!!",
                 importOrder = ++counterImportPos

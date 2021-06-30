@@ -56,7 +56,10 @@ internal fun Application.serverModule(
 
                 route("/recent_data") {  // /api/mobile/recent_data
                     get {
-                        call.respond(1234)
+                        val consumers = withContext(Dispatchers.IO) {
+                            synchronizer().getRecentData()
+                        }
+                        call.respond(consumers)
                     }
                 }
             }

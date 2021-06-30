@@ -18,14 +18,14 @@ object CountersTable : IntIdTable("PUBLIC.COUNTER") {
     val importOrder = integer("import_order").uniqueIndex()
 }
 
-object PrevCounterReadingsTable : IntIdTable("PUBLIC.PREV_COUNTER_READING") {
+/*object PrevCounterReadingsTable : IntIdTable("PUBLIC.PREV_COUNTER_READING") {
     val counterId = reference("counter_id", CountersTable.id)
         .uniqueIndex()
     val reading = double("reading")
     val consumption = double("consumption")
     val readDate = date("read_date")
     val comment = varchar("comment", 2000).nullable()
-}
+}*/
 
 object CounterReadingsTable : IntIdTable("PUBLIC.COUNTER_READING") {
     val counterId = reference("counter_id", CountersTable.id)
@@ -39,4 +39,4 @@ object CounterReadingsTable : IntIdTable("PUBLIC.COUNTER_READING") {
 }
 
 val allTables =
-    arrayOf(ConsumersTable, CountersTable, CounterReadingsTable, PrevCounterReadingsTable)
+    arrayOf(ConsumersTable, CountersTable, CounterReadingsTable /*PrevCounterReadingsTable*/)

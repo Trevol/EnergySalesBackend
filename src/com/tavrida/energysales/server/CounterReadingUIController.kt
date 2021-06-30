@@ -8,6 +8,7 @@ import io.ktor.response.*
 import kotlinx.html.*
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.jetbrains.exposed.sql.Database
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
@@ -40,10 +41,10 @@ class CounterReadingUIController(db: Database) {
                         style = "text-align:center"
                         it.currentReading
                     },
-                    /*"Время" to {
+                    "Время" to {
                         style = "text-align:center"
                         it.currentReadingDateTime
-                    },*/
+                    },
                     "Расход [(Наст-Пред)*K]" to {
                         style = "text-align:center"
                         it.currentConsumption
@@ -154,12 +155,12 @@ class CounterReadingUIController(db: Database) {
             CounterReadingRecord(
                 importOrder = counter.importOrder,
                 consumerName = consumer.name,
-                prevReading = counter.prevReading.reading.noTrailingZero(),
+                prevReading = counter.prevReading(LocalDate.now())?.reading.noTrailingZero(),
                 currentReading = counter.lastReading?.reading.noTrailingZero(),
                 currentReadingDateTime = counter.lastReading?.readingTime?.format(dateTimeFormatter) ?: "",
                 K = counter.K.toInt(),
                 currentConsumption = counter.currentConsumption()?.roundToInt()?.toString().orEmpty(),
-                prevConsumption = counter.prevReading.consumption.roundToInt().toString(),
+                prevConsumption = "", // TODO: counter.prevReading.consumption.roundToInt().toString(),
                 //.toDouble().noTrailingZero(),
                 serialNumber = counter.serialNumber,
                 comment = counter.comment.orEmpty(),

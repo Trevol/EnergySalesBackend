@@ -1,5 +1,7 @@
 package com.tavrida.energysales.data_access.models
 
+/*
+
 import java.time.LocalDate
 
 data class PrevCounterReading(
@@ -9,4 +11,4 @@ data class PrevCounterReading(
     val consumption: Double,
     val readDate: LocalDate,
     val comment: String? = null
-)
+)*/
