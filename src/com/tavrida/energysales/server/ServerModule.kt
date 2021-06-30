@@ -1,5 +1,7 @@
 package com.tavrida.energysales.server
 
+import com.tavrida.energysales.data_contract.CounterReadingItem
+import com.tavrida.energysales.data_contract.HelloResponse
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.request.*
@@ -8,7 +10,6 @@ import io.ktor.routing.*
 import io.ktor.serialization.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import com.tavrida.energysales.data_contract.CounterReadingSyncRequest
 import io.ktor.html.*
 
 internal fun Application.serverModule(
@@ -33,15 +34,33 @@ internal fun Application.serverModule(
         }
 
         route("/api") {
-            route("/syncReadings") { // /api/readings/upload
-                post {
-                    val data = call.receive<CounterReadingSyncRequest>()
-                    val idMappings = withContext(Dispatchers.IO) {
-                        synchronizer().uploadReadings(data.items)
-                    }
-                    call.respond(idMappings)
+
+            route("/hello") {
+                get {
+                    call.respond(HelloResponse("Hello!"))
                 }
             }
+
+
+            route("/mobile") {
+
+                route("/readings") { // /api/mobile/readings
+                    post {
+                        val readings = call.receive<List<CounterReadingItem>>()
+                        val idMappings = withContext(Dispatchers.IO) {
+                            synchronizer().uploadReadings(readings)
+                        }
+                        call.respond(idMappings)
+                    }
+                }
+
+                route("/recent_data") {  // /api/mobile/recent_data
+                    get {
+                        call.respond(1234)
+                    }
+                }
+            }
+
         }
     }
 }

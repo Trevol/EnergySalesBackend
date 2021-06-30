@@ -7,7 +7,6 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import com.tavrida.energysales.data_contract.CounterReadingIdMapping
 import com.tavrida.energysales.data_contract.CounterReadingItem
-import com.tavrida.energysales.data_contract.CounterReadingSyncRequest
 
 class CounterReadingSyncApiClient(
     private val serverHost: String,
@@ -22,12 +21,12 @@ class CounterReadingSyncApiClient(
         httpClient.close()
     }
 
-    suspend fun sync(items: List<CounterReadingItem>): List<CounterReadingIdMapping> =
+    suspend fun uploadMobileReadings(items: List<CounterReadingItem>): List<CounterReadingIdMapping> =
         httpClient.post(
             host = serverHost,
             port = serverPort,
             path = "api/syncReadings",
-            body = CounterReadingSyncRequest(items)
+            body = items
         ) {
             contentType(ContentType.Application.Json)
         }

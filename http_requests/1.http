@@ -1,0 +1,22 @@
+POST http://0.0.0.0:8080/api/mobile/readings
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "id": 123,
+    "user": "SASHA",
+    "counterId": -1234566,
+    "reading": 123.456,
+    "readingTime": "2021-06-30T16:26:06.508773",
+    "comment": "sdfasdfasdfasdf"
+  }
+]
+###
+
+GET http://0.0.0.0:8080/api/hello
+Accept: application/json
+###
+
+GET http://0.0.0.0:8080/api/mobile/recent_data
+Accept: application/json
