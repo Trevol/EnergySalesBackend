@@ -150,6 +150,7 @@ class DataContext(val db: Database) : IDataContext {
                 counterId = it[t.counterId].value,
                 reading = it[t.reading],
                 readingTime = it[t.readingTime],
+                user = it[t.user],
                 comment = it[t.comment],
                 synchronized = it[t.synchronized],
                 syncTime = it[t.syncTime],
@@ -185,7 +186,7 @@ class DataContext(val db: Database) : IDataContext {
         }
     }
 
-    companion object{
+    companion object {
     }
 }
 

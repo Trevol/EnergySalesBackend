@@ -7,24 +7,9 @@ class CounterReading(
     val counterId: Int,
     val reading: Double,
     val readingTime: LocalDateTime,
+    val user: String,
     val comment: String?,
     val synchronized: Boolean,
     val syncTime: LocalDateTime?,
     val serverId: Int?
-) {
-
-}
-
-/*
-data class CounterReading(
-    val id: Int,
-    val counterId: Int,
-    val reading: Double,
-    val readingTime: LocalDateTime,
-    val comment: String? = null,
-
-    val synchronized: Boolean,
-    val syncTime: LocalDateTime?,
-    val serverId: Int?
 )
-* */

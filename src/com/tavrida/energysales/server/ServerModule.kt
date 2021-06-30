@@ -10,7 +10,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import com.tavrida.energysales.data_contract.CounterReadingSyncRequest
 import io.ktor.html.*
-import java.io.File
 
 internal fun Application.serverModule(
     uiController: () -> CounterReadingUIController,
@@ -34,11 +33,11 @@ internal fun Application.serverModule(
         }
 
         route("/api") {
-            route("/syncReadings") {
+            route("/syncReadings") { // /api/readings/upload
                 post {
                     val data = call.receive<CounterReadingSyncRequest>()
                     val idMappings = withContext(Dispatchers.IO) {
-                        synchronizer().sync(data.items)
+                        synchronizer().uploadReadings(data.items)
                     }
                     call.respond(idMappings)
                 }

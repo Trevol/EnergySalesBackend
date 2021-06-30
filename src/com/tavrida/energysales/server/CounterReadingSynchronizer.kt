@@ -13,11 +13,7 @@ import java.time.LocalDateTime
 class CounterReadingSynchronizer(val db: Database) {
     private val dataContext = DataContext(db)
 
-    suspend fun sync(items: List<CounterReadingItem>): List<CounterReadingIdMapping> {
-        return syncInRealMode(items)
-    }
-
-    private suspend fun syncInRealMode(items: List<CounterReadingItem>): List<CounterReadingIdMapping> {
+    fun uploadReadings(items: List<CounterReadingItem>): List<CounterReadingIdMapping> {
         "syncInRealMode called. Items num: ${items.size}".log()
         if (items.isEmpty()) {
             return listOf()
@@ -40,6 +36,7 @@ class CounterReadingSynchronizer(val db: Database) {
                     tab[counterId] = it.counterId
                     tab[reading] = it.reading
                     tab[readingTime] = it.readingTimeAsDateTime
+                    tab[user] = it.user
                     tab[comment] = it.comment
                     tab[synchronized] = true
                     tab[syncTime] = now
@@ -48,7 +45,6 @@ class CounterReadingSynchronizer(val db: Database) {
             }
             resp
         }
-
     }
 
     private companion object {
