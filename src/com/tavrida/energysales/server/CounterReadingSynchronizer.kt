@@ -3,8 +3,7 @@ package com.tavrida.energysales.server
 import com.tavrida.energysales.data_access.dbmodel.tables.CounterReadingsTable
 import com.tavrida.energysales.data_access.models.*
 import com.tavrida.energysales.data_contract.CounterReadingIdMapping
-import com.tavrida.energysales.data_contract.CounterReadingSyncItem
-import com.tavrida.utils.LocalDateTimeUtils
+import com.tavrida.energysales.data_contract.CounterReadingItem
 import com.tavrida.utils.log
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.insertAndGetId
@@ -14,11 +13,11 @@ import java.time.LocalDateTime
 class CounterReadingSynchronizer(val db: Database) {
     private val dataContext = DataContext(db)
 
-    suspend fun sync(syncItems: List<CounterReadingSyncItem>): List<CounterReadingIdMapping> {
-        return syncInRealMode(syncItems)
+    suspend fun sync(items: List<CounterReadingItem>): List<CounterReadingIdMapping> {
+        return syncInRealMode(items)
     }
 
-    private suspend fun syncInRealMode(items: List<CounterReadingSyncItem>): List<CounterReadingIdMapping> {
+    private suspend fun syncInRealMode(items: List<CounterReadingItem>): List<CounterReadingIdMapping> {
         "syncInRealMode called. Items num: ${items.size}".log()
         if (items.isEmpty()) {
             return listOf()
@@ -54,7 +53,7 @@ class CounterReadingSynchronizer(val db: Database) {
 
     private companion object {
         private fun DataContext.loadCounters() = loadAll().flatMap { it.counters }.associateBy { it.id }
-        fun List<CounterReadingSyncItem>.checkCounters(counters: Map<Int, Counter>) =
+        fun List<CounterReadingItem>.checkCounters(counters: Map<Int, Counter>) =
             onEach {
                 if (counters[it.counterId] == null) {
                     throw Exception("Счетчик не найден по id ${it.counterId}")

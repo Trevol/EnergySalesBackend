@@ -1,23 +1,20 @@
 package com.tavrida.energysales
 
 import com.tavrida.energysales.apiClient.CounterReadingSyncApiClient
-import com.tavrida.energysales.data_contract.CounterReadingSyncItem
+import com.tavrida.energysales.data_contract.CounterReadingItem
 import com.tavrida.energysales.data_access.DatabaseInstance
 import com.tavrida.energysales.server.CounterReadingSynchronizer
 import com.tavrida.energysales.server.CounterReadingUIController
 import com.tavrida.energysales.server.ServerApplication
 import com.tavrida.energysales.server.serverModule
-import com.tavrida.utils.log
 import com.tavrida.utils.toEpochMilli
 import java.io.File
 import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
 
 suspend fun main() {
 
     val items = (1..250).map {
-        CounterReadingSyncItem(
+        CounterReadingItem(
             id = 1,
             user = "Саша",
             counterId = it % 190+1,
