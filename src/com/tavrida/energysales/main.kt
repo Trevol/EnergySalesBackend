@@ -8,7 +8,7 @@ import com.tavrida.energysales.server.serverModule
 import java.io.File
 
 fun main() {
-    val dbDir = File("db")
+    val dbDir = File("./databases")
     val db = DatabaseInstance.get(dbDir)
 
     ServerApplication(

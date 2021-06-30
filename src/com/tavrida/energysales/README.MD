@@ -14,7 +14,7 @@ sudo chown -R backend_user .
 
 **How to copy:**
 scp out/artifacts/EnergySalesBackend_jar/* trevol@192.168.87.8:/home/trevol/EnergySalesBackend
-mkdir db
-scp db/ENERGY_SALES.mv.db trevol@192.168.87.8:/home/trevol/EnergySalesBackend/db
+mkdir databases
+scp databases/ENERGY_SALES.mv.db trevol@192.168.87.8:/home/trevol/EnergySalesBackend/databases
 
-scp trevol@192.168.87.8:/home/trevol/EnergySalesBackend/db/ENERGY_SALES.mv.db .
+scp trevol@192.168.87.8:/home/trevol/EnergySalesBackend/databases/ENERGY_SALES.mv.db .
