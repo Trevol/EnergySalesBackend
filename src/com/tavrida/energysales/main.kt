@@ -9,7 +9,7 @@ import java.io.File
 
 fun main() {
     val dbDir = File("./databases")
-    val dbName = "ENERGY_SALES_SYNTHETIC"
+    val dbName = "ENERGY_SALES_SYNTHETIC_2021-06-30"
     val db = DatabaseInstance.get(dbDir, dbName)
 
     ServerApplication(
