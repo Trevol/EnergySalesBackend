@@ -1,14 +1,22 @@
 import com.tavrida.energysales.data_access.models.*
 import database_creation.utils.log
 import database_creation.utils.padStartEx
+import java.io.File
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 private fun main() {
-    val dbDir = "./databases/"
+    val dbDir = "./databases/${currentDateStamp()}"
+        .also {
+            File(it).mkdirs()
+        }
     val dbName = "ENERGY_SALES_SYNTHETIC"
     val consumers = syntheticData(500)
     insertAll(dbDir, dbName, consumers)
 }
+
+private fun currentDateStamp() = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
 private fun syntheticData(nOfConsumers: Int): List<Consumer> {
     val user = "Саша"

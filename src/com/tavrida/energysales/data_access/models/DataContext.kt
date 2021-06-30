@@ -41,6 +41,7 @@ class DataContext(val db: Database) : IDataContext {
                             it[this.counterId] = counterId
                             it[this.reading] = reading.reading
                             it[readingTime] = reading.readingTime
+                            it[user] = reading.user
                             it[comment] = reading.comment
                             it[synchronized] = reading.synchronized
                             it[syncTime] = reading.syncTime
@@ -77,7 +78,8 @@ class DataContext(val db: Database) : IDataContext {
     }
 
     override fun updateSyncData(unsynchronized: List<CounterReading>) {
-        if (unsynchronized.isEmpty()) {
+        TODO()
+        /*if (unsynchronized.isEmpty()) {
             return
         }
         transaction(db) {
@@ -88,7 +90,7 @@ class DataContext(val db: Database) : IDataContext {
                     it[serverId] = r.serverId
                 }
             }
-        }
+        }*/
     }
 
     override fun updateReading(reading: CounterReading) {
