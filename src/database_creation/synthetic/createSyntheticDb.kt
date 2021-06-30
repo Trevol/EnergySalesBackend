@@ -7,11 +7,12 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 private fun main() {
-    val dbDir = "./databases/${currentDateStamp()}"
+    val currentDateStamp = currentDateStamp()
+    val dbDir = "./databases/$currentDateStamp"
         .also {
             File(it).mkdirs()
         }
-    val dbName = "ENERGY_SALES_SYNTHETIC"
+    val dbName = "ENERGY_SALES_SYNTHETIC_$currentDateStamp"
     val consumers = syntheticData(500)
     insertAll(dbDir, dbName, consumers)
 }
