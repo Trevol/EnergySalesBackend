@@ -15,7 +15,6 @@ class CounterReadingSynchronizer(val db: Database) {
 
     fun getRecentData(): List<ConsumerData> {
         return dataContext.loadAll()
-            // .take(5)
             .map { it.toConsumerData() }
     }
 

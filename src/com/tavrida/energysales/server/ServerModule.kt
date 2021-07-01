@@ -11,6 +11,7 @@ import io.ktor.serialization.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import io.ktor.html.*
+import java.time.LocalDate
 
 internal fun Application.serverModule(
     uiController: () -> CounterReadingUIController,
@@ -37,7 +38,7 @@ internal fun Application.serverModule(
 
             route("/hello") {
                 get {
-                    call.respond(HelloResponse("Hello!"))
+                    call.respond(HelloResponse("Hello!", LocalDate.now()))
                 }
             }
 

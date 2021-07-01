@@ -24,8 +24,9 @@ suspend fun main() {
     }
 
 
-    val dbDir = File("db")
-    val db = DatabaseInstance.get(dbDir)
+    val dbDir = File("./databases")
+    val dbName = "ENERGY_SALES_SYNTHETIC_2021-06-30"
+    val db = DatabaseInstance.get(dbDir, dbName)
 
     val port = 8080
     ServerApplication(
@@ -38,8 +39,9 @@ suspend fun main() {
             )
         }
     ).start().use {
-        CounterReadingSyncApiClient("0.0.0.0", port).use {
-            it.uploadMobileReadings(items)
+        CounterReadingSyncApiClient("http://0.0.0.0:$port").use {
+            it.getRecentData()
+            // it.hello()
         }
     }
 
