@@ -17,7 +17,6 @@ fun main() {
         return
     }
     consumers.size.log()
-    return
 
     val currentDateStamp = currentDateStamp()
     val dbDir = "./databases/$currentDateStamp".also {
