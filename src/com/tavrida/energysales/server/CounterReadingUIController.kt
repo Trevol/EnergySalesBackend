@@ -151,13 +151,14 @@ class CounterReadingUIController(db: Database) {
             }
         }
 
-        private fun toRecord(consumer: Consumer, counter: Counter) =
-            CounterReadingRecord(
+        private fun toRecord(consumer: Consumer, counter: Counter): CounterReadingRecord {
+            val recentReading = counter.recentReading
+            return CounterReadingRecord(
                 importOrder = counter.importOrder,
                 consumerName = consumer.name,
                 prevReading = counter.prevReading(LocalDate.now())?.reading.noTrailingZero(),
-                currentReading = counter.lastReading?.reading.noTrailingZero(),
-                currentReadingDateTime = counter.lastReading?.readingTime?.format(dateTimeFormatter) ?: "",
+                currentReading = recentReading?.reading.noTrailingZero(),
+                currentReadingDateTime = recentReading?.readingTime?.format(dateTimeFormatter).orEmpty(),
                 K = counter.K.toInt(),
                 currentConsumption = counter.currentConsumption()?.roundToInt()?.toString().orEmpty(),
                 prevConsumption = "", // TODO: counter.prevReading.consumption.roundToInt().toString(),
@@ -165,6 +166,7 @@ class CounterReadingUIController(db: Database) {
                 serialNumber = counter.serialNumber,
                 comment = counter.comment.orEmpty(),
             )
+        }
     }
 }
 

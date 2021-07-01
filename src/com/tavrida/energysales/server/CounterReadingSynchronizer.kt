@@ -93,7 +93,7 @@ private fun Counter.prevReadingData(): PrevCounterReadingData {
         id = prev.id,
         counterId = prev.counterId,
         reading = prev.reading,
-        consumption = if (prevPrev == null) 0.0 else prev.reading - prevPrev.reading,
+        consumption = if (prevPrev == null) 0.0 else (prev.reading - prevPrev.reading) * K,
         readDate = prev.readingTime.toLocalDate(),
         comment = prev.comment
     )

@@ -1,8 +1,11 @@
 package com.tavrida.energysales.data_access.models
 
-import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
+import kotlin.math.abs
+
+
+private const val recencyDaysThreshold = 7
 
 data class Counter(
     val id: Int,
@@ -15,29 +18,27 @@ data class Counter(
 ) {
     fun prevReading(forDate: LocalDate): CounterReading? {
         return readings.sortedByDescending { it.readingTime }
-            .firstOrNull { forDate.daysDiff(it.readingTime.toLocalDate()) >= 7 }
+            .firstOrNull { forDate.daysDiff(it.readingTime.toLocalDate()) >= recencyDaysThreshold }
     }
 
 
     fun currentConsumption(): Double? {
-        val last = lastReading?.reading
-        return if (last == null) {
+        val recent = recentReading?.reading
+        return if (recent == null) {
             null
         } else {
             val prev = prevReading(LocalDate.now())?.reading ?: return null
-            (last - prev) * K
+            (recent - prev) * K
         }
     }
 
     inline val lastReading get() = readings.maxByOrNull { it.readingTime }
+
     val recentReading: CounterReading?
         get() {
             val lastReading = lastReading ?: return null
-            return if (lastReading.readingTime.isCurrentMonth()) {
-                lastReading
-            } else {
-                null
-            }
+            val isRecent = abs(lastReading.readingTime.toLocalDate().daysDiff(LocalDate.now())) < recencyDaysThreshold
+            return if (isRecent) lastReading else null
         }
 
     private companion object {

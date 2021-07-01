@@ -14,7 +14,8 @@ private fun main() {
             File(it).mkdirs()
         }
     val dbName = "ENERGY_SALES_SYNTHETIC_$currentDateStamp"
-    val consumers = syntheticData(500)
+    val nOfConsumers = 5
+    val consumers = syntheticData(nOfConsumers)
     insertAll(dbDir, dbName, consumers)
 }
 
@@ -29,9 +30,9 @@ private fun syntheticData(nOfConsumers: Int): List<Consumer> {
         serialNumber: String,
         K: Double
     ): List<CounterReading> {
-        val now = LocalDateTime.now()
-        val monthAgo = now.minusMonths(1)
-        val twoMonthAgo = now.minusMonths(2)
+        val (monthAgo, twoMonthAgo) = LocalDateTime.now().let { now ->
+            listOf(now.minusMonths(1), now.minusMonths(2))
+        }
 
         val readingMonthAgo = consumerPos * 100.0
         val readingDeltaForMonth = consumerPos * 10.0 + counterPos
