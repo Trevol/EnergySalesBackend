@@ -10,6 +10,7 @@ import java.time.Month
 import java.time.format.DateTimeFormatter
 
 fun main() {
+    TODO()
     val consumers = "./databases/xlsx/import 2021 05 май TMP.xlsx"
         .let { ImportXlsReader.read(it) }
         .toConsumers()
