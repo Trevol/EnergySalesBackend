@@ -39,7 +39,7 @@ fun main() {
 private fun currentDateStamp() = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
 fun List<XlsRecord>.toConsumers(): List<Consumer> {
-    val prevReadingTime = LocalDate.of(2021, Month.APRIL, 1) //01.05.2021 10:30:30
+    val prevReadingTime = LocalDateTime.of(2021, 4, 29, 10, 30, 30) //29.04.2021 10:30:30
     val currentReadingTime = LocalDateTime.of(2021, 6, 1, 10, 30, 30) //01.06.2021 10:30:30
 
     val consumers = mutableListOf<Consumer>()
@@ -56,14 +56,28 @@ fun List<XlsRecord>.toConsumers(): List<Consumer> {
             consumerId = -1,
             K = rec.K,
             readings = listOf(
-                //текущих НЕТ - мы их только будем собирать
-                /*CounterReading(
+                CounterReading(
+                    id = -1,
+                    counterId = -1,
+                    reading = rec.prevReading,
+                    readingTime = prevReadingTime,
+                    user = "Саша",
+                    comment = null,
+                    synchronized = false,
+                    syncTime = null,
+                    serverId = null
+                ),
+                CounterReading(
                     id = -1,
                     counterId = -1,
                     reading = rec.currentReading,
-                    readTime = currentReadingTime,
-                    comment = null
-                )*/
+                    readingTime = currentReadingTime,
+                    user = "Саша",
+                    comment = null,
+                    synchronized = false,
+                    syncTime = null,
+                    serverId = null
+                )
             ),
             comment = rec.notes,
             importOrder = rec.importOrder
