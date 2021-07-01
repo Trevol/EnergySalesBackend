@@ -1,5 +1,6 @@
 package database_creation.xlsx.reader
 
+import com.tavrida.utils.noTrailingZero
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Row
@@ -48,7 +49,11 @@ object ImportXlsReader {
     private fun Row.serialNumber(): String? {
         try{
 
-            return value(Column.SerialNumber) as String?
+            val value = value(Column.SerialNumber)
+            if (value is Double){
+                return value.noTrailingZero()
+            }
+            return value as String?
         }
         catch (e: Exception){
             throw e
