@@ -22,7 +22,7 @@ object ImportXlsReader {
                         prevReading = row.prevReading(),
                         currentReading = row.currentReading(),
                         K = row.K(),
-                        consumption = row.consumption(),
+                        // consumption = row.consumption(),
                         serialNumber = sn,
                         notes = row.notes(),
                         group = row.group(),
@@ -34,7 +34,7 @@ object ImportXlsReader {
     }
 
     private enum class Column {
-        Consumer, PrevReading, CurrentReading, K, Consumption, SerialNumber, Notes, Group
+        Consumer, PrevReading, CurrentReading, K, /*Consumption,*/ SerialNumber, Notes, Group
     }
 
     private fun Row.cell(col: Column) = getCell(col.ordinal)
@@ -44,8 +44,16 @@ object ImportXlsReader {
     private fun Row.prevReading(): Double = value(Column.PrevReading) as Double
     private fun Row.currentReading(): Double = value(Column.CurrentReading) as Double
     private fun Row.K(): Double = value(Column.K) as Double
-    private fun Row.consumption(): Double = value(Column.Consumption) as Double
-    private fun Row.serialNumber(): String? = value(Column.SerialNumber) as String?
+    // private fun Row.consumption(): Double = value(Column.Consumption) as Double
+    private fun Row.serialNumber(): String? {
+        try{
+
+            return value(Column.SerialNumber) as String?
+        }
+        catch (e: Exception){
+            throw e
+        }
+    }
     private fun Row.notes(): String? = value(Column.Notes) as String?
     private fun Row.group(): Int? = (value(Column.Group) as Double?)?.toInt()
 

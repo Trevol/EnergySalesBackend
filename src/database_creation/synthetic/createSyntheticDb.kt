@@ -9,10 +9,9 @@ import java.time.format.DateTimeFormatter
 private fun main() {
     TODO()
     val currentDateStamp = currentDateStamp()
-    val dbDir = "./databases/$currentDateStamp"
-        .also {
-            File(it).mkdirs()
-        }
+    val dbDir = "./databases/$currentDateStamp".also {
+        File(it).mkdirs()
+    }
     val dbName = "ENERGY_SALES_SYNTHETIC_$currentDateStamp"
     val nOfConsumers = 5
     val consumers = syntheticData(nOfConsumers)

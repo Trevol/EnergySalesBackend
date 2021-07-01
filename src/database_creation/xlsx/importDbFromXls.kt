@@ -1,20 +1,30 @@
 import com.tavrida.energysales.data_access.models.*
+import database_creation.utils.log
 import database_creation.utils.println
 import database_creation.xlsx.reader.ImportXlsReader
 import database_creation.xlsx.reader.XlsRecord
+import java.io.File
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Month
+import java.time.format.DateTimeFormatter
 
 fun main() {
-    val consumers = "/hdd/TMP/Распределение 2021/import.xlsx"
+    val consumers = "./databases/xlsx/import 2021 05 май TMP.xlsx"
         .let { ImportXlsReader.read(it) }
         .toConsumers()
     if (consumers.isEmpty()) {
         return
     }
+    consumers.size.log()
+    return
 
-    val dc = DbInstance("./databases/", "ENERGY_SALES_MOBILE")
+    val currentDateStamp = currentDateStamp()
+    val dbDir = "./databases/$currentDateStamp".also {
+        File(it).mkdirs()
+    }
+    val dbName = "ENERGY_SALES_$currentDateStamp"
+    val dc = DbInstance(dbDir, dbName)
         .get(recreate = true)
         .let { DataContext(it) }
 
@@ -27,9 +37,11 @@ fun main() {
     }
 }
 
+private fun currentDateStamp() = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+
 fun List<XlsRecord>.toConsumers(): List<Consumer> {
-    val aprilMonth = LocalDate.of(2021, Month.APRIL, 1)
-    val currentReadingTime = LocalDateTime.of(2021, Month.MAY, 1, 10, 30, 30)
+    val prevReadingTime = LocalDate.of(2021, Month.APRIL, 1) //01.05.2021 10:30:30
+    val currentReadingTime = LocalDateTime.of(2021, 6, 1, 10, 30, 30) //01.06.2021 10:30:30
 
     val consumers = mutableListOf<Consumer>()
     val recs = this.toMutableList()
