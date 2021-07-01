@@ -19,6 +19,6 @@ tar -xvf EnergySalesBackend-0.0.1.tar
 cd EnergySalesBackend-0.0.1/bin
 mkdir databases
 
-scp databases/ENERGY_SALES.mv.db trevol@192.168.87.8:/home/trevol/EnergySalesBackend/databases
+scp databases/ENERGY_SALES.mv.db trevol@192.168.87.8:/home/trevol/EnergySalesBackend-0.0.1/bin/databases
 
 scp trevol@192.168.87.8:/home/trevol/EnergySalesBackend/databases/ENERGY_SALES.mv.db .
