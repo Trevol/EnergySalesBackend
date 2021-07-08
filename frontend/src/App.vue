@@ -1,26 +1,46 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <DxTabPanel height="100%">
+
+    <dx-item title="Распределение">
+      <template #default>
+        <energy-distribution-page/>
+      </template>
+    </dx-item>
+
+    <dx-item title="Организации">
+      <template #default>
+        Тут организации и счетчики. Редактирование. Печать QR
+      </template>
+    </dx-item>
+
+    <dx-item title="Настройки">
+      <template #default>
+        Тут всякое
+      </template>
+    </dx-item>
+
+  </DxTabPanel>
+
+
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import DxTabPanel, {DxItem} from 'devextreme-vue/tab-panel'
+import EnergyDistributionPage from "@/pages/EnergyDistributionPage";
+
 
 export default {
-  name: 'App',
   components: {
-    HelloWorld
+    DxTabPanel, DxItem, EnergyDistributionPage
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+html, body, #app {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
 }
 </style>
