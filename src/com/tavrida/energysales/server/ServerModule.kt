@@ -11,6 +11,8 @@ import io.ktor.serialization.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import io.ktor.html.*
+import io.ktor.http.*
+import java.time.Duration
 import java.time.LocalDate
 
 internal fun Application.serverModule(
@@ -18,8 +20,23 @@ internal fun Application.serverModule(
     synchronizer: () -> CounterReadingSynchronizer
 ) {
     install(ContentNegotiation) { json() }
-    routing {
+    install(CORS)
+    {
+        method(HttpMethod.Options)
+        method(HttpMethod.Get)
+        method(HttpMethod.Post)
+        method(HttpMethod.Put)
+        method(HttpMethod.Delete)
+        method(HttpMethod.Patch)
+        header(HttpHeaders.AccessControlAllowHeaders)
+        header(HttpHeaders.ContentType)
+        header(HttpHeaders.AccessControlAllowOrigin)
+        allowCredentials = true
+        anyHost()
+        maxAgeInSeconds = Duration.ofDays(1).seconds
+    }
 
+    routing {
         route("/") {
             get {
                 call.respondHtml {
@@ -35,6 +52,16 @@ internal fun Application.serverModule(
         }
 
         route("/api") {
+
+            route("/data_items") {
+                get {
+                    val n = call.parameters["n"]?.toIntOrNull() ?: 25
+                    val message = (1 .. n).map {
+                        mapOf("firstName" to "First Name $it", "lastName" to "Last Name $it")
+                    }
+                    call.respond(message)
+                }
+            }
 
             route("/hello") {
                 get {

@@ -13,7 +13,7 @@ fun main() {
     val db = DatabaseInstance.get(dbDir, dbName)
 
     ServerApplication(
-        8080,
+        8081,
         waitAfterStart = true,
         module = {
             serverModule(

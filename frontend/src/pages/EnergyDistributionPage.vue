@@ -28,9 +28,9 @@ import DataGrid from "@/components/DataGrid";
 import {Pane, Splitpanes} from "splitpanes";
 import 'splitpanes/dist/splitpanes.css'
 import DxToolbar, {DxItem as DxToolbarItem} from 'devextreme-vue/toolbar';
-import notify from 'devextreme/ui/notify';
 import {makeItems, makeItem} from "@/js/dataItems";
-import {randomInt} from "@/js/utils";
+import {randomInt} from "@/js/utils/utils";
+import backendApi from "@/js/backend_api/BackendApi";
 
 export default {
   name: "EnergyDistributionPage",
@@ -42,15 +42,22 @@ export default {
   },
   data() {
     return {
-      items: makeItems(randomInt(2, 40)),
+      items: [],
       refreshOptions: {
         icon: 'refresh',
-        onClick: () => {
-          // this.items[1] = makeItem(randomInt(0, 99))
-          this.items = makeItems(randomInt(2, 40))
+        onClick: async () => {
+          this.items = await this.getDataItems()
         }
       },
     }
+  },
+  methods: {
+    async getDataItems() {
+      return await backendApi.getDataItems(randomInt(2, 40))
+    }
+  },
+  async mounted() {
+    this.items = await this.getDataItems()
   }
 }
 </script>

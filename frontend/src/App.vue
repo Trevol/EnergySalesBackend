@@ -28,10 +28,18 @@
 import DxTabPanel, {DxItem} from 'devextreme-vue/tab-panel'
 import EnergyDistributionPage from "@/pages/EnergyDistributionPage";
 
-
 export default {
   components: {
     DxTabPanel, DxItem, EnergyDistributionPage
+  },
+  mounted() {
+    console.log("App.mounted")
+    /*window.addEventListener('error', function (event) {
+      console.error("window.addEventListener", event)
+    })
+    window.onerror = function (message, source, lineno, colno, error) {
+      console.error("window.onerror", {message, source, lineno, colno, error})
+    };*/
   }
 }
 </script>
