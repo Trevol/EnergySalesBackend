@@ -2,26 +2,22 @@ import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import {createApp} from 'vue'
 import App from './App.vue'
-import notify from "devextreme/ui/notify";
+import errorService from "@/js/ErrorService";
 
-
-window.onerror = function(message, source, lineno, colno, error) {
-    console.log("window.onerror")
-    notify(message)
+window.onerror = function (message, source, lineno, colno, error) {
+    errorService.handleWindowOnError(message, source, lineno, colno, error)
     return true
 };
 
 window.addEventListener('unhandledrejection', event => {
     event.preventDefault()
     event.stopPropagation()
-    console.log("window.addEventListener unhandledrejection")
-    notify(event.reason)
+    errorService.windowUnhandledRejection(event)
 });
 
 let app = createApp(App);
 app.config.errorHandler = function (err, vm, info) {
-    notify("Error!!!!")
-    console.log("Vue app.config.errorHandler", `Error: ${err}\nInfo: ${info}`, err, info);
+    errorService.vueAppError(err, vm, info)
 }
 
 app.mount('#app')
