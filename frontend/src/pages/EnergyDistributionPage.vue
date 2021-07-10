@@ -28,7 +28,6 @@ import DataGrid from "@/components/DataGrid";
 import {Pane, Splitpanes} from "splitpanes";
 import 'splitpanes/dist/splitpanes.css'
 import DxToolbar, {DxItem as DxToolbarItem} from 'devextreme-vue/toolbar';
-import {makeItems, makeItem} from "@/js/dataItems";
 import {randomInt} from "@/js/utils/utils";
 import backendApi from "@/js/backend_api/BackendApi";
 
