@@ -1,6 +1,6 @@
 package com.tavrida.energysales.server
 
-import com.tavrida.energysales.data_contract.CounterReadingItem
+import com.tavrida.energysales.api.data_contract.CounterReadingItem
 import com.tavrida.energysales.server.routing.dataItemsRouting
 import com.tavrida.energysales.server.routing.helloRouting
 import io.ktor.application.*

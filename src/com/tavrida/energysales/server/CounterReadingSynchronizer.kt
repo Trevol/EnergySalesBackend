@@ -2,7 +2,7 @@ package com.tavrida.energysales.server
 
 import com.tavrida.energysales.data_access.dbmodel.tables.CounterReadingsTable
 import com.tavrida.energysales.data_access.models.*
-import com.tavrida.energysales.data_contract.*
+import com.tavrida.energysales.api.data_contract.*
 import com.tavrida.utils.log
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.insertAndGetId

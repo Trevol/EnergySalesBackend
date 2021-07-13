@@ -40,6 +40,10 @@ repositories {
     maven { url "https://kotlin.bintray.com/kotlinx" }
 }
 
+test {
+    useJUnitPlatform()
+}
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
@@ -77,4 +81,5 @@ dependencies {
 
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.7.2"
 }

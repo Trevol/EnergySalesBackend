@@ -1,11 +1,10 @@
 package com.tavrida.energysales.server.routing
 
-import com.tavrida.energysales.data_contract.HelloResponse
+import com.tavrida.energysales.api.data_contract.HelloResponse
 import io.ktor.application.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import java.time.LocalDate
-import kotlin.text.get
 
 fun Route.helloRouting() {
     route("/hello") {

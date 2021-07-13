@@ -1,0 +1,3 @@
+package com.tavrida.energysales.energy_distribution
+
+class EnergyDistributionServiceImpl : EnergyDistributionService

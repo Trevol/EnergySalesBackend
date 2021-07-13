@@ -1,14 +1,14 @@
-package com.tavrida.energysales.apiClient
+package com.tavrida.energysales.api.client
 
-import com.tavrida.energysales.data_contract.ConsumerData
+import com.tavrida.energysales.api.data_contract.ConsumerData
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.features.json.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import com.tavrida.energysales.data_contract.CounterReadingIdMapping
-import com.tavrida.energysales.data_contract.CounterReadingItem
-import com.tavrida.energysales.data_contract.HelloResponse
+import com.tavrida.energysales.api.data_contract.CounterReadingIdMapping
+import com.tavrida.energysales.api.data_contract.CounterReadingItem
+import com.tavrida.energysales.api.data_contract.HelloResponse
 import com.tavrida.utils.ensureTrailingChar
 import io.ktor.client.features.json.serializer.*
 
