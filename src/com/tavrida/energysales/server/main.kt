@@ -1,4 +1,4 @@
-package com.tavrida.energysales
+package com.tavrida.energysales.server
 
 import com.tavrida.energysales.data_access.DatabaseInstance
 import com.tavrida.energysales.server.CounterReadingSynchronizer

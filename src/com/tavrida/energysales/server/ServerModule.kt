@@ -1,7 +1,8 @@
 package com.tavrida.energysales.server
 
 import com.tavrida.energysales.data_contract.CounterReadingItem
-import com.tavrida.energysales.data_contract.HelloResponse
+import com.tavrida.energysales.server.routing.dataItemsRouting
+import com.tavrida.energysales.server.routing.helloRouting
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.request.*
@@ -13,7 +14,6 @@ import kotlinx.coroutines.withContext
 import io.ktor.html.*
 import io.ktor.http.*
 import java.time.Duration
-import java.time.LocalDate
 
 internal fun Application.serverModule(
     uiController: () -> CounterReadingUIController,
@@ -53,21 +53,8 @@ internal fun Application.serverModule(
 
         route("/api") {
 
-            route("/data_items") {
-                get {
-                    val n = call.parameters["n"]?.toIntOrNull() ?: 25
-                    val message = (1 .. n).map {
-                        mapOf("firstName" to "First Name $it", "lastName" to "Last Name $it")
-                    }
-                    call.respond(message)
-                }
-            }
-
-            route("/hello") {
-                get {
-                    call.respond(HelloResponse("Hello!", LocalDate.now()))
-                }
-            }
+            dataItemsRouting()
+            helloRouting()
 
 
             route("/mobile") {
@@ -95,3 +82,4 @@ internal fun Application.serverModule(
         }
     }
 }
+
