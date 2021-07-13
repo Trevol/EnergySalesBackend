@@ -1,3 +1,6 @@
+**How to build dist with fat jar**
+./gradlew shadowDistTar
+
 **How to run in loop**
 tmux new
 while true; do ./EnergySalesBackend; sleep 1; done
