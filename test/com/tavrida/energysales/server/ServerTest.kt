@@ -28,7 +28,7 @@ class ServerTest {
             }
         ).start().use {
             CounterReadingSyncApiClient("http://0.0.0.0:$port").use {
-                it.getRecentData().size
+                it.getRecentData()
                 println(it.hello())
             }
         }

@@ -36,7 +36,35 @@ internal fun Application.serverModule(
         maxAgeInSeconds = Duration.ofDays(1).seconds
     }
 
-    routing {
+    fun Route.api() {
+        dataItemsRouting()
+        helloRouting()
+
+
+        route("/mobile") {
+
+            route("/readings") { // /api/mobile/readings
+                post {
+                    val readings = call.receive<List<CounterReadingItem>>()
+                    val idMappings = withContext(Dispatchers.IO) {
+                        synchronizer().uploadReadings(readings)
+                    }
+                    call.respond(idMappings)
+                }
+            }
+
+            route("/recent_data") {  // /api/mobile/recent_data
+                get {
+                    val consumers = withContext(Dispatchers.IO) {
+                        synchronizer().getRecentData()
+                    }
+                    call.respond(consumers)
+                }
+            }
+        }
+    }
+
+    fun Route.ui() {
         route("/") {
             get {
                 call.respondHtml {
@@ -50,36 +78,11 @@ internal fun Application.serverModule(
                 uiController().downloadAsXlsx(call)
             }
         }
+    }
 
-        route("/api") {
-
-            dataItemsRouting()
-            helloRouting()
-
-
-            route("/mobile") {
-
-                route("/readings") { // /api/mobile/readings
-                    post {
-                        val readings = call.receive<List<CounterReadingItem>>()
-                        val idMappings = withContext(Dispatchers.IO) {
-                            synchronizer().uploadReadings(readings)
-                        }
-                        call.respond(idMappings)
-                    }
-                }
-
-                route("/recent_data") {  // /api/mobile/recent_data
-                    get {
-                        val consumers = withContext(Dispatchers.IO) {
-                            synchronizer().getRecentData()
-                        }
-                        call.respond(consumers)
-                    }
-                }
-            }
-
-        }
+    routing {
+        ui()
+        api()
     }
 }
 
