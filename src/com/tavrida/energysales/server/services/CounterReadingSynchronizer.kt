@@ -1,4 +1,4 @@
-package com.tavrida.energysales.server
+package com.tavrida.energysales.server.services
 
 import com.tavrida.energysales.data_access.dbmodel.tables.CounterReadingsTable
 import com.tavrida.energysales.data_access.models.*

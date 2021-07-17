@@ -75,6 +75,10 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
     implementation("org.slf4j:slf4j-simple:$slf4jVersion")
 
+    implementation "io.insert-koin:koin-core:$koin_version"
+    implementation "io.insert-koin:koin-ktor:$koin_version"
+    implementation "io.insert-koin:koin-logger-slf4j:$koin_version"
+
     implementation("org.apache.poi:poi-ooxml:$poiOoxmlVersion")
 
     implementation("com.google.zxing:core:$zxingVersion")

@@ -1,3 +1,5 @@
 package com.tavrida.energysales.energy_distribution
 
-class EnergyDistributionServiceImpl : EnergyDistributionService
+import org.jetbrains.exposed.sql.Database
+
+class EnergyDistributionServiceImpl(val db: Database) : EnergyDistributionService

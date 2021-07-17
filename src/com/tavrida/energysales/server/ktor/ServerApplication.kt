@@ -1,4 +1,4 @@
-package com.tavrida.energysales.server
+package com.tavrida.energysales.server.ktor
 
 import io.ktor.application.*
 import io.ktor.server.cio.*

@@ -1,4 +1,4 @@
-package com.tavrida.energysales.server
+package com.tavrida.energysales.server.services
 
 import com.tavrida.energysales.data_access.models.*
 import com.tavrida.utils.noTrailingZero

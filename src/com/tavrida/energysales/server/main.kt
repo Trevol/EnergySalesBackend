@@ -1,24 +1,27 @@
 package com.tavrida.energysales.server
 
-import com.tavrida.energysales.data_access.DatabaseInstance
-import com.tavrida.energysales.server.CounterReadingSynchronizer
-import com.tavrida.energysales.server.CounterReadingUIController
-import com.tavrida.energysales.server.ServerApplication
-import com.tavrida.energysales.server.serverModule
+import com.tavrida.energysales.di.ApplicationCallScopeName
+import com.tavrida.energysales.di.backendServicesContainer
+import com.tavrida.energysales.server.ktor.ServerApplication
+import com.tavrida.energysales.server.ktor.serverModule
+import com.tavrida.energysales.server.settings.BackendSettings
 import java.io.File
 
+
 fun main() {
-    val dbDir = File("./databases")
-    val dbName = "ENERGY_SALES_2021-07-01"
-    val db = DatabaseInstance.get(dbDir, dbName)
+    val settings = BackendSettings(
+        port = 8081,
+        dbDir = File("./databases"),
+        dbName = "ENERGY_SALES_2021-07-01"
+    )
 
     ServerApplication(
-        8081,
+        settings.port,
         waitAfterStart = true,
         module = {
             serverModule(
-                uiController = { CounterReadingUIController(db) },
-                synchronizer = { CounterReadingSynchronizer(db) }
+                backendServicesContainer(settings),
+                ApplicationCallScopeName
             )
         }
     ).start()

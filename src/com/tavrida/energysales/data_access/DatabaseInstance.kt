@@ -7,9 +7,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
 
 object DatabaseInstance {
-    const val DEFAULT_DB_NAME = "ENERGY_SALES"
-
-    fun get(directory: File, dbName: String = DEFAULT_DB_NAME) = dbUrl(directory, dbName).let {
+    fun get(directory: File, dbName: String) = dbUrl(directory, dbName).let {
         Database.connect(it)
         //.initSchema()
     }
