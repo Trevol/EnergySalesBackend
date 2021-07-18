@@ -7,13 +7,6 @@ fun Route.api() {
         dataItemsRouting()
         helloRouting()
         mobileAppRouting()
-    }
-}
-
-fun Route.energyDistributionRouting(){
-    route("/energy-distribution"){
-        post {
-
-        }
+        energyDistributionRouting()
     }
 }

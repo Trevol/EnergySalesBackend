@@ -1,5 +1,6 @@
 package com.tavrida.energysales.server.routing.api
 
+import com.tavrida.utils.ktor.respondTo
 import io.ktor.application.*
 import io.ktor.response.*
 import io.ktor.routing.*
@@ -8,11 +9,12 @@ import io.ktor.routing.*
 fun Route.dataItemsRouting() {
     route("/data_items") {
         get {
-            val n = call.parameters["n"]?.toIntOrNull() ?: 25
-            val message = (1..n).map {
-                mapOf("firstName" to "First Name $it", "lastName" to "Last Name $it")
-            }
-            call.respond(message)
+            (call.parameters["n"]?.toIntOrNull() ?: 25)
+                .let { 1..it }
+                .map {
+                    mapOf("firstName" to "First Name $it", "lastName" to "Last Name $it")
+                }
+                .respondTo(call)
         }
     }
 }
