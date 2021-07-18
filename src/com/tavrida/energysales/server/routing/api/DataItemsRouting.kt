@@ -1,9 +1,10 @@
-package com.tavrida.energysales.server.routing
+package com.tavrida.energysales.server.routing.api
 
 import io.ktor.application.*
 import io.ktor.response.*
 import io.ktor.routing.*
 
+@Deprecated("This is test routing. Remove it")
 fun Route.dataItemsRouting() {
     route("/data_items") {
         get {

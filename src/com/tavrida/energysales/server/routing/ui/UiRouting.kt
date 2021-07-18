@@ -1,4 +1,4 @@
-package com.tavrida.energysales.server.routing
+package com.tavrida.energysales.server.routing.ui
 
 import com.tavrida.energysales.server.services.CounterReadingUIController
 import com.tavrida.utils.di.getCallScoped

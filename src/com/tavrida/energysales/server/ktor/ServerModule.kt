@@ -1,7 +1,7 @@
 package com.tavrida.energysales.server.ktor
 
-import com.tavrida.energysales.server.routing.api
-import com.tavrida.energysales.server.routing.ui
+import com.tavrida.energysales.server.routing.api.api
+import com.tavrida.energysales.server.routing.ui.ui
 import com.tavrida.utils.di.ApplicationCallKoinScope
 import io.ktor.application.*
 import io.ktor.features.*

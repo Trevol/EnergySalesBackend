@@ -1,6 +1,11 @@
 package com.tavrida.energysales.energy_distribution
 
-import org.jetbrains.exposed.sql.Database
-
 interface EnergyDistributionService {
+    fun getEnergyDistribution() {
+
+    }
 }
+
+data class EnergyDistributionRow(
+    val d: Int
+)

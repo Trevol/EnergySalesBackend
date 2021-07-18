@@ -1,4 +1,4 @@
-package com.tavrida.energysales.server.routing
+package com.tavrida.energysales.server.routing.api
 
 import com.tavrida.energysales.api.data_contract.HelloResponse
 import io.ktor.application.*
