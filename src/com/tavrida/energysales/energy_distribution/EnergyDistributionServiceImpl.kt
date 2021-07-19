@@ -3,7 +3,7 @@ package com.tavrida.energysales.energy_distribution
 import org.jetbrains.exposed.sql.Database
 
 class EnergyDistributionServiceImpl(val db: Database) : EnergyDistributionService {
-    override fun getEnergyDistribution(monthOfYear: MonthOfYear?): List<EnergyDistributionRow> {
+    override fun getEnergyDistribution(monthOfYear: MonthOfYear?): EnergyDistributionData {
         val monthOfYear = monthOfYear ?: recentMonth()
         TODO("Not yet implemented")
     }
