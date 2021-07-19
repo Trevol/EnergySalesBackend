@@ -18,7 +18,11 @@ data class EnergyDistributionData(
 data class TotalInfo(val name: String, val total: Double)
 
 @Serializable
-data class OrganizationItem(val id: Int, val name: String)
+data class OrganizationItem(
+    val id: Int,
+    val name: String,
+    val counters: List<CounterItem>
+)
 
 @Serializable
 data class CounterItem(

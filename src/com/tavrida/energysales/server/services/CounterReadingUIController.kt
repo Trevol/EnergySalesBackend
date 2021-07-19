@@ -12,9 +12,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
-class CounterReadingUIController(db: Database) {
-    private val dataContext = DataContext(db)
-
+class CounterReadingUIController(private val dataContext: DataContext) {
     fun indexView(html: HTML) {
         html.run {
             head {

@@ -10,8 +10,7 @@ import org.jetbrains.exposed.sql.transactions.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class CounterReadingSynchronizer(val db: Database) {
-    private val dataContext = DataContext(db)
+class CounterReadingSynchronizer(private val dataContext: DataContext) {
 
     fun getRecentData(): List<ConsumerData> {
         return dataContext.loadAll()
@@ -27,7 +26,7 @@ class CounterReadingSynchronizer(val db: Database) {
         items.checkCounters(counters)
 
         val now = LocalDateTime.now()
-        return transaction(db) {
+        return transaction(dataContext) {
             val resp = mutableListOf<CounterReadingIdMapping>()
             items.forEach {
                 val counter = counters[it.counterId]!!
