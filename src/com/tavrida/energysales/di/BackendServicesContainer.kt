@@ -2,6 +2,7 @@ package com.tavrida.energysales.di
 
 import com.tavrida.energysales.data_access.DatabaseInstance
 import com.tavrida.energysales.data_access.models.DataContext
+import com.tavrida.energysales.energy_distribution.EnergyDistributionService
 import com.tavrida.energysales.energy_distribution.EnergyDistributionServiceImpl
 import com.tavrida.energysales.server.services.CounterReadingSynchronizer
 import com.tavrida.energysales.server.services.CounterReadingUIController
@@ -22,6 +23,6 @@ fun backendServicesContainer(settings: BackendSettings) = module {
         }
         scoped { CounterReadingUIController(get()) }
         scoped { CounterReadingSynchronizer(get()) }
-        scoped { EnergyDistributionServiceImpl(get()) }
+        scoped<EnergyDistributionService> { EnergyDistributionServiceImpl(get()) }
     }
 }

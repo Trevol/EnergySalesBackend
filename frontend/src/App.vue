@@ -1,7 +1,7 @@
 <template>
   <DxTabPanel height="100%">
 
-    <dx-item title="Распределение">
+    <dx-item title="Распределение электроэнергии">
       <template #default>
         <energy-distribution-page/>
       </template>

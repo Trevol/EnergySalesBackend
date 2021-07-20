@@ -1,11 +1,11 @@
-import createAxios from "@/js/backend_api/axiosApi";
+import createAxios from "@/js/common/backend_api/axiosApi";
 
-class BackendApi {
+class SomeBackendApi {
     constructor(backendApiUri) {
         this._api = createAxios(backendApiUri)
     }
 
-    async getDataItems(n) {
+    async getExample(n) {
         const conf = {
             params: {
                 n
@@ -15,12 +15,12 @@ class BackendApi {
             .then(r => r.data)
     }
 
-    async postDummyData(dummyData) {
+    async postExample(dummyData) {
         return await this._api.post("dummy", dummyData)
             .then(r => r.data)
     }
 }
 
-const backendApi = new BackendApi("http://0.0.0.0:8081/api")
+const someBackendApi = new SomeBackendApi("http://0.0.0.0:8081/api/energy-distribution")
 
-export default backendApi
+export default someBackendApi

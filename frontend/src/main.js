@@ -2,7 +2,7 @@ import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import {createApp} from 'vue'
 import App from './App.vue'
-import errorService from "@/js/ErrorService";
+import errorService from "@/js/common/ErrorService";
 
 window.onerror = function (message, source, lineno, colno, error) {
     errorService.handleWindowOnError(message, source, lineno, colno, error)

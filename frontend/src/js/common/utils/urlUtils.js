@@ -1,4 +1,4 @@
-import {ensurePrefix, removeSuffix} from "@/js/utils/utils";
+import {ensurePrefix, removeSuffix} from "@/js/common/utils/utils";
 
 const pathSeparator = "/"
 

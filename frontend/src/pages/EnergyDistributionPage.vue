@@ -28,8 +28,8 @@ import DataGrid from "@/components/DataGrid";
 import {Pane, Splitpanes} from "splitpanes";
 import 'splitpanes/dist/splitpanes.css'
 import DxToolbar, {DxItem as DxToolbarItem} from 'devextreme-vue/toolbar';
-import {randomInt} from "@/js/utils/utils";
-import backendApi from "@/js/backend_api/BackendApi";
+import {randomInt} from "@/js/common/utils/utils";
+import energyDistributionApi from "@/js/energyDistribition/api/EnergyDistributionApi";
 
 export default {
   name: "EnergyDistributionPage",
@@ -42,22 +42,29 @@ export default {
   data() {
     return {
       items: [],
+      months: [],
+      selectedMonth: null,
       refreshOptions: {
         icon: 'refresh',
         onClick: async () => {
-          this.items = await this.getDataItems()
+          this.items = await this.energyDistribution()
         }
       },
     }
   },
   methods: {
-    async getDataItems() {
-      return await backendApi.getDataItems(randomInt(2, 40))
+    async energyDistribution() {
+      return await energyDistributionApi.energyDistribution(this.selectedMonth)
     }
   },
   async mounted() {
-    this.items = await this.getDataItems()
+    this.months = monthsRangeToMonthsList(await energyDistributionApi.monthRange())
+    this.items = await this.energyDistribution()
   }
+}
+
+function monthsRangeToMonthsList(monthRange){
+  throw "Not implemented"
 }
 </script>
 

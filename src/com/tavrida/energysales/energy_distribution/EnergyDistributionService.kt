@@ -4,12 +4,14 @@ import com.tavrida.energysales.api.data_contract.CounterReadingItem
 import kotlinx.serialization.Serializable
 
 interface EnergyDistributionService {
-    fun getEnergyDistribution(monthOfYear: MonthOfYear?): EnergyDistributionData
-    fun getMonthRange(): MonthOfYearRange
+    fun energyDistribution(monthOfYear: MonthOfYear?): EnergyDistributionData
+    fun monthRange(): MonthOfYearRange
 }
 
 @Serializable
 data class EnergyDistributionData(
+    val month: MonthOfYear,
+    val prevMonth: MonthOfYear,
     val total: TotalInfo,
     val organizations: List<OrganizationItem>
 )
@@ -35,7 +37,6 @@ data class CounterItem(
 
 @Serializable
 data class CounterEnergyConsumption(
-    val monthOfYear: MonthOfYear,
     val monthReading: CounterReadingItem,
     val prevMonthReading: CounterReadingItem,
     val consumption: Double

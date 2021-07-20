@@ -1,21 +1,23 @@
-async function thisThrows() {
-    throw new Error("Thrown from thisThrows()");
-}
+import _ from "lodash"
 
-async function myFunctionThatCatches() {
-    try {
-        return await thisThrows();
-    } catch (e) {
-        console.error(e);
-    } finally {
-        console.log('We do cleanup here');
+
+class MonthOfYear {
+    constructor(month, year) {
+        this.month = month
+        this.year = year
     }
-    return "Nothing found";
+
+    doIt() {
+        console.log("doIt", this.month, this.year)
+    }
 }
 
-async function run() {
-    const myValue = await myFunctionThatCatches();
-    console.log(myValue);
-}
+let monthOfYear = new MonthOfYear(5, 2010);
+let json = JSON.stringify(monthOfYear);
 
-run();
+let m = new MonthOfYear;
+let source = JSON.parse(json);
+source.ddd = "ttt"
+let d = Object.assign(m, source)
+d.doIt()
+console.log(_(d).keys().value())
