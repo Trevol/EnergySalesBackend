@@ -19,6 +19,12 @@
       </template>
     </dx-item>
 
+    <dx-item title="Эксперименты">
+      <template #default>
+        <Experiments/>
+      </template>
+    </dx-item>
+
   </DxTabPanel>
 
 
@@ -27,10 +33,11 @@
 <script>
 import DxTabPanel, {DxItem} from 'devextreme-vue/tab-panel'
 import EnergyDistributionPage from "@/pages/EnergyDistributionPage";
+import Experiments from "@/pages/Experiments";
 
 export default {
   components: {
-    DxTabPanel, DxItem, EnergyDistributionPage
+    DxTabPanel, DxItem, EnergyDistributionPage, Experiments
   }
 }
 </script>

@@ -8,27 +8,42 @@
             <dx-toolbar-item :options="refreshOptions"
                              location="before"
                              widget="dxButton"/>
+            <dx-toolbar-item
+                location="before"
+            >
+              <dx-select-box
+                  :items="months"
+                  :displayExpr="monthDisplay"
+                  valueExpr="month"
+                  v-model:selectedItem="selectedMonth"
+                  placeholder="Выбрать"
+              />
+            </dx-toolbar-item>
+
+            <dx-toolbar-item>
+              <div>{{selectedMonth}}</div>
+            </dx-toolbar-item>
           </dx-toolbar>
         </div>
         <div class="row content">
-          <data-grid :items="items"/>
+          <data-grid :items="data.organizations || []"/>
         </div>
       </div>
     </pane>
 
     <pane key="2" min-size="0.5">
-      <div v-for="item of items" :key="item.firstName">{{ item }}</div>
+      <div v-for="org of data.organizations" :key="org.name">{{ org.name }}</div>
     </pane>
 
   </splitpanes>
 </template>
 
 <script>
-import DataGrid from "@/components/DataGrid";
+import DataGrid from "@/components/energyDistribution/EnergyDistributionSheet";
 import {Pane, Splitpanes} from "splitpanes";
 import 'splitpanes/dist/splitpanes.css'
 import DxToolbar, {DxItem as DxToolbarItem} from 'devextreme-vue/toolbar';
-import {randomInt} from "@/js/common/utils/utils";
+import DxSelectBox from 'devextreme-vue/select-box'
 import energyDistributionApi from "@/js/energyDistribition/api/EnergyDistributionApi";
 
 export default {
@@ -37,34 +52,46 @@ export default {
     DataGrid,
     Splitpanes,
     Pane,
-    DxToolbar, DxToolbarItem
+    DxToolbar, DxToolbarItem,
+    DxSelectBox
   },
   data() {
     return {
-      items: [],
+      data: {},
       months: [],
       selectedMonth: null,
       refreshOptions: {
         icon: 'refresh',
         onClick: async () => {
-          this.items = await this.energyDistribution()
+          this.data = await this.energyDistribution()
         }
-      },
+      }
     }
   },
   methods: {
+    monthDisplay(monthOfYear) {
+      return monthOfYear ? `${monthOfYear.month.toString().padStart(2, '0')}.${monthOfYear.year}` : "null"
+    },
+    monthValue(monthOfYear) {
+      return monthOfYear ? `${monthOfYear.year}:${monthOfYear.month}`: "null"
+    },
     async energyDistribution() {
       return await energyDistributionApi.energyDistribution(this.selectedMonth)
     }
   },
   async mounted() {
     this.months = monthsRangeToMonthsList(await energyDistributionApi.monthRange())
-    this.items = await this.energyDistribution()
+    this.selectedMonth = this.months[0]
+    this.data = await this.energyDistribution()
   }
 }
 
-function monthsRangeToMonthsList(monthRange){
-  throw "Not implemented"
+function monthsRangeToMonthsList(monthRange) {
+  return [
+    {month: 6, year: 2021},
+    {month: 7, year: 2021}
+  ]
+  // return monthRange
 }
 </script>
 
