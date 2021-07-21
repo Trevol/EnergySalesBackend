@@ -13,9 +13,8 @@
             >
               <dx-select-box
                   :items="months"
-                  :displayExpr="monthDisplay"
-                  valueExpr="month"
-                  v-model:selectedItem="selectedMonth"
+                  displayExpr="month"
+                  v-model:value="selectedMonth"
                   placeholder="Выбрать"
               />
             </dx-toolbar-item>
@@ -70,7 +69,7 @@ export default {
   },
   methods: {
     monthDisplay(monthOfYear) {
-      return monthOfYear ? `${monthOfYear.month.toString().padStart(2, '0')}.${monthOfYear.year}` : "null"
+      return monthOfYear ? `${monthOfYear.month.toString().padStart(2, '0')}.${monthOfYear.year}` : null
     },
     monthValue(monthOfYear) {
       return monthOfYear ? `${monthOfYear.year}:${monthOfYear.month}`: "null"
@@ -80,16 +79,17 @@ export default {
     }
   },
   async mounted() {
-    this.months = monthsRangeToMonthsList(await energyDistributionApi.monthRange())
-    this.selectedMonth = this.months[0]
+    let months = monthsRangeToMonthsList(await energyDistributionApi.monthRange());
+    this.selectedMonth = null //months[0]
+    this.months = months
     this.data = await this.energyDistribution()
   }
 }
 
 function monthsRangeToMonthsList(monthRange) {
   return [
-    {month: 6, year: 2021},
-    {month: 7, year: 2021}
+    {month: 7, year: 2021},
+    {month: 6, year: 2021}
   ]
   // return monthRange
 }

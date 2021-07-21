@@ -1,45 +1,48 @@
 <template>
   <div>
-
     <div>
-      {{ selectedItemId || 'null' }}
+      Selected Item: {{ selectedItem || 'null' }}
     </div>
+
     <dx-select-box
         :items="items"
-        displayExpr="name"
-        valueExpr="id"
-        v-model:value="selectedItemId"
-        @selectionChanged="selectionChanged"
+        displayExpr="name22"
+        v-model:value="selectedItem"
     />
 
   </div>
 </template>
 
 <script>
-import DxSelectBox from 'devextreme-vue/select-box'
-
-export default {
-  name: "Experiments",
-  components: {
-    DxSelectBox
-  },
-  data() {
-    return {
-      items: [new Item(1), new Item(2), new Item(3)],
-      selectedItemId: 2
-    }
-  },
-  methods: {
-    selectionChanged(e) {
-      console.log("selectionChanged!!!!", e.selectedItem.name)
-    }
-  }
-}
+import SelectBox from "@/components/common/SelectBox";
+import DxSelectBox from "devextreme-vue/select-box";
 
 class Item {
   constructor(id) {
     this.id = id
     this.name = `Name_${id}`
   }
+
+  name22() {
+    return `Name##${this.id}`
+  }
 }
+
+let items = [new Item(1), new Item(2), new Item(3)];
+
+export default {
+  name: "Experiments",
+  components: {
+    SelectBox,
+    DxSelectBox
+  },
+  data() {
+    return {
+      items: items,
+      selectedItem: items[-1]
+    }
+  }
+}
+
+
 </script>

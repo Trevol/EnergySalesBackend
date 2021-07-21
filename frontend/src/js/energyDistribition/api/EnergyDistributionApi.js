@@ -1,4 +1,5 @@
 import createAxios from "@/js/common/backend_api/axiosApi";
+import MonthOfYearRange from "@/js/energyDistribition/MonthOfYearRange";
 
 class EnergyDistributionApi {
     constructor(backendApiUri) {
@@ -7,10 +8,12 @@ class EnergyDistributionApi {
 
     async monthRange() {
         return await this._api.get("month-range")
-            .then(r => r.data)
+            .then(r => MonthOfYearRange.fromJson(r.data))
     }
-    async energyDistribution(monthOfYear){
-        return await this._api.post("", monthOfYear)
+
+    async energyDistribution(monthOfYear) {
+        //wrap value to {monthOfYear: monthOfYear} to correctly send null value
+        return await this._api.post("", {monthOfYear})
             .then(r => r.data)
     }
 }
