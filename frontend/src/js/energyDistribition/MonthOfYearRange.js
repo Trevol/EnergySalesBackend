@@ -1,4 +1,4 @@
-import MonthOfYear from "@/js/energyDistribition/MonthOfYear";
+import MonthOfYear from "./MonthOfYear";
 
 class MonthOfYearRange {
     constructor(start, end, lastWithReadings) {
