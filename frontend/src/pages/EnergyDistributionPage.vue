@@ -25,20 +25,20 @@
           </dx-toolbar>
         </div>
         <div class="row content">
-          <data-grid :items="data.organizations || []"/>
+          <EnergyDistributionSheet :energy-distribution-data="energyDistributionData"/>
         </div>
       </div>
     </pane>
 
     <pane key="2" min-size="0.5">
-      <div v-for="org of data.organizations" :key="org.name">{{ org.name }}</div>
+      <div v-for="org of energyDistributionData.organizations" :key="org.name">{{ org.name }}</div>
     </pane>
 
   </splitpanes>
 </template>
 
 <script>
-import DataGrid from "@/components/energyDistribution/EnergyDistributionSheet";
+import EnergyDistributionSheet from "@/components/energyDistribution/EnergyDistributionSheet";
 import {Pane, Splitpanes} from "splitpanes";
 import 'splitpanes/dist/splitpanes.css'
 import DxToolbar, {DxItem as DxToolbarItem} from 'devextreme-vue/toolbar';
@@ -48,7 +48,7 @@ import energyDistributionApi from "@/js/energyDistribition/api/EnergyDistributio
 export default {
   name: "EnergyDistributionPage",
   components: {
-    DataGrid,
+    EnergyDistributionSheet,
     Splitpanes,
     Pane,
     DxToolbar, DxToolbarItem,
@@ -56,33 +56,33 @@ export default {
   },
   data() {
     return {
-      data: {},
+      energyDistributionData: {},
       months: [],
       selectedMonth: null,
       refreshOptions: {
         icon: 'refresh',
         onClick: async () => {
-          this.data = await this.energyDistribution()
+          this.energyDistributionData = await this.energyDistribution()
         }
       }
     }
   },
   methods: {
-    monthDisplay(monthOfYear) {
+    /*monthDisplay(monthOfYear) {
       return monthOfYear ? `${monthOfYear.month.toString().padStart(2, '0')}.${monthOfYear.year}` : null
     },
     monthValue(monthOfYear) {
       return monthOfYear ? `${monthOfYear.year}:${monthOfYear.month}`: "null"
-    },
+    },*/
     async energyDistribution() {
       return await energyDistributionApi.energyDistribution(this.selectedMonth)
     }
   },
   async mounted() {
     let months = (await energyDistributionApi.monthRange()).toMonthsList();
-    this.selectedMonth = null //months[0]
+    this.selectedMonth = months[0]
     this.months = months
-    this.data = await this.energyDistribution()
+    this.energyDistributionData = await this.energyDistribution()
   }
 }
 

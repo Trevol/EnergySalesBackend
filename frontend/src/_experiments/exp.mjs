@@ -1,8 +1,9 @@
 import _ from "lodash"
 
-console.log(_.isArray([]))
-console.log(_.isObject({}))
+let data = {
+    organizations: [1, 2, 3]
+}
+console.log(data?.organizations)
 
-console.log( [] instanceof Array )
-console.log({} instanceof Array )
-console.log(null == undefined)
+data = null
+console.log(data?.organizations ?? [4, 5, 6])

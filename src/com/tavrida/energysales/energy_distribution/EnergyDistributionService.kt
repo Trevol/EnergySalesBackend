@@ -53,8 +53,6 @@ data class MonthOfYearRange(
 data class MonthOfYear(val month: Int, val year: Int) {
     operator fun compareTo(other: MonthOfYear): Int {
         val yearComparison = year.compareTo(other.year)
-        if (yearComparison != 0)
-            return yearComparison
-        return month.compareTo(other.month)
+        return if (yearComparison != 0) yearComparison else month.compareTo(other.month)
     }
 }

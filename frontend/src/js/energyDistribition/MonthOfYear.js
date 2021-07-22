@@ -1,8 +1,19 @@
+import _ from "lodash"
+
 class MonthOfYear {
     constructor(month, year) {
         this.month = month
         this.year = year
         this.display = `${this._monthName()} ${this.year}`
+    }
+
+    toJSON() {
+        //https://stackoverflow.com/questions/4910567/hide-certain-values-in-output-from-json-stringify
+        return _.omit(this, ["display"]);
+        /*return {
+            month: this.month,
+            year: this.year
+        }*/
     }
 
     _monthName() {

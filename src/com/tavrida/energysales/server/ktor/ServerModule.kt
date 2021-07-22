@@ -8,6 +8,7 @@ import io.ktor.features.*
 import io.ktor.routing.*
 import io.ktor.serialization.*
 import io.ktor.http.*
+import kotlinx.serialization.json.Json
 import org.koin.core.module.Module
 import org.koin.ktor.ext.Koin
 import java.time.Duration
@@ -19,7 +20,12 @@ internal fun Application.serverModule(diModule: Module, callScopeName: String) {
     install(ApplicationCallKoinScope) {
         scopeName = callScopeName
     }
-    install(ContentNegotiation) { json() }
+    install(ContentNegotiation) {
+        json()
+        /*json(Json {
+            ignoreUnknownKeys = true
+        })*/
+    }
     install(CORS)
     {
         method(HttpMethod.Options)
