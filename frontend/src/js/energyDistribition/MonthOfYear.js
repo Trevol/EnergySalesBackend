@@ -5,6 +5,13 @@ class MonthOfYear {
     }
 }
 
+MonthOfYear.toMonthOfYear = function (plainObjectOrMonthOfYear) {
+    if (plainObjectOrMonthOfYear instanceof MonthOfYear) {
+        return plainObjectOrMonthOfYear
+    }
+    return MonthOfYear.fromJson(plainObjectOrMonthOfYear)
+}
+
 MonthOfYear.fromJson = function (jsonObj) {
     if (jsonObj == null) {
         return null

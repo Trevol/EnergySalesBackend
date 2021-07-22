@@ -7,6 +7,15 @@ test("Simple creation test", () => {
     expect(m.year).toBe(2020)
 })
 
+test("toMonthOfYear test", () => {
+    expect(MonthOfYear.toMonthOfYear(null)).toBeNull()
+
+    let monthOfYear = new MonthOfYear(5, 2020);
+    expect(MonthOfYear.toMonthOfYear(monthOfYear) === monthOfYear).toBe(true)
+
+    expect(MonthOfYear.toMonthOfYear({month: 5, year: 2020})).toStrictEqual(new MonthOfYear(5, 2020))
+})
+
 test("MonthOfYear.fromJson(plane object)", () => {
     expect(MonthOfYear.fromJson(null)).toBeNull()
     expect(MonthOfYear.fromJson(undefined)).toBeNull()

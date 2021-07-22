@@ -2,9 +2,9 @@ import MonthOfYear from "./MonthOfYear";
 
 class MonthOfYearRange {
     constructor(start, end, lastWithReadings) {
-        this.start = start
-        this.end = end
-        this.lastWithReadings = lastWithReadings
+        this.start = MonthOfYear.toMonthOfYear(start)
+        this.end = MonthOfYear.toMonthOfYear(end)
+        this.lastWithReadings = MonthOfYear.toMonthOfYear(lastWithReadings)
     }
 
     toMonthsList() {
