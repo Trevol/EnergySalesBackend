@@ -2,27 +2,51 @@ class MonthOfYear {
     constructor(month, year) {
         this.month = month
         this.year = year
+        this.display = `${this._monthName()} ${this.year}`
+    }
+
+    _monthName() {
+        return months[this.month - 1]
     }
 }
 
-MonthOfYear.toMonthOfYear = function (plainObjectOrMonthOfYear) {
-    if (plainObjectOrMonthOfYear instanceof MonthOfYear) {
-        return plainObjectOrMonthOfYear
+const months = [
+    "Январь",
+    "Февраль",
+    "Март",
+    "Апрель",
+    "Май",
+    "Июнь",
+    "Июль",
+    "Август",
+    "Сентябрь",
+    "Октябрь",
+    "Ноябрь",
+    "Декабрь",
+]
+
+MonthOfYear.toInstance = function (obj) {
+    if (obj instanceof MonthOfYear) {
+        return obj
     }
-    return MonthOfYear.fromJson(plainObjectOrMonthOfYear)
+    return MonthOfYear.fromPlainObject(obj)
 }
 
-MonthOfYear.fromJson = function (jsonObj) {
-    if (jsonObj == null) {
+MonthOfYear.fromPlainObject = function (obj) {
+    if (obj == null) {
         return null
     }
-    if (jsonObj instanceof Array) {
-        return jsonObj.map(MonthOfYear.fromJson)
+    if (obj instanceof Object) {
+        return new MonthOfYear(obj.month, obj.year)
     }
-    if (jsonObj instanceof Object) {
-        return new MonthOfYear(jsonObj.month, jsonObj.year)
+    throw Error("Unexpected obj " + obj)
+}
+
+MonthOfYear.fromPlainArray = function (array) {
+    if (array instanceof Array) {
+        return array.map(MonthOfYear.fromPlainObject)
     }
-    throw Error("Unexpected jsonObject")
+    throw Error("Unexpected array " + array)
 }
 
 

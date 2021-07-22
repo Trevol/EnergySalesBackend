@@ -5,29 +5,30 @@ test("Simple creation test", () => {
     expect(m).toBeInstanceOf(MonthOfYear)
     expect(m.month).toBe(10)
     expect(m.year).toBe(2020)
+    expect(m.display).toBe("Октябрь 2020")
 })
 
-test("toMonthOfYear test", () => {
-    expect(MonthOfYear.toMonthOfYear(null)).toBeNull()
+test("toInstance test", () => {
+    expect(MonthOfYear.toInstance(null)).toBeNull()
 
     let monthOfYear = new MonthOfYear(5, 2020);
-    expect(MonthOfYear.toMonthOfYear(monthOfYear) === monthOfYear).toBe(true)
+    expect(MonthOfYear.toInstance(monthOfYear) === monthOfYear).toBe(true)
 
-    expect(MonthOfYear.toMonthOfYear({month: 5, year: 2020})).toStrictEqual(new MonthOfYear(5, 2020))
+    expect(MonthOfYear.toInstance({month: 5, year: 2020})).toStrictEqual(new MonthOfYear(5, 2020))
 })
 
-test("MonthOfYear.fromJson(plane object)", () => {
-    expect(MonthOfYear.fromJson(null)).toBeNull()
-    expect(MonthOfYear.fromJson(undefined)).toBeNull()
+test("MonthOfYear.fromPlainObject", () => {
+    expect(MonthOfYear.fromPlainObject(null)).toBeNull()
+    expect(MonthOfYear.fromPlainObject(undefined)).toBeNull()
     const plainObj = {
         month: 10,
         year: 2020
     }
-    expect(MonthOfYear.fromJson(plainObj)).toStrictEqual(new MonthOfYear(10, 2020))
+    expect(MonthOfYear.fromPlainObject(plainObj)).toStrictEqual(new MonthOfYear(10, 2020))
 })
 
-test("MonthOfYear.fromJson(plain array)", () => {
-    expect(MonthOfYear.fromJson([null])).toStrictEqual([null])
+test("MonthOfYear.fromPlainArray", () => {
+    expect(MonthOfYear.fromPlainArray([null])).toStrictEqual([null])
 
     const plainArray = [
         {
@@ -41,9 +42,9 @@ test("MonthOfYear.fromJson(plain array)", () => {
         }
     ]
 
-    let actual = MonthOfYear.fromJson(plainArray);
-    expect(actual).toStrictEqual([
-        new MonthOfYear(10, 2020), null, new MonthOfYear(1, 2019)
-    ])
+    expect(MonthOfYear.fromPlainArray(plainArray))
+        .toStrictEqual([
+            new MonthOfYear(10, 2020), null, new MonthOfYear(1, 2019)
+        ])
 
 })

@@ -8,7 +8,7 @@ class EnergyDistributionApi {
 
     async monthRange() {
         return await this._api.get("month-range")
-            .then(r => MonthOfYearRange.fromJson(r.data))
+            .then(r => MonthOfYearRange.fromPlainObject(r.data))
     }
 
     async energyDistribution(monthOfYear) {

@@ -3,9 +3,14 @@ package com.tavrida.energysales.server
 import com.tavrida.energysales.energy_distribution.MonthOfYear
 import database_creation.utils.println
 import org.junit.Assert
+import java.time.LocalDate
 import kotlin.test.Test
 
 class MonthOfYearTest {
+    @Test
+    fun monthIndex(){
+        LocalDate.of(2020, 1, 1)
+    }
     @Test
     fun compare() {
         Assert.assertTrue(MonthOfYear(11, 2000) <= MonthOfYear(10, 2021))

@@ -2,9 +2,9 @@ import MonthOfYear from "./MonthOfYear";
 
 class MonthOfYearRange {
     constructor(start, end, lastWithReadings) {
-        this.start = MonthOfYear.toMonthOfYear(start)
-        this.end = MonthOfYear.toMonthOfYear(end)
-        this.lastWithReadings = MonthOfYear.toMonthOfYear(lastWithReadings)
+        this.start = MonthOfYear.toInstance(start)
+        this.end = MonthOfYear.toInstance(end)
+        this.lastWithReadings = MonthOfYear.toInstance(lastWithReadings)
     }
 
     toMonthsList() {
@@ -12,21 +12,25 @@ class MonthOfYearRange {
     }
 }
 
-MonthOfYearRange.fromJson = function (jsonObj) {
-    if (jsonObj == null) {
+MonthOfYearRange.toInstance = function (obj) {
+    if (obj instanceof MonthOfYearRange) {
+        return obj
+    }
+    return MonthOfYearRange.fromPlainObject(obj)
+}
+
+MonthOfYearRange.fromPlainObject = function (obj) {
+    if (obj == null) {
         return null
     }
-    if (jsonObj instanceof Array) {
-        return jsonObj.map(MonthOfYearRange.fromJson)
-    }
-    if (jsonObj instanceof Object) {
+    if (obj instanceof Object) {
         return new MonthOfYearRange(
-            MonthOfYear.fromJson(jsonObj.start),
-            MonthOfYear.fromJson(jsonObj.end),
-            MonthOfYear.fromJson(jsonObj.lastWithReadings)
+            obj.start,
+            obj.end,
+            obj.lastWithReadings
         )
     }
-    throw Error("Unexpected jsonObject")
+    throw Error("Unexpected obj " + obj)
 }
 
 export default MonthOfYearRange
