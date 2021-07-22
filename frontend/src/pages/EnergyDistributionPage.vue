@@ -13,7 +13,7 @@
             >
               <dx-select-box
                   :items="months"
-                  displayExpr="month"
+                  displayExpr="display"
                   v-model:value="selectedMonth"
                   placeholder="Выбрать"
               />
@@ -79,7 +79,7 @@ export default {
     }
   },
   async mounted() {
-    let months = monthsRangeToMonthsList(await energyDistributionApi.monthRange());
+    let months = (await energyDistributionApi.monthRange()).toMonthsList();
     this.selectedMonth = null //months[0]
     this.months = months
     this.data = await this.energyDistribution()

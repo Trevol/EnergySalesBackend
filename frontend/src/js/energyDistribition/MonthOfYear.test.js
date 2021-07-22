@@ -48,3 +48,44 @@ test("MonthOfYear.fromPlainArray", () => {
         ])
 
 })
+
+test("subtractMonth", () => {
+    expect(new MonthOfYear(12, 2020).subtractMonth()).toStrictEqual(new MonthOfYear(11, 2020))
+    expect(new MonthOfYear(1, 2020).subtractMonth()).toStrictEqual(new MonthOfYear(12, 2019))
+})
+
+test("greaterThan", () => {
+    expect(
+        new MonthOfYear(12, 2020).greaterThan(new MonthOfYear(12, 2020))
+    ).toBe(false)
+    expect(
+        new MonthOfYear(12, 2020).greaterThan(new MonthOfYear(11, 2020))
+    ).toBe(true)
+    expect(
+        new MonthOfYear(11, 2020).greaterThan(new MonthOfYear(12, 2020))
+    ).toBe(false)
+})
+
+test("greaterThanOrEqual", () => {
+    expect(
+        new MonthOfYear(12, 2020).greaterThanOrEqual(new MonthOfYear(12, 2020))
+    ).toBe(true)
+    expect(
+        new MonthOfYear(12, 2020).greaterThanOrEqual(new MonthOfYear(11, 2020))
+    ).toBe(true)
+    expect(
+        new MonthOfYear(11, 2020).greaterThanOrEqual(new MonthOfYear(12, 2020))
+    ).toBe(false)
+})
+
+test("equals", () => {
+    expect(
+        new MonthOfYear(12, 2020).equals(new MonthOfYear(12, 2020))
+    ).toBe(true)
+    expect(
+        new MonthOfYear(12, 2020).equals({month: 12, year: 2020})
+    ).toBe(false)
+    expect(
+        new MonthOfYear(12, 2020).equals(new MonthOfYear(11, 2020))
+    ).toBe(false)
+})

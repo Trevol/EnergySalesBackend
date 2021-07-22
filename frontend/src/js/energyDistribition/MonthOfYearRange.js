@@ -8,7 +8,17 @@ class MonthOfYearRange {
     }
 
     toMonthsList() {
-        throw "Not implemented"
+        //end is on top -> appending from end to start
+        if (this.start.greaterThan(this.end)) {
+            throw new Error("this.start.greaterThan(this.end)")
+        }
+        const months = []
+        let fromEndToStart = this.end
+        while (fromEndToStart.greaterThanOrEqual(this.start)) {
+            months.push(fromEndToStart)
+            fromEndToStart = fromEndToStart.subtractMonth()
+        }
+        return months
     }
 }
 

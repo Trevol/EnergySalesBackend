@@ -8,6 +8,29 @@ class MonthOfYear {
     _monthName() {
         return months[this.month - 1]
     }
+
+    subtractMonth() {
+        if (this.month > 1) {
+            return new MonthOfYear(this.month - 1, this.year)
+        }
+        //month == 1 => 12 month of prev year
+        return new MonthOfYear(12, this.year - 1)
+    }
+
+    greaterThan(other) {
+        if (!(other instanceof MonthOfYear)) {
+            throw new Error("other is not instanceof MonthOfYear")
+        }
+        return (this.year > other.year) || (this.year === other.year && this.month > other.month)
+    }
+
+    greaterThanOrEqual(other) {
+        return this.greaterThan(other) || this.equals(other)
+    }
+
+    equals(other) {
+        return other instanceof MonthOfYear && this.year === other.year && this.month === other.month
+    }
 }
 
 const months = [

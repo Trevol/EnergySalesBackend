@@ -57,12 +57,12 @@ test("toMonthsList in same year", () => {
             .toMonthsList()
     ).toStrictEqual(
         [
-            new MonthOfYear(2, 2021),
-            new MonthOfYear(3, 2021),
-            new MonthOfYear(4, 2021),
-            new MonthOfYear(5, 2021),
+            new MonthOfYear(7, 2021),
             new MonthOfYear(6, 2021),
-            new MonthOfYear(7, 2021)
+            new MonthOfYear(5, 2021),
+            new MonthOfYear(4, 2021),
+            new MonthOfYear(3, 2021),
+            new MonthOfYear(2, 2021)
         ]
     )
 })
@@ -73,11 +73,11 @@ test("toMonthsList in two years", () => {
             .toMonthsList()
     ).toStrictEqual(
         [
-            new MonthOfYear(10, 2020),
-            new MonthOfYear(11, 2020),
-            new MonthOfYear(12, 2020),
+            new MonthOfYear(2, 2021),
             new MonthOfYear(1, 2021),
-            new MonthOfYear(2, 2021)
+            new MonthOfYear(12, 2020),
+            new MonthOfYear(11, 2020),
+            new MonthOfYear(10, 2020)
         ]
     )
 })
