@@ -1,5 +1,5 @@
 <template>
-  <DxTabPanel height="100%" :selected-index="3">
+  <DxTabPanel height="100%" :selected-index="0">
 
     <dx-item title="Распределение электроэнергии">
       <template #default>

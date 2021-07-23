@@ -4,7 +4,8 @@
     <pane key="1" min-size="5">
       <div class="box">
         <div class="row header toolbar">
-          <dx-toolbar>
+
+          <dx-toolbar style="padding: 3px 0">
             <dx-toolbar-item :options="refreshOptions"
                              location="before"
                              widget="dxButton"/>
@@ -19,19 +20,17 @@
               />
             </dx-toolbar-item>
 
-            <dx-toolbar-item>
-              <div>{{selectedMonth}}</div>
-            </dx-toolbar-item>
+
           </dx-toolbar>
+
         </div>
         <div class="row content">
-          <EnergyDistributionSheet :energy-distribution-data="energyDistributionData"/>
+          <energy-distribution-sheet :energy-distribution-data="energyDistributionData"/>
         </div>
       </div>
     </pane>
 
-    <pane key="2" min-size="0.5">
-      <div v-for="org of energyDistributionData.organizations" :key="org.name">{{ org.name }}</div>
+    <pane key="2" min-size="0" size="3">
     </pane>
 
   </splitpanes>
@@ -68,12 +67,6 @@ export default {
     }
   },
   methods: {
-    /*monthDisplay(monthOfYear) {
-      return monthOfYear ? `${monthOfYear.month.toString().padStart(2, '0')}.${monthOfYear.year}` : null
-    },
-    monthValue(monthOfYear) {
-      return monthOfYear ? `${monthOfYear.year}:${monthOfYear.month}`: "null"
-    },*/
     async energyDistribution() {
       return await energyDistributionApi.energyDistribution(this.selectedMonth)
     }
@@ -84,14 +77,6 @@ export default {
     this.months = months
     this.energyDistributionData = await this.energyDistribution()
   }
-}
-
-function monthsRangeToMonthsList(monthRange) {
-  return [
-    {month: 7, year: 2021},
-    {month: 6, year: 2021}
-  ]
-  // return monthRange
 }
 </script>
 

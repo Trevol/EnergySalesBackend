@@ -13,21 +13,22 @@ data class EnergyDistributionData(
     val month: MonthOfYear,
     val prevMonth: MonthOfYear,
     val total: TotalInfo,
-    val organizations: List<OrganizationItem>
+    val counters: List<CounterItem>
 )
 
 @Serializable
 data class TotalInfo(val name: String, val total: Double)
 
 @Serializable
-data class OrganizationItem(
+data class OrganizationInfo(
     val id: Int,
     val name: String,
-    val counters: List<CounterItem>
+    val numberOfCounters: Int
 )
 
 @Serializable
 data class CounterItem(
+    val organization: OrganizationInfo,
     val id: Int,
     val sn: String,
     val K: Int,
