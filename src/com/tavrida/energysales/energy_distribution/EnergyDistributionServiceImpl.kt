@@ -12,7 +12,9 @@ class EnergyDistributionServiceImpl(private val dataContext: DataContext) : Ener
 
     override fun energyDistribution(monthOfYear: MonthOfYear?): EnergyDistributionData {
         val monthOfYear = monthOfYear ?: recentMonth()
-        val counterItems = dataContext.loadAll().flatMap { it.counters }.toCounterItems(monthOfYear)
+        val counterItems = dataContext.loadAll()
+            .flatMap { org -> org.counters.map { org to it } }
+            .toCounterItems(monthOfYear)
         return EnergyDistributionData(
             month = monthOfYear,
             prevMonth = monthOfYear.prevMonth(),
@@ -46,7 +48,44 @@ private fun List<CounterItem>.totalConsumption(): Double {
     return sumOf { it.consumptionByMonth?.consumption ?: 0.0 }
 }
 
-private fun List<Counter>.toCounterItems(monthOfYear: MonthOfYear): List<CounterItem> {
+
+private fun List<Pair<Consumer, Counter>>.toCounterItems(monthOfYear: MonthOfYear): List<CounterItem> {
+    return map { (organization, counter) ->
+        CounterItem(
+            organization = OrganizationInfo(
+                id = organization.id,
+                name = organization.name,
+                numberOfCounters = organization.counters.size
+            ),
+            id = counter.id,
+            sn = counter.serialNumber,
+            K = counter.K.toInt(),
+            comment = counter.comment,
+            consumptionByMonth = CounterEnergyConsumption(
+                monthReading = CounterReadingItem(
+                    id = 1,
+                    user = "Sasha",
+                    counterId = counter.id,
+                    reading = 1111.0,
+                    readingTime = LocalDateTime.of(monthOfYear.toLocalDate(), LocalTime.of(10, 31)),
+                    comment = null
+                ),
+                prevMonthReading = CounterReadingItem(
+                    id = 1,
+                    user = "Sasha",
+                    counterId = counter.id,
+                    reading = 3333.0,
+                    readingTime = LocalDateTime.of(monthOfYear.prevMonth().toLocalDate(), LocalTime.of(11, 20)),
+                    comment = null
+                ),
+                consumption = 2222.0
+            )
+        )
+    }
+}
+
+
+private fun List<Counter>.toCounterItems_synth(monthOfYear: MonthOfYear): List<CounterItem> {
     val nOfOrganizations = 3
     val nOfCounters = 2
     return (1..nOfOrganizations).map { orgId ->

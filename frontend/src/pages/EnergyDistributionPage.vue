@@ -5,7 +5,7 @@
       <div class="box">
         <div class="row header toolbar">
 
-          <dx-toolbar style="padding: 3px 0">
+          <dx-toolbar style="padding: 0px 0">
             <dx-toolbar-item :options="refreshOptions"
                              location="before"
                              widget="dxButton"/>
@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import "./EnergyDistributionPage.css"
 import EnergyDistributionSheet from "@/components/energyDistribution/EnergyDistributionSheet";
 import {Pane, Splitpanes} from "splitpanes";
 import 'splitpanes/dist/splitpanes.css'
@@ -66,6 +67,11 @@ export default {
       }
     }
   },
+  watch: {
+    async selectedMonth(newValue) {
+      this.energyDistributionData = await this.energyDistribution()
+    }
+  },
   methods: {
     async energyDistribution() {
       return await energyDistributionApi.energyDistribution(this.selectedMonth)
@@ -75,42 +81,6 @@ export default {
     let months = (await energyDistributionApi.monthRange()).toMonthsList();
     this.selectedMonth = months[0]
     this.months = months
-    this.energyDistributionData = await this.energyDistribution()
   }
 }
 </script>
-
-<style>
-.box {
-  display: flex;
-  flex-flow: column;
-  height: 100%;
-}
-
-.box .row {
-  /*border: 1px dotted grey;*/
-}
-
-.box .row.header {
-  flex: 0 1 auto;
-  /* The above is shorthand for:
-  flex-grow: 0,
-  flex-shrink: 1,
-  flex-basis: auto
-  */
-}
-
-.box .row.content {
-  flex: 1 1 auto;
-  overflow-y: auto
-}
-
-.box .row.footer {
-  flex: 0 1 auto;
-}
-
-.toolbar {
-  padding-left: 5px;
-  background-color: #fff;
-}
-</style>

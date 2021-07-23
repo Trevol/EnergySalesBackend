@@ -48,7 +48,7 @@ export default {
         },
 
         {
-          caption: "May 2021",
+          caption: monthOfYear?.display ?? "",
           alignment: 'center',
           columns: [
             {

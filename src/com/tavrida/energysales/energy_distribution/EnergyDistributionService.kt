@@ -32,7 +32,7 @@ data class CounterItem(
     val id: Int,
     val sn: String,
     val K: Int,
-    val comment: String,
+    val comment: String?,
     val consumptionByMonth: CounterEnergyConsumption? //в требуемый месяц данных по потреблению не найдено
 )
 
