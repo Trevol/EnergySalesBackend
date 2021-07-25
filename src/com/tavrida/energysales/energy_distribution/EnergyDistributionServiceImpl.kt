@@ -27,7 +27,6 @@ class EnergyDistributionServiceImpl(private val dataContext: DataContext) : Ener
         return MonthOfYear(7, 2021)
         //текущий месяц независимо от имеющихся данных (LocalDate.now())??
         //или анализировать последний месяц в имеющихся показаниях???
-        // TODO("Not yet implemented")
     }
 
     override fun monthRange(): MonthOfYearRange {
