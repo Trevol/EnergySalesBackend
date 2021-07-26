@@ -7,6 +7,7 @@ import com.tavrida.energysales.data_access.models.DataContext
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import kotlin.math.round
 
 class EnergyDistributionServiceImpl(private val dataContext: DataContext) : EnergyDistributionService {
 
@@ -23,19 +24,16 @@ class EnergyDistributionServiceImpl(private val dataContext: DataContext) : Ener
         )
     }
 
-    private fun recentMonth(): MonthOfYear {
-        return MonthOfYear(7, 2021)
-        //текущий месяц независимо от имеющихся данных (LocalDate.now())??
-        //или анализировать последний месяц в имеющихся показаниях???
-    }
+    private fun recentMonth() = monthRange().end
 
     override fun monthRange(): MonthOfYearRange {
+        //end: текущий месяц независимо от имеющихся данных (LocalDate.now())??
+        //     или анализировать последний месяц в имеющихся показаниях???
         return MonthOfYearRange(
             start = MonthOfYear(3, 2021),
             end = MonthOfYear(7, 2021),
             lastWithReadings = null
         )
-        // TODO("Not yet implemented")
     }
 }
 
@@ -83,45 +81,27 @@ private fun List<Pair<Consumer, Counter>>.toCounterItems(monthOfYear: MonthOfYea
     }
 }
 
+private fun Counter.consumptionByMonth(month: MonthOfYear): CounterEnergyConsumption {
+    val monthReading = CounterReadingItem(
+        id = 1,
+        user = "Sasha",
+        counterId = id,
+        reading = 1111.0,
+        readingTime = LocalDateTime.of(month.toLocalDate(), LocalTime.of(10, 31)),
+        comment = null
+    )
+    val prevMonthReading = CounterReadingItem(
+        id = 1,
+        user = "Sasha",
+        counterId = id,
+        reading = 3333.0,
+        readingTime = LocalDateTime.of(month.prevMonth().toLocalDate(), LocalTime.of(11, 20)),
+        comment = null
+    )
+    return CounterEnergyConsumption(
+        monthReading = monthReading,
+        prevMonthReading = prevMonthReading,
+        consumption = 2222.0
+    )
 
-private fun List<Counter>.toCounterItems_synth(monthOfYear: MonthOfYear): List<CounterItem> {
-    val nOfOrganizations = 3
-    val nOfCounters = 2
-    return (1..nOfOrganizations).map { orgId ->
-        val org = OrganizationInfo(
-            id = orgId,
-            name = "Organization_$orgId",
-            numberOfCounters = nOfCounters
-        )
-        (1..nOfCounters).map { counterPos ->
-            val sn = "000$orgId$counterPos"
-            val counterId = "$orgId$counterPos".toInt()
-            CounterItem(
-                organization = org,
-                id = counterId,
-                sn = sn,
-                K = 1,
-                comment = "Counter $sn",
-                consumptionByMonth = CounterEnergyConsumption(
-                    monthReading = CounterReadingItem(
-                        id = 1,
-                        user = "Sasha",
-                        counterId = counterId,
-                        reading = 1111.0,
-                        readingTime = LocalDateTime.of(monthOfYear.toLocalDate(), LocalTime.of(10, 31)),
-                        comment = null
-                    ),
-                    prevMonthReading = CounterReadingItem(
-                        id = 1,
-                        user = "Sasha",
-                        counterId = counterId,
-                        reading = 3333.0,
-                        readingTime = LocalDateTime.of(monthOfYear.prevMonth().toLocalDate(), LocalTime.of(11, 20)),
-                        comment = null
-                    ),
-                    consumption = 2222.0
-                )
-            )
-        }
-    }.flatMap { it }
 }

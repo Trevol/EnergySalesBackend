@@ -85,5 +85,5 @@ dependencies {
 
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
-    testImplementation "org.junit.jupiter:junit-jupiter:5.7.2"
+    testImplementation "io.kotest:kotest-assertions-core:$kotestVersion"
 }

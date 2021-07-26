@@ -51,8 +51,8 @@ data class MonthOfYearRange(
 )
 
 @Serializable
-data class MonthOfYear(val month: Int, val year: Int) {
-    operator fun compareTo(other: MonthOfYear): Int {
+data class MonthOfYear(val month: Int, val year: Int): Comparable<MonthOfYear> {
+    override operator fun compareTo(other: MonthOfYear): Int {
         val yearComparison = year.compareTo(other.year)
         return if (yearComparison != 0) yearComparison else month.compareTo(other.month)
     }
