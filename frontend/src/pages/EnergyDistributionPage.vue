@@ -60,7 +60,7 @@ export default {
       months: [],
       selectedMonth: null,
       refreshOptions: {
-        icon: 'refresh',
+        icon: 'fal fa-file-excel',//'refresh', //<i class="fal fa-file-excel"></i>
         onClick: async () => {
           this.energyDistributionData = await this.energyDistribution()
         }
