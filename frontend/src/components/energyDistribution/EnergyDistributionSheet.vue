@@ -11,10 +11,18 @@
       key-expr="id"
       :hover-state-enabled="true"
       height="100%"
+      @cell-prepared="cellPrepared"
   >
     <DxPaging :enabled="false"/>
     <DxSorting mode="none"/>
     <DxScrolling mode="virtual"/>
+
+    <template #organization-cell="{ data }">
+      <div style="height: 100%; background-color: greenyellow">
+        {{ data.text }}
+      </div>
+
+    </template>
 
   </DxDataGrid>
 </template>
@@ -22,6 +30,7 @@
 <script>
 import DxDataGrid, {DxColumn, DxPaging, DxSorting, DxScrolling} from 'devextreme-vue/data-grid'
 import MonthOfYear from "@/js/energyDistribition/MonthOfYear";
+import {toRaw} from "vue"
 
 export default {
   name: "EnergyDistributionSheet",
@@ -34,6 +43,11 @@ export default {
       required: true
     }
   },
+  data() {
+    return {
+      selectedItemKeys: []
+    }
+  },
   computed: {
     items() {
       return this.energyDistributionData?.counters ?? [];
@@ -44,9 +58,9 @@ export default {
         {
           caption: "Организация",
           dataField: "organization.name",
+          name: "org",
           width: "auto"
         },
-
         {
           caption: monthOfYear?.display ?? "",
           alignment: 'center',
@@ -65,7 +79,6 @@ export default {
             }
           ]
         },
-
         {
           caption: "K",
           dataField: "K",
@@ -84,10 +97,21 @@ export default {
       ]
     }
   },
-  data() {
-    return {
-      selectedItemKeys: []
+  methods: {
+    cellPrepared(cellInfo) {
+      if (cellInfo.rowType === "data" &&
+          cellInfo.column.name === 'org' &&
+          cellInfo.data.organization.numberOfCounters === 2
+      ) {
+        cellInfo.cellElement.classList.add('orgHasSeveralCounters');
+      }
     }
   }
 }
 </script>
+
+<style>
+.orgHasSeveralCounters {
+  background-color: greenyellow !important;
+}
+</style>

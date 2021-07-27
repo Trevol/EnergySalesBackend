@@ -31,6 +31,8 @@
 </template>
 
 <script>
+import "@fortawesome/fontawesome-free/css/all.css"
+import "./App.css"
 import DxTabPanel, {DxItem} from 'devextreme-vue/tab-panel'
 import EnergyDistributionPage from "@/pages/EnergyDistributionPage";
 import Experiments from "@/pages/Experiments";
@@ -41,7 +43,3 @@ export default {
   }
 }
 </script>
-
-<style>
-@import "App.css";
-</style>

@@ -1,5 +1,7 @@
 import createAxios from "@/js/common/backend_api/axiosApi";
 import MonthOfYearRange from "@/js/energyDistribition/MonthOfYearRange";
+import {backendRootUri} from "@/js/appSettings";
+import {uri} from "@/js/common/utils/urlUtils";
 
 class EnergyDistributionApi {
     constructor(backendApiUri) {
@@ -18,6 +20,6 @@ class EnergyDistributionApi {
     }
 }
 
-const energyDistributionApi = new EnergyDistributionApi("http://0.0.0.0:8081/api/energy-distribution")
+const energyDistributionApi = new EnergyDistributionApi(uri(backendRootUri, "/api/energy-distribution"))
 
 export default energyDistributionApi

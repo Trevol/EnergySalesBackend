@@ -1,4 +1,6 @@
 import createAxios from "@/js/common/backend_api/axiosApi";
+import {backendRootUri} from "@/js/appSettings";
+import {uri} from "@/js/common/utils/urlUtils";
 
 class SomeBackendApi {
     constructor(backendApiUri) {
@@ -21,6 +23,6 @@ class SomeBackendApi {
     }
 }
 
-const someBackendApi = new SomeBackendApi("http://0.0.0.0:8081/api/energy-distribution")
+const someBackendApi = new SomeBackendApi(uri(backendRootUri, "/api/energy-distribution"))
 
 export default someBackendApi

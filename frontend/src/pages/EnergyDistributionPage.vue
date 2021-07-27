@@ -5,21 +5,24 @@
       <div class="box">
         <div class="row header toolbar">
 
-          <dx-toolbar style="padding: 0px 0">
-            <dx-toolbar-item :options="refreshOptions"
-                             location="before"
-                             widget="dxButton"/>
+          <dx-toolbar style="padding: 0 0">
+
             <dx-toolbar-item
-                location="before"
-            >
+                location="before">
               <dx-select-box
                   :items="months"
                   displayExpr="display"
                   v-model:value="selectedMonth"
-                  placeholder="Выбрать"
-              />
+                  placeholder="Выбрать"/>
             </dx-toolbar-item>
 
+            <dx-toolbar-item :options="refreshButtonOptions"
+                             location="before"
+                             widget="dxButton"/>
+
+            <dx-toolbar-item :options="exportToExcelOptions"
+                             location="before"
+                             widget="dxButton"/>
 
           </dx-toolbar>
 
@@ -44,6 +47,8 @@ import 'splitpanes/dist/splitpanes.css'
 import DxToolbar, {DxItem as DxToolbarItem} from 'devextreme-vue/toolbar';
 import DxSelectBox from 'devextreme-vue/select-box'
 import energyDistributionApi from "@/js/energyDistribition/api/EnergyDistributionApi";
+import {uri} from "@/js/common/utils/urlUtils";
+import {backendRootUri} from "@/js/appSettings";
 
 export default {
   name: "EnergyDistributionPage",
@@ -59,10 +64,16 @@ export default {
       energyDistributionData: {},
       months: [],
       selectedMonth: null,
-      refreshOptions: {
-        icon: 'fal fa-file-excel',//'refresh', //<i class="fal fa-file-excel"></i>
+      refreshButtonOptions: {
+        icon: 'refresh',
         onClick: async () => {
           this.energyDistributionData = await this.energyDistribution()
+        }
+      },
+      exportToExcelOptions: {
+        icon: 'far fa-file-excel',
+        onClick: async () => {
+          window.open(uri(backendRootUri, "download"), "_exportAsXls")
         }
       }
     }
