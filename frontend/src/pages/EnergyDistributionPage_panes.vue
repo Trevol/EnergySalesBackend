@@ -1,40 +1,50 @@
+<!--
 <template>
+  <splitpanes class="default-theme">
 
-  <div class="box">
-    <div class="row header toolbar">
+    <pane key="1" min-size="5">
+      <div class="box">
+        <div class="row header toolbar">
 
-      <dx-toolbar style="padding: 0 0">
+          <dx-toolbar style="padding: 0 0">
 
-        <dx-toolbar-item
-            location="before">
-          <dx-select-box
-              :items="months"
-              displayExpr="display"
-              v-model:value="selectedMonth"
-              placeholder="Выбрать"/>
-        </dx-toolbar-item>
+            <dx-toolbar-item
+                location="before">
+              <dx-select-box
+                  :items="months"
+                  displayExpr="display"
+                  v-model:value="selectedMonth"
+                  placeholder="Выбрать"/>
+            </dx-toolbar-item>
 
-        <dx-toolbar-item :options="refreshButtonOptions"
-                         location="before"
-                         widget="dxButton"/>
+            <dx-toolbar-item :options="refreshButtonOptions"
+                             location="before"
+                             widget="dxButton"/>
 
-        <dx-toolbar-item :options="exportToExcelOptions"
-                         location="before"
-                         widget="dxButton"/>
+            <dx-toolbar-item :options="exportToExcelOptions"
+                             location="before"
+                             widget="dxButton"/>
 
-      </dx-toolbar>
+          </dx-toolbar>
 
-    </div>
-    <div class="row content">
-      <energy-distribution-sheet :energy-distribution-data="energyDistributionData"/>
-    </div>
-  </div>
+        </div>
+        <div class="row content">
+          <energy-distribution-sheet :energy-distribution-data="energyDistributionData"/>
+        </div>
+      </div>
+    </pane>
 
+    <pane key="2" min-size="0" size="3">
+    </pane>
+
+  </splitpanes>
 </template>
 
 <script>
 import "./EnergyDistributionPage.css"
 import EnergyDistributionSheet from "@/components/energyDistribution/EnergyDistributionSheet";
+import {Pane, Splitpanes} from "splitpanes";
+import 'splitpanes/dist/splitpanes.css'
 import DxToolbar, {DxItem as DxToolbarItem} from 'devextreme-vue/toolbar';
 import DxSelectBox from 'devextreme-vue/select-box'
 import energyDistributionApi from "@/js/energyDistribition/api/EnergyDistributionApi";
@@ -45,6 +55,8 @@ export default {
   name: "EnergyDistributionPage",
   components: {
     EnergyDistributionSheet,
+    Splitpanes,
+    Pane,
     DxToolbar, DxToolbarItem,
     DxSelectBox
   },
@@ -83,4 +95,4 @@ export default {
     this.months = months
   }
 }
-</script>
+</script>-->

@@ -17,25 +17,26 @@
     <DxSorting mode="none"/>
     <DxScrolling mode="virtual"/>
 
-    <template #organization-cell="{ data }">
-      <div style="height: 100%; background-color: greenyellow">
-        {{ data.text }}
-      </div>
+    <DxMasterDetail
+        :enabled="true"
+        template="masterDetailTemplate"/>
 
+    <template #masterDetailTemplate="{ data }">
+      <counter-details :counter-info="data.data"/>
     </template>
 
   </DxDataGrid>
 </template>
 
 <script>
-import DxDataGrid, {DxColumn, DxPaging, DxSorting, DxScrolling} from 'devextreme-vue/data-grid'
+import DxDataGrid, {DxColumn, DxPaging, DxSorting, DxScrolling, DxMasterDetail} from 'devextreme-vue/data-grid'
 import MonthOfYear from "@/js/energyDistribition/MonthOfYear";
-import {toRaw} from "vue"
+import CounterDetails from "@/components/energyDistribution/CounterDetails";
 
 export default {
   name: "EnergyDistributionSheet",
   components: {
-    DxDataGrid, DxColumn, DxPaging, DxSorting, DxScrolling
+    DxDataGrid, DxColumn, DxPaging, DxSorting, DxScrolling, DxMasterDetail, CounterDetails
   },
   props: {
     energyDistributionData: {
