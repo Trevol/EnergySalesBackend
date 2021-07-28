@@ -3,10 +3,8 @@ package com.tavrida.energysales.energy_distribution
 import com.tavrida.energysales.api.data_contract.CounterReadingItem
 import com.tavrida.energysales.data_access.dbmodel.tables.CounterReadingsTable
 import com.tavrida.energysales.data_access.dbmodel.tables.CountersTable
-import com.tavrida.energysales.data_access.models.Consumer
-import com.tavrida.energysales.data_access.models.Counter
-import com.tavrida.energysales.data_access.models.DataContext
-import com.tavrida.energysales.data_access.models.transaction
+import com.tavrida.energysales.data_access.models.*
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.select
 import java.time.LocalDate
 
@@ -44,16 +42,18 @@ class EnergyDistributionServiceImpl(private val dataContext: DataContext) : Ener
                 .firstOrNull() ?: throw Exception("Counter not found by id $counterId")
 
             val CRT = CounterReadingsTable
-            val readings = CRT.select { CRT.counterId eq counterId }.map {
-                CounterReadingItem(
-                    id = it[CRT.id].value,
-                    user = it[CRT.user],
-                    counterId = it[CRT.counterId].value,
-                    reading = it[CRT.reading],
-                    readingTime = it[CRT.readingTime],
-                    comment = it[CRT.comment]
-                )
-            }
+            val readings = CRT.select { CRT.counterId eq counterId }
+                .orderBy(CRT.readingTime, SortOrder.DESC)
+                .map {
+                    CounterReadingItem(
+                        id = it[CRT.id].value,
+                        user = it[CRT.user],
+                        counterId = it[CRT.counterId].value,
+                        reading = it[CRT.reading],
+                        readingTime = it[CRT.readingTime],
+                        comment = it[CRT.comment]
+                    )
+                }
             CounterEnergyConsumptionDetails(
                 counterId = counterId,
                 readings = readings
@@ -62,14 +62,7 @@ class EnergyDistributionServiceImpl(private val dataContext: DataContext) : Ener
     }
 }
 
-private fun MonthOfYear.prevMonth() = toLocalDate().minusMonths(1).toMonthOfYear()
-private fun MonthOfYear.toLocalDate() = LocalDate.of(year, month, 1)
-private fun LocalDate.toMonthOfYear() = MonthOfYear(monthValue, year)
-
-private fun List<CounterItem>.totalConsumption(): Double {
-    return sumOf { it.consumptionByMonth?.consumption ?: 0.0 }
-}
-
+private fun List<CounterItem>.totalConsumption() = sumOf { it.consumptionByMonth?.consumption ?: 0.0 }
 
 private fun List<Pair<Consumer, Counter>>.toCounterItems(monthOfYear: MonthOfYear): List<CounterItem> {
     return map { (organization, counter) ->
@@ -89,12 +82,59 @@ private fun List<Pair<Consumer, Counter>>.toCounterItems(monthOfYear: MonthOfYea
 }
 
 private fun Counter.consumptionByMonth(month: MonthOfYear): CounterEnergyConsumptionByMonth {
-    val orderedReadings = readings.sortedByDescending { it.readingTime }
+    val daysDelta = 7
+    /*val monthReadings = readings.byDateRange(month.extendedDateRange(daysDelta = daysDelta))
+        .sortedByDescending { it.readingTime }*/
+
+    val startingReading = readings.startingReading(month, daysDelta)?.toCounterReadingItem()
+    val endingReading = readings.endingReading(month, daysDelta)?.toCounterReadingItem()
+
     return CounterEnergyConsumptionByMonth(
         month = month,
-        startingReading = null,
-        endingReading = null,
-        consumption = null
+        startingReading = startingReading,
+        endingReading = endingReading,
+        consumption = consumption(startingReading, endingReading)
     )
+}
+
+private fun List<CounterReading>.startingReading(month: MonthOfYear, daysDelta: Int): CounterReading? {
+    val startingReadings = byDateRange(month.firstDate().extendedDateRange(daysDelta = daysDelta))
+        .sortedBy { it.readingTime }
     TODO()
+}
+
+private fun List<CounterReading>.endingReading(month: MonthOfYear, daysDelta: Int): CounterReading? {
+    TODO()
+}
+
+private fun List<CounterReading>.byDateRange(range: DateRange) = filter {
+    it.readingTime.toLocalDate()
+        .let { d ->
+            range.start <= d && d <= range.end
+        }
+}
+
+private fun MonthOfYear.extendedDateRange(daysDelta: Int) = DateRange(
+    start = firstDate().minusDays(daysDelta.toLong()),
+    end = lastDate().plusDays(daysDelta.toLong())
+)
+
+private fun LocalDate.extendedDateRange(daysDelta: Int) = DateRange(
+    start = minusDays(daysDelta.toLong()),
+    end = plusDays(daysDelta.toLong())
+)
+
+private data class DateRange(val start: LocalDate, val end: LocalDate)
+
+private fun CounterReading.toCounterReadingItem() = CounterReadingItem(
+    id = id,
+    user = user,
+    counterId = counterId,
+    reading = reading,
+    readingTime = readingTime,
+    comment = comment
+)
+
+private fun consumption(startingReading: CounterReadingItem?, endingReading: CounterReadingItem?): Double? {
+    return (endingReading ?: return null).reading - (startingReading ?: return null).reading
 }
