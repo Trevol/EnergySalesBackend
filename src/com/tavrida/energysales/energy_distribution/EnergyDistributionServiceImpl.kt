@@ -100,6 +100,7 @@ private fun Counter.consumptionByMonth(month: MonthOfYear): CounterEnergyConsump
     val startingReading = readings.startingReading(month, daysDelta)?.toCounterReadingItem()
     val endingReading = readings.endingReading(month, daysDelta)?.toCounterReadingItem()
 
+    TODO("consumption = readingDelta * K")
     return CounterEnergyConsumptionByMonth(
         month = month,
         startingReading = startingReading,

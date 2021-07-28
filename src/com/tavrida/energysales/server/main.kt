@@ -12,7 +12,7 @@ fun main() {
     val settings = BackendSettings(
         port = 8081,
         dbDir = File("./databases"),
-        dbName = "ENERGY_SALES_2021-07-01"
+        dbName = "ENERGY_SALES_2021-07-02_2_SERVER"
     )
 
     ServerApplication(
