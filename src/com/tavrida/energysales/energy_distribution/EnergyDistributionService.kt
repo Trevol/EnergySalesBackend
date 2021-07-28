@@ -6,7 +6,14 @@ import kotlinx.serialization.Serializable
 interface EnergyDistributionService {
     fun energyDistribution(monthOfYear: MonthOfYear?): EnergyDistributionData
     fun monthRange(): MonthOfYearRange
+    fun counterEnergyConsumptionDetails(counterId: Int): CounterEnergyConsumptionDetails
 }
+
+@Serializable
+data class CounterEnergyConsumptionDetails(
+    val counterId: Int,
+    val readings: List<CounterReadingItem>
+)
 
 @Serializable
 data class EnergyDistributionData(
@@ -33,14 +40,15 @@ data class CounterItem(
     val sn: String,
     val K: Int,
     val comment: String?,
-    val consumptionByMonth: CounterEnergyConsumption? //в требуемый месяц данных по потреблению не найдено
+    val consumptionByMonth: CounterEnergyConsumptionByMonth? //в требуемый месяц данных по потреблению не найдено
 )
 
 @Serializable
-data class CounterEnergyConsumption(
-    val monthReading: CounterReadingItem,
-    val prevMonthReading: CounterReadingItem,
-    val consumption: Double
+data class CounterEnergyConsumptionByMonth(
+    val month: MonthOfYear,
+    val startingReading: CounterReadingItem?,
+    val endingReading: CounterReadingItem?,
+    val consumption: Double?
 )
 
 @Serializable
@@ -51,7 +59,7 @@ data class MonthOfYearRange(
 )
 
 @Serializable
-data class MonthOfYear(val month: Int, val year: Int): Comparable<MonthOfYear> {
+data class MonthOfYear(val month: Int, val year: Int) : Comparable<MonthOfYear> {
     override operator fun compareTo(other: MonthOfYear): Int {
         val yearComparison = year.compareTo(other.year)
         return if (yearComparison != 0) yearComparison else month.compareTo(other.month)

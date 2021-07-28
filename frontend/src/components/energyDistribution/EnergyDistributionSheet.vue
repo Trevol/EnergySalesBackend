@@ -11,8 +11,7 @@
       key-expr="id"
       :hover-state-enabled="true"
       height="100%"
-      @cell-prepared="cellPrepared"
-  >
+      @cell-prepared="cellPrepared">
     <DxPaging :enabled="false"/>
     <DxSorting mode="none"/>
     <DxScrolling mode="virtual"/>
@@ -21,8 +20,8 @@
         :enabled="true"
         template="masterDetailTemplate"/>
 
-    <template #masterDetailTemplate="{ data }">
-      <counter-details :counter-info="data.data"/>
+    <template #masterDetailTemplate="{ data: counterInfo }">
+      <counter-details :counter-info="counterInfo.data"/>
     </template>
 
   </DxDataGrid>
@@ -68,11 +67,11 @@ export default {
           columns: [
             {
               caption: "Пред. показ.",
-              dataField: "consumptionByMonth.prevMonthReading.reading"
+              dataField: "consumptionByMonth.startingReading.reading"
             },
             {
               caption: "Наст. показ.",
-              dataField: "consumptionByMonth.monthReading.reading"
+              dataField: "consumptionByMonth.endingReading.reading"
             },
             {
               caption: "Расход",
@@ -113,6 +112,6 @@ export default {
 
 <style>
 .orgHasSeveralCounters {
-  background-color: greenyellow !important;
+  background-color: #dfefed !important;
 }
 </style>

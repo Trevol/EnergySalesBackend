@@ -18,6 +18,15 @@ class EnergyDistributionApi {
         return await this._api.post("", {monthOfYear})
             .then(r => r.data)
     }
+
+    async counterEnergyConsumptionDetails(counterId) {
+        const conf = {
+            params: {
+                id: counterId
+            }
+        }
+        return await this._api.get("counter-energy-consumption-details", conf).then(r => r.data)
+    }
 }
 
 const energyDistributionApi = new EnergyDistributionApi(uri(backendRootUri, "/api/energy-distribution"))

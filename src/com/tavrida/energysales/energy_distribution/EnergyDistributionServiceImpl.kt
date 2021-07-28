@@ -1,13 +1,14 @@
 package com.tavrida.energysales.energy_distribution
 
 import com.tavrida.energysales.api.data_contract.CounterReadingItem
+import com.tavrida.energysales.data_access.dbmodel.tables.CounterReadingsTable
+import com.tavrida.energysales.data_access.dbmodel.tables.CountersTable
 import com.tavrida.energysales.data_access.models.Consumer
 import com.tavrida.energysales.data_access.models.Counter
 import com.tavrida.energysales.data_access.models.DataContext
+import com.tavrida.energysales.data_access.models.transaction
+import org.jetbrains.exposed.sql.select
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import kotlin.math.round
 
 class EnergyDistributionServiceImpl(private val dataContext: DataContext) : EnergyDistributionService {
 
@@ -35,6 +36,30 @@ class EnergyDistributionServiceImpl(private val dataContext: DataContext) : Ener
             lastWithReadings = null
         )
     }
+
+    override fun counterEnergyConsumptionDetails(counterId: Int): CounterEnergyConsumptionDetails {
+        return transaction(dataContext) {
+            val CT = CountersTable
+            CT.slice(CT.id).select { CT.id eq counterId }
+                .firstOrNull() ?: throw Exception("Counter not found by id $counterId")
+
+            val CRT = CounterReadingsTable
+            val readings = CRT.select { CRT.counterId eq counterId }.map {
+                CounterReadingItem(
+                    id = it[CRT.id].value,
+                    user = it[CRT.user],
+                    counterId = it[CRT.counterId].value,
+                    reading = it[CRT.reading],
+                    readingTime = it[CRT.readingTime],
+                    comment = it[CRT.comment]
+                )
+            }
+            CounterEnergyConsumptionDetails(
+                counterId = counterId,
+                readings = readings
+            )
+        }
+    }
 }
 
 private fun MonthOfYear.prevMonth() = toLocalDate().minusMonths(1).toMonthOfYear()
@@ -58,50 +83,18 @@ private fun List<Pair<Consumer, Counter>>.toCounterItems(monthOfYear: MonthOfYea
             sn = counter.serialNumber,
             K = counter.K.toInt(),
             comment = counter.comment,
-            consumptionByMonth = CounterEnergyConsumption(
-                monthReading = CounterReadingItem(
-                    id = 1,
-                    user = "Sasha",
-                    counterId = counter.id,
-                    reading = 1111.0,
-                    readingTime = LocalDateTime.of(monthOfYear.toLocalDate(), LocalTime.of(10, 31)),
-                    comment = null
-                ),
-                prevMonthReading = CounterReadingItem(
-                    id = 1,
-                    user = "Sasha",
-                    counterId = counter.id,
-                    reading = 3333.0,
-                    readingTime = LocalDateTime.of(monthOfYear.prevMonth().toLocalDate(), LocalTime.of(11, 20)),
-                    comment = null
-                ),
-                consumption = 2222.0
-            )
+            consumptionByMonth = counter.consumptionByMonth(monthOfYear)
         )
     }
 }
 
-private fun Counter.consumptionByMonth(month: MonthOfYear): CounterEnergyConsumption {
-    val monthReading = CounterReadingItem(
-        id = 1,
-        user = "Sasha",
-        counterId = id,
-        reading = 1111.0,
-        readingTime = LocalDateTime.of(month.toLocalDate(), LocalTime.of(10, 31)),
-        comment = null
+private fun Counter.consumptionByMonth(month: MonthOfYear): CounterEnergyConsumptionByMonth {
+    val orderedReadings = readings.sortedByDescending { it.readingTime }
+    return CounterEnergyConsumptionByMonth(
+        month = month,
+        startingReading = null,
+        endingReading = null,
+        consumption = null
     )
-    val prevMonthReading = CounterReadingItem(
-        id = 1,
-        user = "Sasha",
-        counterId = id,
-        reading = 3333.0,
-        readingTime = LocalDateTime.of(month.prevMonth().toLocalDate(), LocalTime.of(11, 20)),
-        comment = null
-    )
-    return CounterEnergyConsumption(
-        monthReading = monthReading,
-        prevMonthReading = prevMonthReading,
-        consumption = 2222.0
-    )
-
+    TODO()
 }

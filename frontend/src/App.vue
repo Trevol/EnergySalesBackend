@@ -7,7 +7,7 @@
       </template>
     </dx-item>
 
-    <dx-item title="Организации">
+<!--    <dx-item title="Организации">
       <template #default>
         Тут организации и счетчики. Редактирование. Печать QR
       </template>
@@ -23,7 +23,7 @@
       <template #default>
         <Experiments/>
       </template>
-    </dx-item>
+    </dx-item>-->
 
   </DxTabPanel>
 
