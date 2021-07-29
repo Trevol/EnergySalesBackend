@@ -1,5 +1,6 @@
 **Install on server**
-apt install tmux default-jre
+apt install tmux default-jre nodejs npm
+npm install --global http-server
 
 **How to build dist with fat jar**
 ./gradlew shadowDistTar
@@ -7,6 +8,9 @@ apt install tmux default-jre
 **How to run in loop**
 tmux new
 while true; do ./EnergySalesBackend; sleep 1; done
+
+tmux new
+while true; do http-server; sleep 1; done
 
 
 

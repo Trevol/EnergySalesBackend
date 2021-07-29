@@ -65,9 +65,10 @@ class EnergyDistributionServiceImpl(private val dataContext: DataContext) : Ener
             val withConsumption = readings.mapIndexed { index, currentReading ->
                 // Readings sorted by readingTime DESC: prevReading for current one is at (index+1) position in readings
                 val prevReading = if (index >= readings.lastIndex) null else readings[index + 1]
-                (currentReading.reading - prevReading?.reading).let {delta->
-                    CounterReadingWithConsumption(currentReading, delta, delta * K)
-                }
+                (currentReading.reading - prevReading?.reading)?.round3()
+                    .let { delta ->
+                        CounterReadingWithConsumption(currentReading, delta, (delta * K)?.round3())
+                    }
             }
 
             CounterEnergyConsumptionDetails(
@@ -86,7 +87,8 @@ class EnergyDistributionServiceImpl(private val dataContext: DataContext) : Ener
     }
 }
 
-private fun List<CounterInfoWithEnergyConsumption>.totalConsumption() = sumOf { it.consumptionByMonth?.consumption ?: 0.0 }
+private fun List<CounterInfoWithEnergyConsumption>.totalConsumption() =
+    sumOf { it.consumptionByMonth?.consumption ?: 0.0 }
 
 private fun List<Pair<Consumer, Counter>>.toCounterItems(monthOfYear: MonthOfYear): List<CounterInfoWithEnergyConsumption> {
     return map { (organization, counter) ->
