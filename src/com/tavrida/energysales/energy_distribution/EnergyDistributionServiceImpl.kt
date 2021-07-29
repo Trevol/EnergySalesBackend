@@ -4,8 +4,7 @@ import com.tavrida.energysales.api.data_contract.CounterReadingItem
 import com.tavrida.energysales.data_access.dbmodel.tables.CounterReadingsTable
 import com.tavrida.energysales.data_access.dbmodel.tables.CountersTable
 import com.tavrida.energysales.data_access.models.*
-import com.tavrida.utils.round3
-import org.jetbrains.exposed.dao.id.EntityID
+import com.tavrida.utils.*
 import org.jetbrains.exposed.sql.*
 import java.time.LocalDate
 
@@ -100,13 +99,21 @@ private fun Counter.consumptionByMonth(month: MonthOfYear): CounterEnergyConsump
     val startingReading = readings.startingReading(month, daysDelta)?.toCounterReadingItem()
     val endingReading = readings.endingReading(month, daysDelta)?.toCounterReadingItem()
 
-    TODO("consumption = readingDelta * K")
     return CounterEnergyConsumptionByMonth(
         month = month,
         startingReading = startingReading,
         endingReading = endingReading,
-        consumption = consumption(startingReading, endingReading)
+        readingDelta = readingDelta(startingReading, endingReading),
+        consumption = consumption(startingReading, endingReading, K)
     )
+}
+
+private inline fun readingDelta(startingReading: CounterReadingItem?, endingReading: CounterReadingItem?): Double? {
+    return (endingReading?.reading - startingReading?.reading)?.round3()
+}
+
+private inline fun consumption(startingReading: CounterReadingItem?, endingReading: CounterReadingItem?, K: Double): Double? {
+    return readingDelta(startingReading, endingReading) * (K as Double?) //TODO: это ужасно
 }
 
 private fun List<CounterReading>.startingReading(month: MonthOfYear, daysDelta: Int): CounterReading? {
@@ -151,6 +158,3 @@ private fun CounterReading.toCounterReadingItem() = CounterReadingItem(
     comment = comment
 )
 
-private fun consumption(startingReading: CounterReadingItem?, endingReading: CounterReadingItem?): Double? {
-    return ((endingReading ?: return null).reading - (startingReading ?: return null).reading).round3()
-}

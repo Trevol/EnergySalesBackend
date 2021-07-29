@@ -74,6 +74,10 @@ export default {
               dataField: "consumptionByMonth.endingReading.reading"
             },
             {
+              caption: "Разница",
+              dataField: "consumptionByMonth.readingDelta"
+            },
+            {
               caption: "Расход",
               dataField: "consumptionByMonth.consumption"
             }

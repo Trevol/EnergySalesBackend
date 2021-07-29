@@ -48,6 +48,7 @@ data class CounterEnergyConsumptionByMonth(
     val month: MonthOfYear,
     val startingReading: CounterReadingItem?,
     val endingReading: CounterReadingItem?,
+    val readingDelta: Double?,
     val consumption: Double?
 )
 

@@ -1,16 +1,39 @@
 <template>
   <div>
-    <div>{{ counterInfo.sn }}</div>
-    <div>{{ extendedInfo }}</div>
+    <div>История показаний счетчика №{{ counterInfo.sn }}</div>
+    <div>
+      <dx-data-grid
+          :data-source="consumptionDetails.readings"
+          :show-borders="true"
+          :show-row-lines="true"
+          :allow-column-resizing="true"
+          column-resizing-mode="widget"
+          key-expr="id"
+          :hover-state-enabled="true">
+        <DxPaging :enabled="false"/>
+        <DxSorting mode="none"/>
+
+        <dx-column data-field="reading" caption="Показания" width="auto"/>
+        <dx-column data-field="readingDelta" caption="Разница" width="auto"/>
+        <dx-column data-field="consumption" caption="Потребление" width="auto"/>
+        <dx-column data-field="readingTime" caption="Когда" width="auto"/>
+        <dx-column data-field="user" caption="Кто" width="auto"/>
+        <dx-column data-field="comment" caption="Примечание" width="auto"/>
+
+      </dx-data-grid>
+    </div>
   </div>
 </template>
 
 <script>
-import _ from "lodash"
 import energyDistributionApi from "@/js/energyDistribition/api/EnergyDistributionApi";
+import DxDataGrid, {DxColumn, DxPaging, DxSorting} from 'devextreme-vue/data-grid'
 
 export default {
   name: "CounterDetails",
+  components: {
+    DxDataGrid, DxColumn, DxPaging, DxSorting
+  },
   props: {
     counterInfo: {
       type: Object
@@ -18,7 +41,7 @@ export default {
   },
   data() {
     return {
-      extendedInfo: null
+      consumptionDetails: null
     }
   },
   methods: {
@@ -29,7 +52,7 @@ export default {
   async mounted() {
     //load details here
     //debounce loading - because component can be mounted several times (refresh grid data with opened details)
-    this.extendedInfo = await this.loadCounterConsumption()
+    this.consumptionDetails = await this.loadCounterConsumption()
   }
 }
 </script>

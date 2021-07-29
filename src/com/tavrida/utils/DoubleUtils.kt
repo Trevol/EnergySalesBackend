@@ -1,5 +1,26 @@
 package com.tavrida.utils
 
+
+operator fun Double?.minus(other: Double?): Double? {
+    return (this ?: return null) - (other ?: return null)
+}
+
+operator fun Double?.plus(other: Double?): Double? {
+    return (this ?: return null) + (other ?: return null)
+}
+
+operator fun Double?.times(other: Double?): Double? {
+    return (this ?: return null) * (other ?: return null)
+}
+
+operator fun Double?.times(other: Double): Double? {
+    return (this ?: return null) * other
+}
+
+operator fun Double?.times(other: Int): Double? {
+    return (this ?: return null) * other
+}
+
 fun Double?.noTrailingZero() = this?.noTrailingZero().orEmpty()
 
 fun Double.noTrailingZero(): String {
