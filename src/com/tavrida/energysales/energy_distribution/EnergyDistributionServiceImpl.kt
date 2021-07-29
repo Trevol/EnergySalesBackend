@@ -46,7 +46,7 @@ class EnergyDistributionServiceImpl(private val dataContext: DataContext) : Ener
 
     override fun counterEnergyConsumptionDetails(counterId: Int): CounterEnergyConsumptionDetails {
         return transaction(dataContext) {
-            checkCounter(counterId)
+            val K = loadCounterK(counterId)
 
             val CRT = CounterReadingsTable
             val readings = CRT.select { CRT.counterId eq counterId }
@@ -61,17 +61,26 @@ class EnergyDistributionServiceImpl(private val dataContext: DataContext) : Ener
                         comment = it[CRT.comment]
                     )
                 }
+
+            val withConsumption = readings.mapIndexed { index, item ->
+                TODO("Readings sort order - where is prev and where is current?!!")
+                val delta = if (index == 0) null else item.reading - readings[index-1].reading
+                CounterReadingWithConsumption(item, delta, delta * K)
+            }
+
             CounterEnergyConsumptionDetails(
                 counterId = counterId,
-                readings = readings
+                readingsWithConsumption = withConsumption
             )
         }
     }
 
-    private fun checkCounter(counterId: Int) {
+    private fun loadCounterK(counterId: Int): Double {
         val CT = CountersTable
-        CT.slice(CT.id).select { CT.id eq counterId }
-            .firstOrNull() ?: throw Exception("Counter not found by id $counterId")
+        return CT.slice(CT.K).select { CT.id eq counterId }
+            .firstOrNull()
+            ?.let { it[CT.K] }
+            ?: throw Exception("Counter not found by id $counterId")
     }
 }
 
@@ -112,7 +121,11 @@ private inline fun readingDelta(startingReading: CounterReadingItem?, endingRead
     return (endingReading?.reading - startingReading?.reading)?.round3()
 }
 
-private inline fun consumption(startingReading: CounterReadingItem?, endingReading: CounterReadingItem?, K: Double): Double? {
+private inline fun consumption(
+    startingReading: CounterReadingItem?,
+    endingReading: CounterReadingItem?,
+    K: Double
+): Double? {
     return readingDelta(startingReading, endingReading) * (K as Double?) //TODO: это ужасно
 }
 

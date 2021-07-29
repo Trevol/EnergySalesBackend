@@ -3,22 +3,22 @@
     <div>История показаний счетчика №{{ counterInfo.sn }}</div>
     <div>
       <dx-data-grid
-          :data-source="consumptionDetails.readings"
+          :data-source="consumptionDetails.readingsWithConsumption"
           :show-borders="true"
           :show-row-lines="true"
           :allow-column-resizing="true"
           column-resizing-mode="widget"
-          key-expr="id"
+          key-expr="reading.id"
           :hover-state-enabled="true">
         <DxPaging :enabled="false"/>
         <DxSorting mode="none"/>
 
-        <dx-column data-field="reading" caption="Показания" width="auto"/>
+        <dx-column data-field="reading.reading" caption="Показания" width="auto"/>
         <dx-column data-field="readingDelta" caption="Разница" width="auto"/>
         <dx-column data-field="consumption" caption="Потребление" width="auto"/>
-        <dx-column data-field="readingTime" caption="Когда" width="auto"/>
-        <dx-column data-field="user" caption="Кто" width="auto"/>
-        <dx-column data-field="comment" caption="Примечание" width="auto"/>
+        <dx-column data-field="reading.readingTime" caption="Когда" width="auto"/>
+        <dx-column data-field="reading.user" caption="Кто" width="auto"/>
+        <dx-column data-field="reading.comment" caption="Примечание" width="auto"/>
 
       </dx-data-grid>
     </div>

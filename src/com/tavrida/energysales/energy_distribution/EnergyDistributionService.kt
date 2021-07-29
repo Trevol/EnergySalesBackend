@@ -12,7 +12,14 @@ interface EnergyDistributionService {
 @Serializable
 data class CounterEnergyConsumptionDetails(
     val counterId: Int,
-    val readings: List<CounterReadingItem>
+    val readingsWithConsumption: List<CounterReadingWithConsumption>
+)
+
+@Serializable
+data class CounterReadingWithConsumption(
+    val reading: CounterReadingItem,
+    val readingDelta: Double?,
+    val consumption: Double?
 )
 
 @Serializable
