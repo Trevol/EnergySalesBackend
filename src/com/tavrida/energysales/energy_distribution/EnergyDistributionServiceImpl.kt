@@ -19,7 +19,7 @@ class EnergyDistributionServiceImpl(private val dataContext: DataContext) : Ener
             month = monthOfYear,
             prevMonth = monthOfYear.prevMonth(),
             total = TotalInfo("Итого", counterItems.totalConsumption()),
-            counters = counterItems
+            perCounters = counterItems
         )
     }
 
@@ -62,10 +62,12 @@ class EnergyDistributionServiceImpl(private val dataContext: DataContext) : Ener
                     )
                 }
 
-            val withConsumption = readings.mapIndexed { index, item ->
-                TODO("Readings sort order - where is prev and where is current?!!")
-                val delta = if (index == 0) null else item.reading - readings[index-1].reading
-                CounterReadingWithConsumption(item, delta, delta * K)
+            val withConsumption = readings.mapIndexed { index, currentReading ->
+                // Readings sorted by readingTime DESC: prevReading for current one is at (index+1) position in readings
+                val prevReading = if (index >= readings.lastIndex) null else readings[index + 1]
+                (currentReading.reading - prevReading?.reading).let {delta->
+                    CounterReadingWithConsumption(currentReading, delta, delta * K)
+                }
             }
 
             CounterEnergyConsumptionDetails(
@@ -84,11 +86,11 @@ class EnergyDistributionServiceImpl(private val dataContext: DataContext) : Ener
     }
 }
 
-private fun List<CounterItem>.totalConsumption() = sumOf { it.consumptionByMonth?.consumption ?: 0.0 }
+private fun List<CounterInfoWithEnergyConsumption>.totalConsumption() = sumOf { it.consumptionByMonth?.consumption ?: 0.0 }
 
-private fun List<Pair<Consumer, Counter>>.toCounterItems(monthOfYear: MonthOfYear): List<CounterItem> {
+private fun List<Pair<Consumer, Counter>>.toCounterItems(monthOfYear: MonthOfYear): List<CounterInfoWithEnergyConsumption> {
     return map { (organization, counter) ->
-        CounterItem(
+        CounterInfoWithEnergyConsumption(
             organization = OrganizationInfo(
                 id = organization.id,
                 name = organization.name,

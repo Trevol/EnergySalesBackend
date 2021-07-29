@@ -3,7 +3,7 @@
     <div>История показаний счетчика №{{ counterInfo.sn }}</div>
     <div>
       <dx-data-grid
-          :data-source="consumptionDetails.readingsWithConsumption"
+          :data-source="consumptionDetails?.readingsWithConsumption"
           :show-borders="true"
           :show-row-lines="true"
           :allow-column-resizing="true"

@@ -27,7 +27,7 @@ data class EnergyDistributionData(
     val month: MonthOfYear,
     val prevMonth: MonthOfYear,
     val total: TotalInfo,
-    val counters: List<CounterItem>
+    val perCounters: List<CounterInfoWithEnergyConsumption>
 )
 
 @Serializable
@@ -41,7 +41,7 @@ data class OrganizationInfo(
 )
 
 @Serializable
-data class CounterItem(
+data class CounterInfoWithEnergyConsumption(
     val organization: OrganizationInfo,
     val id: Int,
     val sn: String,

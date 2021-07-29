@@ -1,6 +1,6 @@
 <template>
   <DxDataGrid
-      :data-source="items"
+      :data-source="consumptionPerCounters"
       :columns="columns"
       :show-borders="true"
       :show-row-lines="true"
@@ -49,8 +49,8 @@ export default {
     }
   },
   computed: {
-    items() {
-      return this.energyDistributionData?.counters ?? [];
+    consumptionPerCounters() {
+      return this.energyDistributionData?.perCounters;
     },
     columns() {
       const monthOfYear = MonthOfYear.fromPlainObject(this.energyDistributionData?.month)
