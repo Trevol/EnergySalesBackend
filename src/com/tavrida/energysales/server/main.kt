@@ -10,7 +10,7 @@ import java.io.File
 
 fun main() {
     val settings = BackendSettings(
-        port = 8081,
+        port = 8080,
         dbDir = File("./databases"),
         dbName = "ENERGY_SALES_2021-07-02_2_SERVER"
     )

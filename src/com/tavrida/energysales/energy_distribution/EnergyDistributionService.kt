@@ -47,7 +47,7 @@ data class CounterInfoWithEnergyConsumption(
     val sn: String,
     val K: Int,
     val comment: String?,
-    val consumptionByMonth: CounterEnergyConsumptionByMonth? //в требуемый месяц данных по потреблению не найдено
+    val consumptionByMonth: CounterEnergyConsumptionByMonth
 )
 
 @Serializable
