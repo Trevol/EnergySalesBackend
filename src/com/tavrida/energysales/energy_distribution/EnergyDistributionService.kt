@@ -19,7 +19,8 @@ data class CounterEnergyConsumptionDetails(
 data class CounterReadingWithConsumption(
     val reading: CounterReadingItem,
     val readingDelta: Double?,
-    val consumption: Double?
+    val consumption: Double?,
+    val continuousPowerFlow: Double? //непрерывный переток мощности
 )
 
 @Serializable
@@ -56,7 +57,8 @@ data class CounterEnergyConsumptionByMonth(
     val startingReading: CounterReadingItem?,
     val endingReading: CounterReadingItem?,
     val readingDelta: Double?,
-    val consumption: Double?
+    val consumption: Double?,
+    val continuousPowerFlow: Double? //непрерывный переток мощности
 )
 
 @Serializable

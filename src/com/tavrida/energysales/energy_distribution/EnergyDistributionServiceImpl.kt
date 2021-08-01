@@ -67,7 +67,10 @@ class EnergyDistributionServiceImpl(private val dataContext: DataContext) : Ener
                 val prevReading = if (index >= readings.lastIndex) null else readings[index + 1]
                 (currentReading.reading - prevReading?.reading)?.round3()
                     .let { delta ->
-                        CounterReadingWithConsumption(currentReading, delta, (delta * K)?.round3())
+                        CounterReadingWithConsumption(
+                            currentReading,
+                            delta,
+                            (delta * K)?.round3())
                     }
             }
 
