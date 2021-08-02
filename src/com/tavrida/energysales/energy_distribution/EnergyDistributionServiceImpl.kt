@@ -6,7 +6,9 @@ import com.tavrida.energysales.data_access.dbmodel.tables.CountersTable
 import com.tavrida.energysales.data_access.models.*
 import com.tavrida.utils.*
 import org.jetbrains.exposed.sql.*
+import java.time.Duration
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class EnergyDistributionServiceImpl(private val dataContext: DataContext) : EnergyDistributionService {
 
@@ -65,13 +67,12 @@ class EnergyDistributionServiceImpl(private val dataContext: DataContext) : Ener
             val withConsumption = readings.mapIndexed { index, currentReading ->
                 // Readings sorted by readingTime DESC: prevReading for current one is at (index+1) position in readings
                 val prevReading = if (index >= readings.lastIndex) null else readings[index + 1]
-                (currentReading.reading - prevReading?.reading)?.round3()
-                    .let { delta ->
-                        CounterReadingWithConsumption(
-                            currentReading,
-                            delta,
-                            (delta * K)?.round3())
-                    }
+                CounterReadingWithConsumption(
+                    reading = currentReading,
+                    readingDelta = readingDelta(prevReading, currentReading),
+                    consumption = consumption(prevReading, currentReading, K),
+                    continuousPowerFlow = continuousPowerFlow(prevReading, currentReading, K)
+                )
             }
 
             CounterEnergyConsumptionDetails(
@@ -120,21 +121,32 @@ private fun Counter.consumptionByMonth(month: MonthOfYear): CounterEnergyConsump
         startingReading = startingReading,
         endingReading = endingReading,
         readingDelta = readingDelta(startingReading, endingReading),
-        consumption = consumption(startingReading, endingReading, K)
+        consumption = consumption(startingReading, endingReading, K),
+        continuousPowerFlow = continuousPowerFlow(startingReading, endingReading, K)
     )
 }
 
-private inline fun readingDelta(startingReading: CounterReadingItem?, endingReading: CounterReadingItem?): Double? {
-    return (endingReading?.reading - startingReading?.reading)?.round3()
-}
+private inline fun readingDelta(startingReading: CounterReadingItem?, endingReading: CounterReadingItem?) =
+    (endingReading?.reading - startingReading?.reading)?.round3()
 
 private inline fun consumption(
     startingReading: CounterReadingItem?,
     endingReading: CounterReadingItem?,
     K: Double
+) = (readingDelta(startingReading, endingReading) * K)?.round3()
+
+private inline fun continuousPowerFlow(
+    startingReading: CounterReadingItem?,
+    endingReading: CounterReadingItem?,
+    K: Double
 ): Double? {
-    return readingDelta(startingReading, endingReading) * (K as Double?) //TODO: это ужасно
+    val kwh = consumption(startingReading, endingReading, K) // energy consumption in kilowatt-hours
+    val durationHours = durationHours(startingReading, endingReading)
+    return (kwh / durationHours)?.round3()
 }
+
+private inline fun durationHours(startingReading: CounterReadingItem?, endingReading: CounterReadingItem?) =
+    durationHours(startingReading?.readingTime, endingReading?.readingTime)
 
 private fun List<CounterReading>.startingReading(month: MonthOfYear, daysDelta: Int): CounterReading? {
     val startingReadings = month.firstDate().extendedDateRange(daysDelta = daysDelta)

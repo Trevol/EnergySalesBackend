@@ -83,7 +83,7 @@ dependencies {
 
     implementation("com.google.zxing:core:$zxingVersion")
 
-    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    testImplementation 'junit:junit:4.13.2'
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
     testImplementation "io.kotest:kotest-assertions-core:$kotestVersion"
 }

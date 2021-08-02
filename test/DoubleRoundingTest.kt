@@ -1,7 +1,8 @@
 import com.tavrida.utils.*
 import database_creation.utils.println
 import io.kotest.matchers.shouldBe
-import kotlin.test.Test
+import org.junit.Test
+
 
 class DoubleRoundingTest {
     @Test

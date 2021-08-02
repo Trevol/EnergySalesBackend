@@ -8,8 +8,8 @@ import org.jetbrains.exposed.sql.min
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.junit.Test
 import java.io.File
-import kotlin.test.Test
 
 class MonthRangeTest {
     @Test

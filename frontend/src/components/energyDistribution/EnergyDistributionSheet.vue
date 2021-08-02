@@ -80,6 +80,10 @@ export default {
             {
               caption: "Расход",
               dataField: "consumptionByMonth.consumption"
+            },
+            {
+              caption: "НПМ (квт)",
+              dataField: "consumptionByMonth.continuousPowerFlow"
             }
           ]
         },

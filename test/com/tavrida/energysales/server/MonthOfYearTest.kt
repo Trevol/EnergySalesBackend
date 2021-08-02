@@ -10,8 +10,8 @@ import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
 import io.kotest.matchers.ints.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import org.junit.Assert
+import org.junit.Test
 import java.time.LocalDate
-import kotlin.test.Test
 
 class MonthOfYearTest {
     @Test

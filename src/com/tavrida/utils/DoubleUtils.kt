@@ -21,6 +21,26 @@ operator fun Double?.times(other: Int): Double? {
     return (this ?: return null) * other
 }
 
+operator fun Double?.div(other: Double?): Double? {
+    return (this ?: return null) / (other ?: return null)
+}
+
+operator fun Double?.div(other: Double): Double? {
+    return (this ?: return null) / other
+}
+
+operator fun Double.div(other: Double?): Double? {
+    return this / (other ?: return null)
+}
+
+
+fun ff() {
+    val d: Double? = 3.0
+    val o: Double = 4.0
+    val t = d / o
+    val r = o / d
+}
+
 fun Double?.noTrailingZero() = this?.noTrailingZero().orEmpty()
 
 fun Double.noTrailingZero(): String {

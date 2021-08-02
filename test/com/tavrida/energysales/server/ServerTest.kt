@@ -8,8 +8,8 @@ import com.tavrida.energysales.server.ktor.ServerApplication
 import com.tavrida.energysales.server.ktor.serverModule
 import com.tavrida.energysales.server.settings.BackendSettings
 import kotlinx.coroutines.runBlocking
+import org.junit.Test
 import java.io.File
-import kotlin.test.Test
 
 
 class ServerTest {
