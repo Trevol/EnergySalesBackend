@@ -1,12 +1,16 @@
+package database_creation.QR
+
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
-import com.tavrida.energysales.data_access.models.Consumer
+import com.tavrida.energysales.data_access.models.Organization
 import com.tavrida.energysales.data_access.models.Counter
 import com.tavrida.energysales.data_access.models.DataContext
 import com.tavrida.energysales.data_access.models.transaction
+import database_creation.DbInstance
 import database_creation.utils.println
+import saveQrImage
 
 fun main() {
     // return
@@ -33,7 +37,7 @@ fun main() {
 
 }
 
-private fun toHtmlSticker(counter: Counter, consumer: Consumer): String {
+private fun toHtmlSticker(counter: Counter, consumer: Organization): String {
 return "<div class=\"sticker\">" +
         "<div class=\"consumer\">" +
         consumer.name +
@@ -60,6 +64,6 @@ return "<div class=\"sticker\">" +
 private const val COUNTER_PREFIX = "1:"
 private val hints = mapOf(EncodeHintType.MARGIN to 2, EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.Q)
 private fun QRCodeWriter.encode(counter: Counter, size: Int) =
-    encode("${COUNTER_PREFIX}${counter.serialNumber}", BarcodeFormat.QR_CODE, size, size, hints)
+    encode("$COUNTER_PREFIX${counter.serialNumber}", BarcodeFormat.QR_CODE, size, size, hints)
 
 

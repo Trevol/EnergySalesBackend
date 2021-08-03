@@ -7,7 +7,6 @@ import io.ktor.http.*
 import io.ktor.response.*
 import kotlinx.html.*
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
-import org.jetbrains.exposed.sql.Database
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
@@ -149,7 +148,7 @@ class CounterReadingUIController(private val dataContext: DataContext) {
             }
         }
 
-        private fun toRecord(consumer: Consumer, counter: Counter): CounterReadingRecord {
+        private fun toRecord(consumer: Organization, counter: Counter): CounterReadingRecord {
             val recentReading = counter.recentReading
             return CounterReadingRecord(
                 importOrder = counter.importOrder,

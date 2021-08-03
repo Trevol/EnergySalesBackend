@@ -1,35 +1,36 @@
 package com.tavrida.energysales.data_access.models
 
-import com.tavrida.energysales.data_access.dbmodel.tables.ConsumersTable
+import com.tavrida.energysales.data_access.dbmodel.tables.OrganizationsTable
 import com.tavrida.energysales.data_access.dbmodel.tables.CounterReadingsTable
 import com.tavrida.energysales.data_access.dbmodel.tables.CountersTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 interface IDataContext {
-    fun loadAll(): List<Consumer>
+    fun loadAll(): List<Organization>
     fun updateReading(reading: CounterReading)
     fun createReading(newReading: CounterReading)
     fun updateSyncData(unsynchronized: List<CounterReading>)
 }
 
 class DataContext(val db: Database) : IDataContext {
-    fun insertAll(consumers: List<Consumer>) {
-        if (consumers.isEmpty()) {
+    fun insertAll(organizations: List<Organization>) {
+        if (organizations.isEmpty()) {
             return
         }
         transaction(db) {
-            for (consumer in consumers) {
-                val consId = ConsumersTable.insertAndGetId {
-                    it[name] = consumer.name
-                    it[comment] = consumer.comment
-                    it[importOrder] = consumer.importOrder
+            for (organization in organizations) {
+                val orgId = OrganizationsTable.insertAndGetId {
+                    it[name] = organization.name
+                    it[orgStructureId] = organization.orgStructureId
+                    it[comment] = organization.comment
+                    it[importOrder] = organization.importOrder
                 }.value
 
-                for (counter in consumer.counters) {
+                for (counter in organization.counters) {
                     val counterId = CountersTable.insertAndGetId {
                         it[serialNumber] = counter.serialNumber
-                        it[consumerId] = consId
+                        it[organizationId] = orgId
                         it[K] = counter.K
                         it[comment] = counter.comment
                         it[importOrder] = counter.importOrder
@@ -53,8 +54,8 @@ class DataContext(val db: Database) : IDataContext {
     }
 
     override fun loadAll() = transaction(db) {
-        val consumerRows = ConsumersTable.selectAll()
-            .orderBy(ConsumersTable.importOrder)
+        val consumerRows = OrganizationsTable.selectAll()
+            .orderBy(OrganizationsTable.importOrder)
             .toList()
         if (consumerRows.isEmpty()) {
             listOf()
@@ -115,7 +116,7 @@ class DataContext(val db: Database) : IDataContext {
         consumerRows: List<ResultRow>,
         countersRows: List<ResultRow>,
         readingRows: List<ResultRow>
-    ): List<Consumer> {
+    ): List<Organization> {
         if (consumerRows.isEmpty())
             return listOf()
 
@@ -140,7 +141,7 @@ class DataContext(val db: Database) : IDataContext {
             Counter(
                 id = counterId,
                 serialNumber = it[t.serialNumber],
-                consumerId = it[t.consumerId].value,
+                consumerId = it[t.organizationId].value,
                 K = it[t.K],
                 readings = readings.filter { it.counterId == counterId },
                 comment = it[t.comment],
@@ -149,10 +150,11 @@ class DataContext(val db: Database) : IDataContext {
         }
 
         return consumerRows.map {
-            val t = ConsumersTable
+            val t = OrganizationsTable
             val consumerId = it[t.id].value
-            Consumer(
+            Organization(
                 id = consumerId,
+                orgStructureId = it[t.orgStructureId].value,
                 name = it[t.name],
                 counters = counters.filter { it.consumerId == consumerId }.toMutableList(),
                 comment = it[t.comment],

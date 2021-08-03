@@ -5,10 +5,11 @@ import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import java.io.File
 import java.lang.Exception
 
-object ImportXlsReader {
-    fun read(path: String): List<XlsRecord> {
+object OrganizationsXlsReader {
+    fun read(path: File): List<XlsRecord> {
         return XSSFWorkbook(path).use { workbook ->
             val sheet = workbook.getSheetAt(0)
             sequence {

@@ -1,7 +1,8 @@
 package com.tavrida.energysales.data_access.models
 
-data class Consumer(
+data class Organization(
     val id: Int,
+    val orgStructureId: Int,
     val name: String,
     var counters: MutableList<Counter> = mutableListOf(),
     val comment: String? = null,
@@ -15,3 +16,4 @@ data class Consumer(
     fun allCountersAreSynchronized() =
         counters.all { it.readings.all { it.synchronized } }
 }
+

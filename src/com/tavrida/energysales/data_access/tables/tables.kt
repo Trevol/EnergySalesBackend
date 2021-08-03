@@ -1,10 +1,22 @@
 package com.tavrida.energysales.data_access.dbmodel.tables
 
+import com.tavrida.energysales.data_access.dbmodel.tables.OrganizationsTable.nullable
+import com.tavrida.energysales.data_access.dbmodel.tables.OrganizationsTable.uniqueIndex
+import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.sql.`java-time`.date
+import org.jetbrains.exposed.sql.Column
+import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.`java-time`.datetime
 
-object ConsumersTable : IntIdTable("PUBLIC.CONSUMER") {
+object OrganizationsStructure : IntIdTable("PUBLIC.ORGANIZATION_STRUCTURE") {
+    override val id = integer("id").entityId()
+    val parentId = reference("parent_id", OrganizationsStructure).nullable()
+    val name = varchar("name", 256).uniqueIndex()
+    val comment = varchar("comment", 2000).nullable()
+}
+
+object OrganizationsTable : IntIdTable("PUBLIC.ORGANIZATION") {
+    val orgStructureId = reference("org_structure_id", OrganizationsStructure)
     val name = varchar("name", 256).uniqueIndex()
     val comment = varchar("comment", 2000).nullable()
     val importOrder = integer("import_order").uniqueIndex()
@@ -12,20 +24,11 @@ object ConsumersTable : IntIdTable("PUBLIC.CONSUMER") {
 
 object CountersTable : IntIdTable("PUBLIC.COUNTER") {
     val serialNumber = varchar("serial_number", 20).uniqueIndex()
-    val consumerId = reference("consumer_id", ConsumersTable.id)
+    val organizationId = reference("organization_id", OrganizationsTable.id)
     val K = double("K")
     val comment = varchar("comment", 2000).nullable()
     val importOrder = integer("import_order").uniqueIndex()
 }
-
-/*object PrevCounterReadingsTable : IntIdTable("PUBLIC.PREV_COUNTER_READING") {
-    val counterId = reference("counter_id", CountersTable.id)
-        .uniqueIndex()
-    val reading = double("reading")
-    val consumption = double("consumption")
-    val readDate = date("read_date")
-    val comment = varchar("comment", 2000).nullable()
-}*/
 
 object CounterReadingsTable : IntIdTable("PUBLIC.COUNTER_READING") {
     val counterId = reference("counter_id", CountersTable.id)
@@ -39,4 +42,4 @@ object CounterReadingsTable : IntIdTable("PUBLIC.COUNTER_READING") {
 }
 
 val allTables =
-    arrayOf(ConsumersTable, CountersTable, CounterReadingsTable /*PrevCounterReadingsTable*/)
+    arrayOf(OrganizationsStructure, OrganizationsTable, CountersTable, CounterReadingsTable)

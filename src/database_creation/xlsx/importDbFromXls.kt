@@ -1,35 +1,35 @@
+package database_creation.xlsx
+
 import com.tavrida.energysales.data_access.models.*
+import database_creation.DbInstance
+import database_creation.utils.currentDateStamp
 import database_creation.utils.log
 import database_creation.utils.println
-import database_creation.xlsx.reader.ImportXlsReader
+import database_creation.xlsx.reader.OrganizationsXlsReader
 import database_creation.xlsx.reader.XlsRecord
 import java.io.File
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 fun main() {
     // TODO()
-    val consumers = "./databases/xlsx/import 2021.06 июнь/import 2021.06 июнь.xlsx"
-        .let { ImportXlsReader.read(it) }
-        .toConsumers()
-    if (consumers.isEmpty()) {
+    // июнь
+    val prevReadingTime: LocalDateTime = LocalDateTime.of(2021, 6, 1, 10, 30, 30) //01.06.2021 10:30:30
+    val currentReadingTime: LocalDateTime = LocalDateTime.of(2021, 7, 1, 10, 30, 30) //01.07.2021 10:30:30
+
+    val organizations = "./databases/xlsx/import 2021.06 июнь/import 2021.06 июнь.xlsx"
+        .let { File(it) }
+        .let { OrganizationsXlsReader.read(it) }
+        .toOrganizations(prevReadingTime, currentReadingTime)
+    if (organizations.isEmpty()) {
         return
     }
-    consumers.size.log()
-    consumers.flatMap { it.counters }.size.log()
+    organizations.size.log()
+    organizations.flatMap { it.counters }.size.log()
 
-    val currentDateStamp = currentDateStamp()
-    val dbDir = "./databases/$currentDateStamp".also {
-        File(it).mkdirs()
-    }
-    val dbName = "ENERGY_SALES_${currentDateStamp}_xls"
-    val dc = DbInstance(dbDir, dbName)
-        .get(recreate = true)
-        .let { DataContext(it) }
 
+    val dc = datacontext()
     transaction(dc) {
-        dc.insertAll(consumers)
+        dc.insertAll(organizations)
     }
 
     transaction(dc) {
@@ -37,14 +37,23 @@ fun main() {
     }
 }
 
-private fun currentDateStamp() = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
-fun List<XlsRecord>.toConsumers(): List<Consumer> {
-    //июнь
-    val prevReadingTime = LocalDateTime.of(2021, 6, 1, 10, 30, 30) //01.06.2021 10:30:30
-    val currentReadingTime = LocalDateTime.of(2021, 7, 1, 10, 30, 30) //01.07.2021 10:30:30
+private fun datacontext(): DataContext {
+    val currentDateStamp = currentDateStamp()
+    val dbDir = "./databases/$currentDateStamp".also {
+        File(it).mkdirs()
+    }
+    val dbName = "ENERGY_SALES_${currentDateStamp}_xls"
+    return DbInstance(dbDir, dbName)
+        .get(recreate = true)
+        .let { DataContext(it) }
+}
 
-    val consumers = mutableListOf<Consumer>()
+private fun List<XlsRecord>.toOrganizations(
+    prevReadingTime: LocalDateTime,
+    currentReadingTime: LocalDateTime
+): List<Organization> {
+    val consumers = mutableListOf<Organization>()
     val recs = this.toMutableList()
     while (recs.isNotEmpty()) {
         val rec = recs.removeAt(0)
@@ -85,15 +94,16 @@ fun List<XlsRecord>.toConsumers(): List<Consumer> {
             importOrder = rec.importOrder
         )
 
-        var consumer = null as Consumer?
+        var consumer = null as Organization?
         var newConsumer = false
         if (rec.group != null) {
             consumer = consumers.firstOrNull { it.name == rec.consumer }
         }
 
         if (consumer == null) {
-            consumer = Consumer(
+            consumer = Organization(
                 id = -1,
+                orgStructureId = -1,
                 name = rec.consumer,
                 counters = mutableListOf(),
                 comment = null,

@@ -6,9 +6,7 @@ import com.tavrida.energysales.data_access.dbmodel.tables.CountersTable
 import com.tavrida.energysales.data_access.models.*
 import com.tavrida.utils.*
 import org.jetbrains.exposed.sql.*
-import java.time.Duration
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 class EnergyDistributionServiceImpl(private val dataContext: DataContext) : EnergyDistributionService {
 
@@ -94,7 +92,7 @@ class EnergyDistributionServiceImpl(private val dataContext: DataContext) : Ener
 private fun List<CounterInfoWithEnergyConsumption>.totalConsumption() =
     sumOf { it.consumptionByMonth?.consumption ?: 0.0 }
 
-private fun List<Pair<Consumer, Counter>>.toCounterItems(monthOfYear: MonthOfYear): List<CounterInfoWithEnergyConsumption> {
+private fun List<Pair<Organization, Counter>>.toCounterItems(monthOfYear: MonthOfYear): List<CounterInfoWithEnergyConsumption> {
     return map { (organization, counter) ->
         CounterInfoWithEnergyConsumption(
             organization = OrganizationInfo(

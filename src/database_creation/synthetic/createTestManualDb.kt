@@ -1,10 +1,11 @@
+package database_creation.synthetic
+
 import com.tavrida.energysales.data_access.models.*
+import database_creation.DbInstance
+import database_creation.utils.currentDateStamp
 import database_creation.utils.log
-import database_creation.utils.padStartEx
 import java.io.File
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 private fun main() {
     TODO()
@@ -18,9 +19,7 @@ private fun main() {
     insertAll(dbDir, dbName, consumers)
 }
 
-private fun currentDateStamp() = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-
-private fun testData(): List<Consumer> {
+private fun testData(): List<Organization> {
     val user = "Саша"
 
     val reading_21_05_01 = CounterReading(
@@ -67,8 +66,9 @@ private fun testData(): List<Consumer> {
         comment = "",
         importOrder = 1
     )
-    val consumer = Consumer(
+    val consumer = Organization(
         id = -1,
+        orgStructureId = -1,
         name = "TestConsumer",
         comment = "",
         counters = mutableListOf(counter),
@@ -78,7 +78,7 @@ private fun testData(): List<Consumer> {
     return listOf(consumer)
 }
 
-private fun insertAll(dbDir: String, dbName: String, consumers: List<Consumer>) {
+private fun insertAll(dbDir: String, dbName: String, consumers: List<Organization>) {
     val dc = DbInstance(dbDir, dbName)
         .get(recreate = true)
         .let { DataContext(it) }

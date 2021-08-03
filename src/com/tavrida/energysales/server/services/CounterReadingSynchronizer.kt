@@ -4,9 +4,7 @@ import com.tavrida.energysales.data_access.dbmodel.tables.CounterReadingsTable
 import com.tavrida.energysales.data_access.models.*
 import com.tavrida.energysales.api.data_contract.*
 import com.tavrida.utils.log
-import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.insertAndGetId
-import org.jetbrains.exposed.sql.transactions.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -63,7 +61,7 @@ class CounterReadingSynchronizer(private val dataContext: DataContext) {
     }
 }
 
-private fun Consumer.toConsumerData(): ConsumerData {
+private fun Organization.toConsumerData(): ConsumerData {
     return ConsumerData(
         id = id,
         name = name,
