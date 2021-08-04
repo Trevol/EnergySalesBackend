@@ -68,7 +68,7 @@ private fun testData(): List<Organization> {
     )
     val consumer = Organization(
         id = -1,
-        orgStructureId = -1,
+        orgStructureUnitId = -1,
         name = "TestConsumer",
         comment = "",
         counters = mutableListOf(counter),

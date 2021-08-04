@@ -86,7 +86,7 @@ private fun syntheticData(nOfConsumers: Int): List<Organization> {
 
         Organization(
             id = -1,
-            orgStructureId = -1,
+            orgStructureUnitId = -1,
             name = consumerName,
             comment = "this is consumer №$consumerPos",
             counters = counters.toMutableList(),

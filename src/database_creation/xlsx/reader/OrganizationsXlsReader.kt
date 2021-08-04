@@ -9,7 +9,19 @@ import java.io.File
 import java.lang.Exception
 
 object OrganizationsXlsReader {
-    fun read(path: File): List<XlsRecord> {
+    data class Record(
+        val consumer: String,
+        val prevReading: Double,
+        val currentReading: Double,
+        val K: Double,
+        //val consumption: Double,
+        val serialNumber: String,
+        val notes: String?,
+        val group: Int?,
+        val importOrder: Int
+    )
+
+    fun read(path: File): List<Record> {
         return XSSFWorkbook(path).use { workbook ->
             val sheet = workbook.getSheetAt(0)
             sequence {
@@ -19,7 +31,7 @@ object OrganizationsXlsReader {
                     if (sn.isNullOrEmpty()) {
                         break
                     }
-                    XlsRecord(
+                    Record(
                         consumer = row.consumer(),
                         prevReading = row.prevReading(),
                         currentReading = row.currentReading(),

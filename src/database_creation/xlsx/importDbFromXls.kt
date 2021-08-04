@@ -1,12 +1,10 @@
 package database_creation.xlsx
 
 import com.tavrida.energysales.data_access.models.*
-import database_creation.DbInstance
-import database_creation.utils.currentDateStamp
+import database_creation.utils.dataContextWithTimestampedDb
 import database_creation.utils.log
 import database_creation.utils.println
 import database_creation.xlsx.reader.OrganizationsXlsReader
-import database_creation.xlsx.reader.XlsRecord
 import java.io.File
 import java.time.LocalDateTime
 
@@ -26,8 +24,7 @@ fun main() {
     organizations.size.log()
     organizations.flatMap { it.counters }.size.log()
 
-
-    val dc = datacontext()
+    val dc = dataContextWithTimestampedDb(dbNameSuffix = "_xls")
     transaction(dc) {
         dc.insertAll(organizations)
     }
@@ -38,18 +35,7 @@ fun main() {
 }
 
 
-private fun datacontext(): DataContext {
-    val currentDateStamp = currentDateStamp()
-    val dbDir = "./databases/$currentDateStamp".also {
-        File(it).mkdirs()
-    }
-    val dbName = "ENERGY_SALES_${currentDateStamp}_xls"
-    return DbInstance(dbDir, dbName)
-        .get(recreate = true)
-        .let { DataContext(it) }
-}
-
-private fun List<XlsRecord>.toOrganizations(
+private fun List<OrganizationsXlsReader.Record>.toOrganizations(
     prevReadingTime: LocalDateTime,
     currentReadingTime: LocalDateTime
 ): List<Organization> {
@@ -103,7 +89,7 @@ private fun List<XlsRecord>.toOrganizations(
         if (consumer == null) {
             consumer = Organization(
                 id = -1,
-                orgStructureId = -1,
+                orgStructureUnitId = -1,
                 name = rec.consumer,
                 counters = mutableListOf(),
                 comment = null,

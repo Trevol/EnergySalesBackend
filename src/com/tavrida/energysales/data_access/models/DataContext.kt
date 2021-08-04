@@ -22,7 +22,7 @@ class DataContext(val db: Database) : IDataContext {
             for (organization in organizations) {
                 val orgId = OrganizationsTable.insertAndGetId {
                     it[name] = organization.name
-                    it[orgStructureId] = organization.orgStructureId
+                    it[orgStructureUnitId] = organization.orgStructureUnitId
                     it[comment] = organization.comment
                     it[importOrder] = organization.importOrder
                 }.value
@@ -154,7 +154,7 @@ class DataContext(val db: Database) : IDataContext {
             val consumerId = it[t.id].value
             Organization(
                 id = consumerId,
-                orgStructureId = it[t.orgStructureId].value,
+                orgStructureUnitId = it[t.orgStructureUnitId].value,
                 name = it[t.name],
                 counters = counters.filter { it.consumerId == consumerId }.toMutableList(),
                 comment = it[t.comment],

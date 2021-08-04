@@ -1,22 +1,23 @@
 package com.tavrida.energysales.data_access.dbmodel.tables
 
-import com.tavrida.energysales.data_access.dbmodel.tables.OrganizationsTable.nullable
-import com.tavrida.energysales.data_access.dbmodel.tables.OrganizationsTable.uniqueIndex
 import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.`java-time`.datetime
 
-object OrganizationsStructure : IntIdTable("PUBLIC.ORGANIZATION_STRUCTURE") {
+object OrganizationStructureUnits : IdTable<Int>("PUBLIC.ORGANIZATION_STRUCTURE") {
     override val id = integer("id").entityId()
-    val parentId = reference("parent_id", OrganizationsStructure).nullable()
+    override val primaryKey = PrimaryKey(id)
+
+    val parentId = reference("parent_id", OrganizationStructureUnits).nullable()
     val name = varchar("name", 256).uniqueIndex()
     val comment = varchar("comment", 2000).nullable()
 }
 
 object OrganizationsTable : IntIdTable("PUBLIC.ORGANIZATION") {
-    val orgStructureId = reference("org_structure_id", OrganizationsStructure)
+    val orgStructureUnitId = reference("org_structure_unit_id", OrganizationStructureUnits)
     val name = varchar("name", 256).uniqueIndex()
     val comment = varchar("comment", 2000).nullable()
     val importOrder = integer("import_order").uniqueIndex()
@@ -42,4 +43,4 @@ object CounterReadingsTable : IntIdTable("PUBLIC.COUNTER_READING") {
 }
 
 val allTables =
-    arrayOf(OrganizationsStructure, OrganizationsTable, CountersTable, CounterReadingsTable)
+    arrayOf(OrganizationStructureUnits, OrganizationsTable, CountersTable, CounterReadingsTable)
