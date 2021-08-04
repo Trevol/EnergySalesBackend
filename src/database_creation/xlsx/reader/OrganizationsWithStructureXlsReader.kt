@@ -1,5 +1,6 @@
 package database_creation.xlsx.reader
 
+import com.tavrida.energysales.data_access.models.OrganizationStructureUnit
 import com.tavrida.utils.noTrailingZero
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
@@ -24,11 +25,12 @@ object OrganizationsWithStructureXlsReader {
     fun readOrganizations(path: File, firstRowContainsHeader: Boolean): List<OrganizationRecord> {
         return XSSFWorkbook(path).use { workbook ->
             val sheet = workbook.getSheetAt(0)
-            sequence {
-                var numOfEmptyRowsFound = 0
-                var order = 0
-                with(OrganizationRow)
-                {
+            with(OrganizationRow) {
+                sequence {
+                    var numOfEmptyRowsFound = 0
+                    var order = 0
+
+
                     for ((index, row) in sheet.mapIndexed { index, row -> index to row }) {
                         if (firstRowContainsHeader && index == 0) {
                             continue
@@ -59,14 +61,34 @@ object OrganizationsWithStructureXlsReader {
                             )
                         )
                     }
-                }
 
-            }.toList()
+
+                }.toList()
+            }
         }
     }
 
-    fun readOrgStructureUnits() {
-
+    fun readOrgStructureUnits(path: File, firstRowContainsHeader: Boolean): List<OrganizationStructureUnit> {
+        return XSSFWorkbook(path).use { workbook ->
+            val sheet = workbook.getSheetAt(0)
+            with(OrgStructureUnitRow) {
+                sequence {
+                    for ((index, row) in sheet.mapIndexed { index, row -> index to row }) {
+                        if (firstRowContainsHeader && index == 0) {
+                            continue
+                        }
+                        yield(
+                            OrganizationStructureUnit(
+                                id = row.id() ?: break,
+                                parentId = row.parentId(),
+                                name = row.name(),
+                                comment = row.comment()
+                            )
+                        )
+                    }
+                }
+            }.toList()
+        }
     }
 
     private fun Row.cell(col: Int) = getCell(col)
@@ -83,6 +105,7 @@ object OrganizationsWithStructureXlsReader {
 
     fun Any?.cellToInt() = when {
         this == null -> null
+        this == "" -> null
         this is Double -> toInt()
         this is String -> toInt()
         else -> throw Exception("Unexpected target $this")

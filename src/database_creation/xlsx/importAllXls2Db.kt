@@ -1,9 +1,13 @@
 package database_creation.xlsx
 
+import com.tavrida.energysales.data_access.dbmodel.tables.OrganizationStructureUnits
 import com.tavrida.energysales.data_access.models.DataContext
+import com.tavrida.energysales.data_access.models.OrganizationStructureUnit
 import database_creation.utils.dataContextWithTimestampedDb
 import database_creation.utils.println
 import database_creation.xlsx.reader.OrganizationsWithStructureXlsReader
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
 import java.time.LocalDateTime
 import java.time.Month
@@ -34,15 +38,37 @@ private data class ImportConfig(
 private class Importer(val config: ImportConfig) {
     fun import(dataContext: DataContext) {
 
+        val orgStructureUnits = OrganizationsWithStructureXlsReader.readOrgStructureUnits(
+            config.orgStructureFile,
+            firstRowContainsHeader = true
+        )
+
         for ((time, readingsFile) in config.timeToReadings) {
             val organizations = OrganizationsWithStructureXlsReader.readOrganizations(
                 readingsFile,
                 firstRowContainsHeader = true
             )
-            organizations.size.println()
         }
 
-        // TODO("Not yet implemented")
+        dataContext.saveOrgStructure(orgStructureUnits)
+        dataContext.selectOrganizationStructureUnits().size.println()
+    }
+
+    private fun DataContext.saveOrgStructure(orgStructureUnits: List<OrganizationStructureUnit>) {
+        transaction(this.db) {
+            orgStructureUnits.forEach { u ->
+                OrganizationStructureUnits.insert {
+                    it[id] = u.id
+                    it[name] = u.name
+                    it[parentId] = u.parentId
+                    it[comment] = u.comment
+                }
+            }
+        }
+    }
+
+    private fun saveOrgStructure() {
+
     }
 }
 

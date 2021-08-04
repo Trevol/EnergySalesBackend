@@ -3,6 +3,7 @@ package com.tavrida.energysales.data_access.models
 import com.tavrida.energysales.data_access.dbmodel.tables.OrganizationsTable
 import com.tavrida.energysales.data_access.dbmodel.tables.CounterReadingsTable
 import com.tavrida.energysales.data_access.dbmodel.tables.CountersTable
+import com.tavrida.energysales.data_access.dbmodel.tables.OrganizationStructureUnits
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -14,6 +15,18 @@ interface IDataContext {
 }
 
 class DataContext(val db: Database) : IDataContext {
+    fun selectOrganizationStructureUnits() = transaction(db) {
+        val t = OrganizationStructureUnits
+        OrganizationStructureUnits.selectAll().map {
+            OrganizationStructureUnit(
+                id = it[t.id].value,
+                parentId = it[t.parentId],
+                name = it[t.name],
+                comment = it[t.comment]
+            )
+        }
+    }
+
     fun insertAll(organizations: List<Organization>) {
         if (organizations.isEmpty()) {
             return

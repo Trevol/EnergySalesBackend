@@ -11,7 +11,8 @@ object OrganizationStructureUnits : IdTable<Int>("PUBLIC.ORGANIZATION_STRUCTURE"
     override val id = integer("id").entityId()
     override val primaryKey = PrimaryKey(id)
 
-    val parentId = reference("parent_id", OrganizationStructureUnits).nullable()
+    // val parentId = reference("parent_id", OrganizationStructureUnits).nullable()
+    val parentId = integer("parent_id").references(OrganizationStructureUnits.id).nullable()
     val name = varchar("name", 256).uniqueIndex()
     val comment = varchar("comment", 2000).nullable()
 }
