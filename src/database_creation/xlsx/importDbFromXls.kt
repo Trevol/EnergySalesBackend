@@ -24,7 +24,7 @@ fun main() {
     organizations.size.log()
     organizations.flatMap { it.counters }.size.log()
 
-    val dc = dataContextWithTimestampedDb(dbNameSuffix = "_xls")
+    val dc = dataContextWithTimestampedDb(databasesDir = "./databases", dbNameSuffix = "xls")
     transaction(dc) {
         dc.insertAll(organizations)
     }

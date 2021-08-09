@@ -8,9 +8,11 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
 
 class DbInstance(
-    val dbDir: String = "./databases/",
-    val dbName: String = "ENERGY_SALES_MOBILE"
+    val dbDir: File,
+    val dbName: String
 ) {
+    constructor(dbDir: String, dbName: String) : this(File(dbDir), dbName)
+
     fun get(recreate: Boolean): Database {
         if (recreate) {
             deleteFileInDir(dbDir, "$dbName.")

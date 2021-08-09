@@ -16,7 +16,7 @@ typealias TimeAndFile = Pair<LocalDateTime, File>
 
 fun main() {
     val baseDir = File("./databases/xlsx/import_all")
-    val config = ImportConfig(
+    val config = Importer.ImportConfig(
         orgStructureFile = File(baseDir, "org_units.xlsx"),
         timeToReadings = listOf(
             LocalDateTime.of(2021, Month.JULY, 1, 11, 30, 33) to File(baseDir, "import 21.06.xlsx"),
@@ -24,18 +24,17 @@ fun main() {
         )
     )
 
-    val dc = dataContextWithTimestampedDb(dbNameSuffix = "_xls_ALL")
+    val dc = dataContextWithTimestampedDb(databasesDir = "./databases", dbNameSuffix = "xls_ALL")
     Importer(config).import(dc)
 }
 
 
-private data class ImportConfig(
-    val orgStructureFile: File,
-    val timeToReadings: List<TimeAndFile>
-)
-
-
 private class Importer(val config: ImportConfig) {
+    data class ImportConfig(
+        val orgStructureFile: File,
+        val timeToReadings: List<TimeAndFile>
+    )
+
     fun import(dataContext: DataContext) {
 
         val orgStructureUnits = OrganizationsWithStructureXlsReader.readOrgStructureUnits(
@@ -65,10 +64,6 @@ private class Importer(val config: ImportConfig) {
                 }
             }
         }
-    }
-
-    private fun saveOrgStructure() {
-
     }
 }
 
