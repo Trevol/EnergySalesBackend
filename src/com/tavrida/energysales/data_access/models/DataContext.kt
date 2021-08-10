@@ -168,6 +168,7 @@ class DataContext(val db: Database) : IDataContext {
             Organization(
                 id = consumerId,
                 orgStructureUnitId = it[t.orgStructureUnitId].value,
+                orgStructureUnit = null,
                 name = it[t.name],
                 counters = counters.filter { it.consumerId == consumerId }.toMutableList(),
                 comment = it[t.comment],

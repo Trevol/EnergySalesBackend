@@ -2,12 +2,13 @@ package database_creation.xlsx
 
 import com.tavrida.energysales.data_access.dbmodel.tables.OrganizationStructureUnits
 import com.tavrida.energysales.data_access.models.DataContext
+import com.tavrida.energysales.data_access.models.Organization
 import com.tavrida.energysales.data_access.models.OrganizationStructureUnit
 import database_creation.utils.dataContextWithTimestampedDb
-import database_creation.utils.println
 import database_creation.xlsx.reader.OrganizationsWithStructureXlsReader
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
+import com.tavrida.energysales.data_access.models.transaction
 import java.io.File
 import java.time.LocalDateTime
 import java.time.Month
@@ -25,7 +26,7 @@ fun main() {
     )
 
     val dc = dataContextWithTimestampedDb(databasesDir = "./databases", dbNameSuffix = "xls_ALL")
-    Importer(config).import(dc)
+    Importer(config).xlsToOrganizationsAndStructureToDb(dc)
 }
 
 
@@ -35,8 +36,24 @@ private class Importer(val config: ImportConfig) {
         val timeToReadings: List<TimeAndFile>
     )
 
-    fun import(dataContext: DataContext) {
+    fun xlsToOrganizationsAndStructureToDb(dataContext: DataContext) {
+        val organizationsAndStructure = xlsToOrganizationsAndStructure()
+        dataContext.save(organizationsAndStructure)
+    }
 
+    private fun DataContext.save(organizationsAndStructure: OrganizationsAndStructure) {
+        transaction(this) {
+            this@save.saveOrgStructure(organizationsAndStructure.structure)
+            this@save.insertAll(organizationsAndStructure.organizations)
+        }
+    }
+
+    data class OrganizationsAndStructure(
+        val organizations: List<Organization>,
+        val structure: List<OrganizationStructureUnit>
+    )
+
+    fun xlsToOrganizationsAndStructure(): OrganizationsAndStructure {
         val orgStructureUnits = OrganizationsWithStructureXlsReader.readOrgStructureUnits(
             config.orgStructureFile,
             firstRowContainsHeader = true
@@ -47,10 +64,9 @@ private class Importer(val config: ImportConfig) {
                 readingsFile,
                 firstRowContainsHeader = true
             )
+            // convert list<OrganizationRecord> to list<Organization>
         }
-
-        dataContext.saveOrgStructure(orgStructureUnits)
-        dataContext.selectOrganizationStructureUnits().size.println()
+        TODO()
     }
 
     private fun DataContext.saveOrgStructure(orgStructureUnits: List<OrganizationStructureUnit>) {

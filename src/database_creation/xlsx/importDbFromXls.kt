@@ -90,6 +90,7 @@ private fun List<OrganizationsXlsReader.Record>.toOrganizations(
             consumer = Organization(
                 id = -1,
                 orgStructureUnitId = -1,
+                orgStructureUnit = null,
                 name = rec.consumer,
                 counters = mutableListOf(),
                 comment = null,

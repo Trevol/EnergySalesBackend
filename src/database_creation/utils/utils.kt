@@ -31,7 +31,7 @@ fun dataContextWithTimestampedDb(
     databasesDir: String,
     dbNamePrefix: String = "ENERGY_SALES",
     dbNameSuffix: String
-) = DataContext(timestampedDb(databasesDir, dbNamePrefix, dbNameSuffix))
+) = timestampedDb(databasesDir, dbNamePrefix, dbNameSuffix).let { DataContext(it) }
 
 fun timestampedDb(
     databasesDir: String,
