@@ -4,11 +4,11 @@ import com.tavrida.energysales.data_access.dbmodel.tables.OrganizationStructureU
 import com.tavrida.energysales.data_access.models.DataContext
 import com.tavrida.energysales.data_access.models.Organization
 import com.tavrida.energysales.data_access.models.OrganizationStructureUnit
-import database_creation.utils.dataContextWithTimestampedDb
 import database_creation.xlsx.reader.OrganizationsWithStructureXlsReader
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import com.tavrida.energysales.data_access.models.transaction
+import database_creation.utils.println
 import java.io.File
 import java.time.LocalDateTime
 import java.time.Month
@@ -24,9 +24,11 @@ fun main() {
             // LocalDateTime.of(2021, Month.JUNE, 1, 12, 22, 15) to File(baseDir, "import 21.05.xlsx")
         )
     )
+    val orgAndStruct = Importer(config).xlsToOrganizationsAndStructure()
+    orgAndStruct.structure.size.println()
 
-    val dc = dataContextWithTimestampedDb(databasesDir = "./databases", dbNameSuffix = "xls_ALL")
-    Importer(config).xlsToOrganizationsAndStructureToDb(dc)
+    /*val dc = dataContextWithTimestampedDb(databasesDir = "./databases", dbNameSuffix = "xls_ALL")
+    Importer(config).xlsToOrganizationsAndStructureToDb(dc)*/
 }
 
 
@@ -59,14 +61,35 @@ private class Importer(val config: ImportConfig) {
             firstRowContainsHeader = true
         )
 
-        for ((time, readingsFile) in config.timeToReadings) {
-            val organizations = OrganizationsWithStructureXlsReader.readOrganizations(
-                readingsFile,
-                firstRowContainsHeader = true
-            )
-            // convert list<OrganizationRecord> to list<Organization>
+        val organizations = mutableListOf<Organization>()
+
+        config.timeToReadings
+            .sortedBy { (time, readingsFile) -> time } // сначала
+            .map { (time, readingsFile) ->
+                time to OrganizationsWithStructureXlsReader.readOrganizations(
+                    readingsFile,
+                    firstRowContainsHeader = true
+                )
+            }
+            .forEach { (readingTime, orgCounterReadingRecs) ->
+                mergeOrganizationsReadings(organizations, orgStructureUnits, readingTime, orgCounterReadingRecs)
+            }
+
+        return OrganizationsAndStructure(organizations, orgStructureUnits)
+    }
+
+    fun mergeOrganizationsReadings(
+        organizations: MutableList<Organization>,
+        orgStructureUnits: List<OrganizationStructureUnit>,
+        readingTime: LocalDateTime,
+        orgCounterReadingRecs: List<OrganizationsWithStructureXlsReader.OrganizationCounterReadingRecord>
+    ) {
+        if (organizations.isNotEmpty()) {
+            TODO()
         }
-        TODO()
+        orgCounterReadingRecs.groupBy { it.group }
+        TODO("Test group by null")
+
     }
 
     private fun DataContext.saveOrgStructure(orgStructureUnits: List<OrganizationStructureUnit>) {
@@ -80,6 +103,10 @@ private class Importer(val config: ImportConfig) {
                 }
             }
         }
+    }
+
+    companion object {
+        fun List<OrganizationStructureUnit>.byId(id: Int) = first { it.id == id }
     }
 }
 

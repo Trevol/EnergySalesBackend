@@ -10,7 +10,7 @@ import java.io.File
 import kotlin.Exception
 
 object OrganizationsWithStructureXlsReader {
-    data class OrganizationRecord(
+    data class OrganizationCounterReadingRecord(
         val consumer: String,
         val prevReading: Double,
         val currentReading: Double,
@@ -22,7 +22,7 @@ object OrganizationsWithStructureXlsReader {
         val orgStructureUnitId: Int
     )
 
-    fun readOrganizations(path: File, firstRowContainsHeader: Boolean): List<OrganizationRecord> {
+    fun readOrganizations(path: File, firstRowContainsHeader: Boolean): List<OrganizationCounterReadingRecord> {
         return XSSFWorkbook(path).use { workbook ->
             val sheet = workbook.getSheetAt(0)
             with(OrganizationRow) {
@@ -48,7 +48,7 @@ object OrganizationsWithStructureXlsReader {
                         }
 
                         yield(
-                            OrganizationRecord(
+                            OrganizationCounterReadingRecord(
                                 consumer = row.organization(),
                                 prevReading = row.prevReading(),
                                 currentReading = row.currentReading(),
