@@ -15,16 +15,16 @@ private fun main() {
         File(it).mkdirs()
     }
     val dbName = "ENERGY_SALES_SYNTHETIC_$currentDateStamp"
-    val nOfConsumers = 5
-    val consumers = syntheticData(nOfConsumers)
-    insertAll(dbDir, dbName, consumers)
+    val nOfOrganizations = 5
+    val organizations = syntheticData(nOfOrganizations)
+    insertAll(dbDir, dbName, organizations)
 }
 
-private fun syntheticData(nOfConsumers: Int): List<Organization> {
+private fun syntheticData(nOfOrganizations: Int): List<Organization> {
     val user = "Саша"
 
     fun readings(
-        consumerPos: Int,
+        organizationPos: Int,
         counterPos: Int,
         serialNumber: String,
         K: Double
@@ -33,8 +33,8 @@ private fun syntheticData(nOfConsumers: Int): List<Organization> {
             listOf(now.minusMonths(1), now.minusMonths(2))
         }
 
-        val readingMonthAgo = consumerPos * 100.0
-        val readingDeltaForMonth = consumerPos * 10.0 + counterPos
+        val readingMonthAgo = organizationPos * 100.0
+        val readingDeltaForMonth = organizationPos * 10.0 + counterPos
         val readings = listOf(
             CounterReading(
                 id = -1,
@@ -64,21 +64,21 @@ private fun syntheticData(nOfConsumers: Int): List<Organization> {
 
     var counterImportPos = 0
 
-    val maxLen = nOfConsumers.toString().length
-    return (1..nOfConsumers).map { consumerPos ->
-        val consumerName = "Потребитель_${consumerPos.padStartEx(maxLen, '0')}"
-        val oneOrTwo = if (consumerPos % 2 == 1) (1..1) else (1..2)
+    val maxLen = nOfOrganizations.toString().length
+    return (1..nOfOrganizations).map { organizationPos ->
+        val organizationName = "Потребитель_${organizationPos.padStartEx(maxLen, '0')}"
+        val oneOrTwo = if (organizationPos % 2 == 1) (1..1) else (1..2)
         val counters = oneOrTwo.map { counterPos ->
-            val serialNumber = "${consumerPos}0$counterPos"
+            val serialNumber = "${organizationPos}0$counterPos"
             val K = if (counterPos % 2 == 0) 1.0 else 50.0
-            val readings = readings(consumerPos, counterPos, serialNumber, K)
+            val readings = readings(organizationPos, counterPos, serialNumber, K)
             Counter(
                 id = -1,
                 serialNumber = serialNumber,
                 organizationId = -1,
                 K = K,
                 readings = readings,
-                comment = "Счетчик $serialNumber потребителя $consumerName!!",
+                comment = "Счетчик $serialNumber потребителя $organizationName!!",
                 importOrder = ++counterImportPos
             )
 
@@ -88,26 +88,26 @@ private fun syntheticData(nOfConsumers: Int): List<Organization> {
             id = -1,
             orgStructureUnitId = -1,
             orgStructureUnit = null,
-            name = consumerName,
-            comment = "this is consumer №$consumerPos",
+            name = organizationName,
+            comment = "this is organization №$organizationPos",
             counters = counters.toMutableList(),
-            importOrder = consumerPos
+            importOrder = organizationPos
         )
     }
 }
 
-private fun insertAll(dbDir: String, dbName: String, consumers: List<Organization>) {
+private fun insertAll(dbDir: String, dbName: String, organizations: List<Organization>) {
     val dc = DbInstance(dbDir, dbName)
         .get(recreate = true)
         .let { DataContext(it) }
 
     transaction(dc) {
-        dc.insertAll(consumers)
+        dc.insertAll(organizations)
     }
 
     transaction(dc) {
-        val allConsumers = dc.loadAll()
-        allConsumers.size.log()
+        val allOrganizations = dc.loadAll()
+        allOrganizations.size.log()
     }
 }
 

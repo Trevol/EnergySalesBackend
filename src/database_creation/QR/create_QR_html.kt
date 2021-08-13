@@ -18,10 +18,10 @@ fun main() {
         .get(recreate = false)
         .let { DataContext(it) }
 
-    val consumers = transaction(dc) {
+    val organizations = transaction(dc) {
         dc.loadAll()
     }
-    val counters = consumers.flatMap { it.counters }.sortedBy { it.importOrder }
+    val counters = organizations.flatMap { it.counters }.sortedBy { it.importOrder }
 
     val size = 256
     val qrCodeWriter = QRCodeWriter()
@@ -31,16 +31,16 @@ fun main() {
     }
 
     counters.forEach { counter ->
-        val consumer = consumers.first { consumer -> consumer.id == counter.organizationId }
-        toHtmlSticker(counter, consumer).println()
+        val organization = organizations.first { org -> org.id == counter.organizationId }
+        toHtmlSticker(counter, organization).println()
     }
 
 }
 
-private fun toHtmlSticker(counter: Counter, consumer: Organization): String {
+private fun toHtmlSticker(counter: Counter, organization: Organization): String {
 return "<div class=\"sticker\">" +
-        "<div class=\"consumer\">" +
-        consumer.name +
+        "<div class=\"organization\">" +
+        organization.name +
         "</div>" +
         "<img class=\"qr\" src=\"qr/${counter.serialNumber}.png\" alt=\"123\"/>" +
         "<div class=\"id\">" +
@@ -50,8 +50,8 @@ return "<div class=\"sticker\">" +
 }
 /*
 <div class="sticker">   
-        <div class="consumer">
-            Consumer Consumer Consumer
+        <div class="organization">
+            Organization Organization Organization
         </div>
         <img class="qr" src="qr/00227.png" alt="123"/>
         <div class="id">

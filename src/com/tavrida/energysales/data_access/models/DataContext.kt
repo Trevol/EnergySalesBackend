@@ -67,17 +67,17 @@ class DataContext(val db: Database) : IDataContext {
     }
 
     override fun loadAll() = transaction(db) {
-        val consumerRows = OrganizationsTable.selectAll()
+        val organizationRows = OrganizationsTable.selectAll()
             .orderBy(OrganizationsTable.importOrder)
             .toList()
-        if (consumerRows.isEmpty()) {
+        if (organizationRows.isEmpty()) {
             listOf()
         } else {
             val counterRows = CountersTable.selectAll()
                 .orderBy(CountersTable.importOrder)
                 .toList()
             val readingRows = CounterReadingsTable.selectAll().toList()
-            connectConsumerEntities(consumerRows, counterRows, readingRows)
+            connectOrganizationEntities(organizationRows, counterRows, readingRows)
         }
     }
 
@@ -125,12 +125,12 @@ class DataContext(val db: Database) : IDataContext {
         }
     }
 
-    private fun connectConsumerEntities(
-        consumerRows: List<ResultRow>,
+    private fun connectOrganizationEntities(
+        organizationRows: List<ResultRow>,
         countersRows: List<ResultRow>,
         readingRows: List<ResultRow>
     ): List<Organization> {
-        if (consumerRows.isEmpty())
+        if (organizationRows.isEmpty())
             return listOf()
 
         val readings = readingRows.map {
@@ -162,15 +162,15 @@ class DataContext(val db: Database) : IDataContext {
             )
         }
 
-        return consumerRows.map {
+        return organizationRows.map {
             val t = OrganizationsTable
-            val consumerId = it[t.id].value
+            val organizationId = it[t.id].value
             Organization(
-                id = consumerId,
+                id = organizationId,
                 orgStructureUnitId = it[t.orgStructureUnitId].value,
                 orgStructureUnit = null,
                 name = it[t.name],
-                counters = counters.filter { it.organizationId == consumerId }.toMutableList(),
+                counters = counters.filter { it.organizationId == organizationId }.toMutableList(),
                 comment = it[t.comment],
                 importOrder = it[t.importOrder]
             )

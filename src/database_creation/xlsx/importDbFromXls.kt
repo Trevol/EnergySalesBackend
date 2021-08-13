@@ -39,11 +39,11 @@ private fun List<OrganizationsXlsReader.Record>.toOrganizations(
     prevReadingTime: LocalDateTime,
     currentReadingTime: LocalDateTime
 ): List<Organization> {
-    val consumers = mutableListOf<Organization>()
+    val organizations = mutableListOf<Organization>()
     val recs = this.toMutableList()
     while (recs.isNotEmpty()) {
         val rec = recs.removeAt(0)
-        assert(rec.consumer.isNotEmpty())
+        assert(rec.organization.isNotEmpty())
         assert(rec.serialNumber.isNotEmpty())
 
         // предыдущие - за апрель
@@ -80,38 +80,38 @@ private fun List<OrganizationsXlsReader.Record>.toOrganizations(
             importOrder = rec.importOrder
         )
 
-        var consumer = null as Organization?
-        var newConsumer = false
+        var organization = null as Organization?
+        var newOrganization = false
         if (rec.group != null) {
-            consumer = consumers.firstOrNull { it.name == rec.consumer }
+            organization = organizations.firstOrNull { it.name == rec.organization }
         }
 
-        if (consumer == null) {
-            consumer = Organization(
+        if (organization == null) {
+            organization = Organization(
                 id = -1,
                 orgStructureUnitId = -1,
                 orgStructureUnit = null,
-                name = rec.consumer,
+                name = rec.organization,
                 counters = mutableListOf(),
                 comment = null,
                 importOrder = rec.importOrder
             )
-            newConsumer = true
+            newOrganization = true
         }
 
-        consumer.counters.add(counter)
+        organization.counters.add(counter)
 
-        if (newConsumer) {
-            val existingConsumerWithName = consumers.firstOrNull { it.name == consumer.name }
-            if (existingConsumerWithName != null) {
-                throw Exception("Consumer with name ${consumer.name} already exists with id ${existingConsumerWithName.id}")
+        if (newOrganization) {
+            val existingOrganizationWithName = organizations.firstOrNull { it.name == organization.name }
+            if (existingOrganizationWithName != null) {
+                throw Exception("Organization with name ${organization.name} already exists with id ${existingOrganizationWithName.id}")
             }
 
-            consumers.add(consumer)
+            organizations.add(organization)
         }
     }
 
-    return consumers
+    return organizations
 }
 
 

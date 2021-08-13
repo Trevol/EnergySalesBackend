@@ -25,7 +25,7 @@ class CounterReadingUIController(private val dataContext: DataContext) {
 
                 tableFor(items,
                     "#" to { it.importOrder },
-                    "Наименование" to { it.consumerName },
+                    "Наименование" to { it.organizationName },
                     "К трансф" to {
                         style = "text-align:center"
                         it.K
@@ -78,7 +78,7 @@ class CounterReadingUIController(private val dataContext: DataContext) {
 
         val config: List<Pair<String, (CounterReadingRecord) -> Any>> = listOf(
             "#" to { it.importOrder },
-            "Наименование" to { it.consumerName },
+            "Наименование" to { it.organizationName },
             "К трансф" to {
                 it.K
             },
@@ -124,7 +124,7 @@ class CounterReadingUIController(private val dataContext: DataContext) {
 
         private data class CounterReadingRecord(
             val importOrder: Int,
-            val consumerName: String,
+            val organizationName: String,
             val prevReading: String,
             val currentReading: String,
             val currentReadingDateTime: String,
@@ -138,21 +138,20 @@ class CounterReadingUIController(private val dataContext: DataContext) {
         private fun DataContext.loadReadings(): List<CounterReadingRecord> = let { dc ->
             transaction(dc) {
                 dc.loadAll()
-                    .flatMap { consumer ->
-                        consumer.counters.map { counter ->
-                            toRecord(consumer, counter)
+                    .flatMap { organization ->
+                        organization.counters.map { counter ->
+                            toRecord(organization, counter)
                         }
                     }
-                // уже должен быть отсортирован
-                //.sortedBy { it.importOrder }
+                // уже должен быть отсортирован по importOrder
             }
         }
 
-        private fun toRecord(consumer: Organization, counter: Counter): CounterReadingRecord {
+        private fun toRecord(organization: Organization, counter: Counter): CounterReadingRecord {
             val recentReading = counter.recentReading
             return CounterReadingRecord(
                 importOrder = counter.importOrder,
-                consumerName = consumer.name,
+                organizationName = organization.name,
                 prevReading = counter.prevReading(LocalDate.now())?.reading.noTrailingZero(),
                 currentReading = recentReading?.reading.noTrailingZero(),
                 currentReadingDateTime = recentReading?.readingTime?.format(dateTimeFormatter).orEmpty(),

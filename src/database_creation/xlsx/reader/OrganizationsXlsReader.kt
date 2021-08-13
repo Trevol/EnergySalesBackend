@@ -10,7 +10,7 @@ import java.lang.Exception
 
 object OrganizationsXlsReader {
     data class Record(
-        val consumer: String,
+        val organization: String,
         val prevReading: Double,
         val currentReading: Double,
         val K: Double,
@@ -32,7 +32,7 @@ object OrganizationsXlsReader {
                         break
                     }
                     Record(
-                        consumer = row.consumer(),
+                        organization = row.organization(),
                         prevReading = row.prevReading(),
                         currentReading = row.currentReading(),
                         K = row.K(),
@@ -48,13 +48,13 @@ object OrganizationsXlsReader {
     }
 
     private enum class Column {
-        Consumer, PrevReading, CurrentReading, K, /*Consumption,*/ SerialNumber, Notes, Group
+        Organization, PrevReading, CurrentReading, K, /*Consumption,*/ SerialNumber, Notes, Group
     }
 
     private fun Row.cell(col: Column) = getCell(col.ordinal)
     private fun Row.value(col: Column): Any? = cell(col)?.value()
 
-    private fun Row.consumer(): String = value(Column.Consumer) as String
+    private fun Row.organization(): String = value(Column.Organization) as String
     private fun Row.prevReading(): Double = value(Column.PrevReading) as Double
     private fun Row.currentReading(): Double = value(Column.CurrentReading) as Double
     private fun Row.K(): Double = value(Column.K) as Double

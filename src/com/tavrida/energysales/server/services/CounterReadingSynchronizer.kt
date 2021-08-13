@@ -10,9 +10,9 @@ import java.time.LocalDateTime
 
 class CounterReadingSynchronizer(private val dataContext: DataContext) {
 
-    fun getRecentData(): List<ConsumerData> {
+    fun getRecentData(): List<OrganizationData> {
         return dataContext.loadAll()
-            .map { it.toConsumerData() }
+            .map { it.toOrganizationData() }
     }
 
     fun uploadReadings(items: List<CounterReadingItem>): List<CounterReadingIdMapping> {
@@ -61,8 +61,8 @@ class CounterReadingSynchronizer(private val dataContext: DataContext) {
     }
 }
 
-private fun Organization.toConsumerData(): ConsumerData {
-    return ConsumerData(
+private fun Organization.toOrganizationData(): OrganizationData {
+    return OrganizationData(
         id = id,
         name = name,
         counters = counters.map { it.toCounterData() },
@@ -75,7 +75,7 @@ private fun Counter.toCounterData(): CounterData {
     return CounterData(
         id = id,
         serialNumber = serialNumber,
-        consumerId = organizationId,
+        organizationId = organizationId,
         K = K,
         prevReading = prevReadingData(),
         comment = comment,

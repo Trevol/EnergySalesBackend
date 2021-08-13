@@ -15,8 +15,8 @@ private fun main() {
             File(it).mkdirs()
         }
     val dbName = "ENERGY_SALES_TEST_$currentDateStamp"
-    val consumers = testData()
-    insertAll(dbDir, dbName, consumers)
+    val organizations = testData()
+    insertAll(dbDir, dbName, organizations)
 }
 
 private fun testData(): List<Organization> {
@@ -66,31 +66,31 @@ private fun testData(): List<Organization> {
         comment = "",
         importOrder = 1
     )
-    val consumer = Organization(
+    val organization = Organization(
         id = -1,
         orgStructureUnitId = -1,
         orgStructureUnit = null,
-        name = "TestConsumer",
+        name = "TestOrganization",
         comment = "",
         counters = mutableListOf(counter),
         importOrder = 1
     )
 
-    return listOf(consumer)
+    return listOf(organization)
 }
 
-private fun insertAll(dbDir: String, dbName: String, consumers: List<Organization>) {
+private fun insertAll(dbDir: String, dbName: String, organizations: List<Organization>) {
     val dc = DbInstance(dbDir, dbName)
         .get(recreate = true)
         .let { DataContext(it) }
 
     transaction(dc) {
-        dc.insertAll(consumers)
+        dc.insertAll(organizations)
     }
 
     transaction(dc) {
-        val allConsumers = dc.loadAll()
-        allConsumers.size.log()
+        val allOrganizations = dc.loadAll()
+        allOrganizations.size.log()
     }
 }
 
