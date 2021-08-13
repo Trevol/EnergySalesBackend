@@ -50,7 +50,7 @@ private fun List<OrganizationsXlsReader.Record>.toOrganizations(
         val counter = Counter(
             id = -1,
             serialNumber = rec.serialNumber,
-            consumerId = -1,
+            organizationId = -1,
             K = rec.K,
             readings = listOf(
                 CounterReading(

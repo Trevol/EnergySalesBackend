@@ -31,7 +31,7 @@ fun main() {
     }
 
     counters.forEach { counter ->
-        val consumer = consumers.first { consumer -> consumer.id == counter.consumerId }
+        val consumer = consumers.first { consumer -> consumer.id == counter.organizationId }
         toHtmlSticker(counter, consumer).println()
     }
 

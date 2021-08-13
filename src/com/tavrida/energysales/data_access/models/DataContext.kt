@@ -154,7 +154,7 @@ class DataContext(val db: Database) : IDataContext {
             Counter(
                 id = counterId,
                 serialNumber = it[t.serialNumber],
-                consumerId = it[t.organizationId].value,
+                organizationId = it[t.organizationId].value,
                 K = it[t.K],
                 readings = readings.filter { it.counterId == counterId },
                 comment = it[t.comment],
@@ -170,7 +170,7 @@ class DataContext(val db: Database) : IDataContext {
                 orgStructureUnitId = it[t.orgStructureUnitId].value,
                 orgStructureUnit = null,
                 name = it[t.name],
-                counters = counters.filter { it.consumerId == consumerId }.toMutableList(),
+                counters = counters.filter { it.organizationId == consumerId }.toMutableList(),
                 comment = it[t.comment],
                 importOrder = it[t.importOrder]
             )

@@ -10,7 +10,7 @@ private const val recencyDaysThreshold = 7
 data class Counter(
     val id: Int,
     val serialNumber: String,
-    val consumerId: Int,
+    val organizationId: Int,
     val K: Double,
     val readings: List<CounterReading>,
     val comment: String? = null,

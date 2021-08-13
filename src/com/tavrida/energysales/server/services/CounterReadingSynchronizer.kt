@@ -75,7 +75,7 @@ private fun Counter.toCounterData(): CounterData {
     return CounterData(
         id = id,
         serialNumber = serialNumber,
-        consumerId = consumerId,
+        consumerId = organizationId,
         K = K,
         prevReading = prevReadingData(),
         comment = comment,

@@ -60,7 +60,7 @@ private fun testData(): List<Organization> {
     val counter = Counter(
         id = -1,
         serialNumber = "111111",
-        consumerId = -1,
+        organizationId = -1,
         K = 1.0,
         readings = listOf(reading_21_05_01, reading_21_06_01, reading_21_06_30),
         comment = "",

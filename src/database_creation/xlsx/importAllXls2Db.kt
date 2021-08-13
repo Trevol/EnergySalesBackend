@@ -97,7 +97,7 @@ private class Importer(val config: ImportConfig) {
                         Counter(
                             id = -1,
                             serialNumber = it.serialNumber,
-                            consumerId = -1,
+                            organizationId = -1,
                             K = it.K,
                             readings = listOf(
 

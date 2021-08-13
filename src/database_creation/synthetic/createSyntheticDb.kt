@@ -75,7 +75,7 @@ private fun syntheticData(nOfConsumers: Int): List<Organization> {
             Counter(
                 id = -1,
                 serialNumber = serialNumber,
-                consumerId = -1,
+                organizationId = -1,
                 K = K,
                 readings = readings,
                 comment = "Счетчик $serialNumber потребителя $consumerName!!",
