@@ -16,20 +16,3 @@ class LastDayOfMonthTest {
         LocalDate.of(2020, 2, 1).with(TemporalAdjusters.lastDayOfMonth()) shouldBe LocalDate.of(2020, 2, 29)
     }
 }
-
-class DurationHoursTest {
-    @Test
-    fun calc() {
-        val now = LocalDateTime.now()
-        val someDurationLater = now.plusMinutes(140)
-        val msInSomeDuration = ChronoUnit.MILLIS.between(now, someDurationLater)
-        (msInSomeDuration / msInHour).println()
-
-        (Duration.between(now, someDurationLater).toMillis() / msInHour).println()
-    }
-
-    companion object {
-        const val msInHour = 60 * 60 * 1000.0 //  minInHour * secsInMin * msInSec
-    }
-}
-

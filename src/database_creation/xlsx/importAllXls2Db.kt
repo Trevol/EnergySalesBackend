@@ -1,13 +1,10 @@
 package database_creation.xlsx
 
 import com.tavrida.energysales.data_access.dbmodel.tables.OrganizationStructureUnits
-import com.tavrida.energysales.data_access.models.DataContext
-import com.tavrida.energysales.data_access.models.Organization
-import com.tavrida.energysales.data_access.models.OrganizationStructureUnit
+import com.tavrida.energysales.data_access.models.*
 import database_creation.xlsx.reader.OrganizationsWithStructureXlsReader
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
-import com.tavrida.energysales.data_access.models.transaction
 import database_creation.utils.println
 import java.io.File
 import java.time.LocalDateTime
@@ -87,8 +84,40 @@ private class Importer(val config: ImportConfig) {
         if (organizations.isNotEmpty()) {
             TODO()
         }
-        orgCounterReadingRecs.groupBy { it.group }
-        TODO("Test group by null")
+
+        orgCounterReadingRecs
+            .filter { it.group == null }
+            .map {
+                Organization(
+                    id = -1,
+                    orgStructureUnitId = it.orgStructureUnitId,
+                    orgStructureUnit = orgStructureUnits.byId(it.orgStructureUnitId),
+                    name = it.organizationName,
+                    counters = mutableListOf(
+                        Counter(
+                            id = -1,
+                            serialNumber = it.serialNumber,
+                            consumerId = -1,
+                            K = it.K,
+                            readings = listOf(
+
+                            ),
+                            comment = it.notes,
+                            importOrder = it.importOrder
+                        )
+                    ),
+                    comment = null,
+                    importOrder = it.importOrder
+                )
+            }
+
+        orgCounterReadingRecs
+            .filter { it.group != null }
+            .groupBy { it.group!! }
+            .flatMap { entry ->
+                listOf<Organization>()
+            }
+        TODO("Test groupBy null")
 
     }
 
@@ -107,6 +136,10 @@ private class Importer(val config: ImportConfig) {
 
     companion object {
         fun List<OrganizationStructureUnit>.byId(id: Int) = first { it.id == id }
+
+        private fun OrganizationsWithStructureXlsReader.OrganizationCounterReadingRecord.toOrganizationWithCounter(): Organization {
+            TODO("Not yet implemented")
+        }
     }
 }
 

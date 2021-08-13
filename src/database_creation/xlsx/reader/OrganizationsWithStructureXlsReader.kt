@@ -11,7 +11,7 @@ import kotlin.Exception
 
 object OrganizationsWithStructureXlsReader {
     data class OrganizationCounterReadingRecord(
-        val consumer: String,
+        val organizationName: String,
         val prevReading: Double,
         val currentReading: Double,
         val K: Double,
@@ -49,7 +49,7 @@ object OrganizationsWithStructureXlsReader {
 
                         yield(
                             OrganizationCounterReadingRecord(
-                                consumer = row.organization(),
+                                organizationName = row.organization(),
                                 prevReading = row.prevReading(),
                                 currentReading = row.currentReading(),
                                 K = row.K(),
