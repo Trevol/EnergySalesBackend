@@ -46,3 +46,27 @@ fun timestampedDb(
     return DbInstance(dbDir, dbName)
         .get(recreate = true)
 }
+
+inline fun checkNotEmpty(value: String) {
+    if (value.isEmpty()) {
+        throw AssertionError("value is empty")
+    }
+}
+
+@JvmName("checkNotEmptyExt")
+inline fun String.checkNotEmpty() = checkNotEmpty(this)
+
+inline fun <T> checkNotEmpty(value: Collection<T>) {
+    if (value.isEmpty()) {
+        throw AssertionError("value is empty")
+    }
+}
+
+@JvmName("checkNotEmptyExt")
+inline fun <T> Collection<T>.checkNotEmpty() = checkNotEmpty(this)
+
+inline fun checkIsTrue(value: Boolean){
+    if (!value){
+        throw AssertionError("value should be true")
+    }
+}

@@ -2,6 +2,8 @@ package database_creation.xlsx
 
 import com.tavrida.energysales.data_access.dbmodel.tables.OrganizationStructureUnits
 import com.tavrida.energysales.data_access.models.*
+import database_creation.utils.checkIsTrue
+import database_creation.utils.checkNotEmpty
 import database_creation.xlsx.reader.OrganizationsWithStructureXlsReader
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -11,6 +13,7 @@ import java.time.LocalDateTime
 import java.time.Month
 
 typealias TimeAndFile = Pair<LocalDateTime, File>
+typealias OrganizationCounterReadingRecord = OrganizationsWithStructureXlsReader.OrganizationCounterReadingRecord
 
 fun main() {
     val baseDir = File("./databases/xlsx/import_all")
@@ -79,7 +82,7 @@ private class Importer(val config: ImportConfig) {
         organizations: MutableList<Organization>,
         orgStructureUnits: List<OrganizationStructureUnit>,
         readingTime: LocalDateTime,
-        orgCounterReadingRecs: List<OrganizationsWithStructureXlsReader.OrganizationCounterReadingRecord>
+        orgCounterReadingRecs: List<OrganizationCounterReadingRecord>
     ) {
         if (organizations.isNotEmpty()) {
             TODO()
@@ -88,38 +91,17 @@ private class Importer(val config: ImportConfig) {
         orgCounterReadingRecs
             .filter { it.group == null }
             .map {
-                Organization(
-                    id = -1,
-                    orgStructureUnitId = it.orgStructureUnitId,
-                    orgStructureUnit = orgStructureUnits.byId(it.orgStructureUnitId),
-                    name = it.organizationName,
-                    counters = mutableListOf(
-                        Counter(
-                            id = -1,
-                            serialNumber = it.serialNumber,
-                            organizationId = -1,
-                            K = it.K,
-                            readings = listOf(
-
-                            ),
-                            comment = it.notes,
-                            importOrder = it.importOrder
-                        )
-                    ),
-                    comment = null,
-                    importOrder = it.importOrder
-                )
+                it.toOrganizationWithCounter(orgStructureUnits, readingTime)
             }
-
         orgCounterReadingRecs
             .filter { it.group != null }
             .groupBy { it.group!! }
-            .flatMap { entry ->
-                listOf<Organization>()
+            .map { entry ->
+                entry.value.toOrganizationWithCounters(orgStructureUnits, readingTime)
             }
-        TODO("Test groupBy null")
-
+        checkNameDuplicates()
     }
+
 
     private fun DataContext.saveOrgStructure(orgStructureUnits: List<OrganizationStructureUnit>) {
         transaction(this.db) {
@@ -135,10 +117,70 @@ private class Importer(val config: ImportConfig) {
     }
 
     companion object {
+        fun List<Organization>.checkNameDuplicates() {
+            TODO()
+        }
+
         fun List<OrganizationStructureUnit>.byId(id: Int) = first { it.id == id }
 
-        private fun OrganizationsWithStructureXlsReader.OrganizationCounterReadingRecord.toOrganizationWithCounter(): Organization {
-            TODO("Not yet implemented")
+        private fun OrganizationCounterReadingRecord.toCounter(
+            readingTime: LocalDateTime
+        ): Counter {
+            serialNumber.checkNotEmpty()
+            return Counter(
+                id = -1,
+                serialNumber = serialNumber,
+                organizationId = -1,
+                K = K,
+                readings = listOf(
+                    CounterReading(
+                        id = -1,
+                        counterId = -1,
+                        reading = currentReading,
+                        readingTime = readingTime,
+                        user = "Саша",
+                        comment = null,
+                        synchronized = false,
+                        syncTime = null,
+                        serverId = null
+                    )
+                ),
+                comment = notes,
+                importOrder = importOrder
+            )
+
+        }
+
+        private fun OrganizationCounterReadingRecord.toOrganizationWithCounter(
+            orgStructureUnits: List<OrganizationStructureUnit>,
+            readingTime: LocalDateTime
+        ): Organization {
+            organizationName.checkNotEmpty()
+            serialNumber.checkNotEmpty()
+            return Organization(
+                id = -1,
+                orgStructureUnitId = orgStructureUnitId,
+                orgStructureUnit = orgStructureUnits.byId(orgStructureUnitId),
+                name = organizationName,
+                counters = mutableListOf(toCounter(readingTime)),
+                comment = null,
+                importOrder = importOrder
+            )
+
+        }
+
+
+        private fun List<OrganizationCounterReadingRecord>.toOrganizationWithCounters(
+            orgStructureUnits: List<OrganizationStructureUnit>,
+            readingTime: LocalDateTime
+        ): Organization {
+            checkIsTrue(orgStructureUnits.size > 1)
+            return get(0).toOrganizationWithCounter(orgStructureUnits, readingTime)
+                .apply {
+                    counters.addAll(
+                        drop(1).map { it.toCounter(readingTime) }
+                    )
+                }
         }
     }
 }
