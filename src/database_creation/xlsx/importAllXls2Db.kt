@@ -4,6 +4,7 @@ import com.tavrida.energysales.data_access.dbmodel.tables.OrganizationStructureU
 import com.tavrida.energysales.data_access.models.*
 import database_creation.utils.checkIsTrue
 import database_creation.utils.checkNotEmpty
+import database_creation.utils.dataContextWithTimestampedDb
 import database_creation.xlsx.reader.OrganizationsWithStructureXlsReader
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -24,11 +25,18 @@ fun main() {
             // LocalDateTime.of(2021, Month.JUNE, 1, 12, 22, 15) to File(baseDir, "import 21.05.xlsx")
         )
     )
+
     val orgAndStruct = Importer(config).xlsToOrganizationsAndStructure()
     orgAndStruct.structure.size.println()
+    orgAndStruct.organizations.size.println()
+    orgAndStruct.organizations.flatMap { it.counters }.size.println()
 
     /*val dc = dataContextWithTimestampedDb(databasesDir = "./databases", dbNameSuffix = "xls_ALL")
-    Importer(config).xlsToOrganizationsAndStructureToDb(dc)*/
+    Importer(config).xlsToOrganizationsAndStructureToDb(dc)
+    dc.loadAll().run {
+        size.println()
+        flatMap { it.counters }.size.println()
+    }*/
 }
 
 
@@ -64,7 +72,7 @@ private class Importer(val config: ImportConfig) {
         val organizations = mutableListOf<Organization>()
 
         config.timeToReadings
-            .sortedBy { (time, readingsFile) -> time } // сначала
+            .sortedBy { (time, readingsFile) -> time } // сначала сохраняются старые записи
             .map { (time, readingsFile) ->
                 time to OrganizationsWithStructureXlsReader.readOrganizations(
                     readingsFile,
@@ -88,18 +96,20 @@ private class Importer(val config: ImportConfig) {
             TODO()
         }
 
-        orgCounterReadingRecs
+        val organizationsWithOneCounter = orgCounterReadingRecs
             .filter { it.group == null }
             .map {
                 it.toOrganizationWithCounter(orgStructureUnits, readingTime)
             }
-        orgCounterReadingRecs
+        val organizationsWithManyCounters = orgCounterReadingRecs
             .filter { it.group != null }
             .groupBy { it.group!! }
             .map { entry ->
                 entry.value.toOrganizationWithCounters(orgStructureUnits, readingTime)
             }
-        checkNameDuplicates()
+        organizations.addAll(organizationsWithOneCounter)
+        organizations.addAll(organizationsWithManyCounters)
+        organizations.checkNameDuplicates()
     }
 
 
@@ -118,7 +128,12 @@ private class Importer(val config: ImportConfig) {
 
     companion object {
         fun List<Organization>.checkNameDuplicates() {
-            TODO()
+            val duplicatedNames = groupBy { it.name }
+                .filter { it.value.size > 1 }
+                .map { it.key }
+            if (duplicatedNames.isNotEmpty()) {
+                throw Exception("Organizations with duplicated names found: $duplicatedNames")
+            }
         }
 
         fun List<OrganizationStructureUnit>.byId(id: Int) = first { it.id == id }
