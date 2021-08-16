@@ -28,14 +28,14 @@ private fun syntheticData(nOfOrganizations: Int): List<Organization> {
         counterPos: Int,
         serialNumber: String,
         K: Double
-    ): List<CounterReading> {
+    ): MutableList<CounterReading> {
         val (monthAgo, twoMonthAgo) = LocalDateTime.now().let { now ->
             listOf(now.minusMonths(1), now.minusMonths(2))
         }
 
         val readingMonthAgo = organizationPos * 100.0
         val readingDeltaForMonth = organizationPos * 10.0 + counterPos
-        val readings = listOf(
+        val readings = mutableListOf(
             CounterReading(
                 id = -1,
                 counterId = -1,

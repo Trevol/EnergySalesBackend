@@ -1,6 +1,6 @@
 package com.tavrida.energysales.data_access
 
-import com.tavrida.energysales.data_access.dbmodel.tables.allTables
+import com.tavrida.energysales.data_access.tables.allTables
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction

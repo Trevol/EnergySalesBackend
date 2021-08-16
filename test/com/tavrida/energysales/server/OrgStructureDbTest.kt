@@ -1,9 +1,7 @@
 package com.tavrida.energysales.server
 
-import com.tavrida.energysales.data_access.DatabaseInstance
-import com.tavrida.energysales.data_access.dbmodel.tables.OrganizationStructureUnits
+import com.tavrida.energysales.data_access.tables.OrganizationStructureUnits
 import database_creation.DbInstance
-import database_creation.utils.print
 import database_creation.utils.println
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll

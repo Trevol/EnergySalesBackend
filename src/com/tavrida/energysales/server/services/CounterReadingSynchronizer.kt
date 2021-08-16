@@ -1,6 +1,6 @@
 package com.tavrida.energysales.server.services
 
-import com.tavrida.energysales.data_access.dbmodel.tables.CounterReadingsTable
+import com.tavrida.energysales.data_access.tables.CounterReadingsTable
 import com.tavrida.energysales.data_access.models.*
 import com.tavrida.energysales.api.data_contract.*
 import com.tavrida.utils.log

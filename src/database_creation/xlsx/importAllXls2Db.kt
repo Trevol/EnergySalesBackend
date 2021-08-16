@@ -1,10 +1,9 @@
 package database_creation.xlsx
 
-import com.tavrida.energysales.data_access.dbmodel.tables.OrganizationStructureUnits
+import com.tavrida.energysales.data_access.tables.OrganizationStructureUnits
 import com.tavrida.energysales.data_access.models.*
 import database_creation.utils.checkIsTrue
 import database_creation.utils.checkNotEmpty
-import database_creation.utils.dataContextWithTimestampedDb
 import database_creation.xlsx.reader.OrganizationsWithStructureXlsReader
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -16,13 +15,14 @@ import java.time.Month
 typealias TimeAndFile = Pair<LocalDateTime, File>
 typealias OrganizationCounterReadingRecord = OrganizationsWithStructureXlsReader.OrganizationCounterReadingRecord
 
+
 fun main() {
     val baseDir = File("./databases/xlsx/import_all")
     val config = Importer.ImportConfig(
         orgStructureFile = File(baseDir, "org_units.xlsx"),
         timeToReadings = listOf(
             LocalDateTime.of(2021, Month.JULY, 1, 11, 30, 33) to File(baseDir, "import 21.06.xlsx"),
-            // LocalDateTime.of(2021, Month.JUNE, 1, 12, 22, 15) to File(baseDir, "import 21.05.xlsx")
+            LocalDateTime.of(2021, Month.JUNE, 1, 12, 22, 15) to File(baseDir, "import 21.05.xlsx")
         )
     )
 
@@ -69,10 +69,10 @@ private class Importer(val config: ImportConfig) {
             firstRowContainsHeader = true
         )
 
-        val organizations = mutableListOf<Organization>()
+        val resultingOrganizations = mutableListOf<Organization>()
 
         config.timeToReadings
-            .sortedBy { (time, readingsFile) -> time } // сначала сохраняются старые записи
+            .sortedByDescending { (time, readingsFile) -> time } // сначала обрабатываются новые файлы (актуальные организации)
             .map { (time, readingsFile) ->
                 time to OrganizationsWithStructureXlsReader.readOrganizations(
                     readingsFile,
@@ -80,36 +80,48 @@ private class Importer(val config: ImportConfig) {
                 )
             }
             .forEach { (readingTime, orgCounterReadingRecs) ->
-                mergeOrganizationsReadings(organizations, orgStructureUnits, readingTime, orgCounterReadingRecs)
+                val currentOrganizations = orgCounterReadingRecs.toOrganizations(orgStructureUnits, readingTime)
+                currentOrganizations.checkNameDuplicates()
+                mergeOrganizationsReadings(resultingOrganizations, currentOrganizations)
             }
 
-        return OrganizationsAndStructure(organizations, orgStructureUnits)
+        return OrganizationsAndStructure(resultingOrganizations, orgStructureUnits)
     }
 
     fun mergeOrganizationsReadings(
-        organizations: MutableList<Organization>,
-        orgStructureUnits: List<OrganizationStructureUnit>,
-        readingTime: LocalDateTime,
-        orgCounterReadingRecs: List<OrganizationCounterReadingRecord>
+        resultingOrganizations: MutableList<Organization>,
+        currentOrganizations: List<Organization>
     ) {
-        if (organizations.isNotEmpty()) {
-            TODO()
+        val subsequentMerge = resultingOrganizations.isNotEmpty()
+        fun String.log() {
+            if (subsequentMerge) {
+                println()
+            }
         }
+        "----------------".log()
+        for (currentOrg in currentOrganizations) {
+            val matchedOrg = resultingOrganizations.firstOrNull { it.name == currentOrg.name }
+            if (matchedOrg == null) {
+                resultingOrganizations.add(currentOrg)
+                "Organization ${currentOrg.name} added".log()
+            } else {
+                currentOrg.counters.forEach { curCounter ->
+                    checkIsTrue(curCounter.readings.size == 1)
+                    val counter = matchedOrg.counters.firstOrNull { it.serialNumber == curCounter.serialNumber }
+                        ?: TODO("Counter not found. Organization: ${matchedOrg.name}. SerialNumber: ${curCounter.serialNumber}")
+                    counter.readings.add(curCounter.readings.first())
+                }
+            }
+        }
+        resultingOrganizations.checkNameDuplicates()
+    }
 
-        val organizationsWithOneCounter = orgCounterReadingRecs
-            .filter { it.group == null }
-            .map {
-                it.toOrganizationWithCounter(orgStructureUnits, readingTime)
-            }
-        val organizationsWithManyCounters = orgCounterReadingRecs
-            .filter { it.group != null }
-            .groupBy { it.group!! }
-            .map { entry ->
-                entry.value.toOrganizationWithCounters(orgStructureUnits, readingTime)
-            }
-        organizations.addAll(organizationsWithOneCounter)
-        organizations.addAll(organizationsWithManyCounters)
-        organizations.checkNameDuplicates()
+    fun mergeOrganizationsReadings2(
+        resultingOrganizations: MutableList<Organization>,
+        currentOrganizations: List<Organization>
+    ) {
+
+        TODO("Start with newer file (contains new organizations), but readings insert in chronological order (from older to newer)")
     }
 
 
@@ -147,7 +159,7 @@ private class Importer(val config: ImportConfig) {
                 serialNumber = serialNumber,
                 organizationId = -1,
                 K = K,
-                readings = listOf(
+                readings = mutableListOf(
                     CounterReading(
                         id = -1,
                         counterId = -1,
@@ -164,6 +176,22 @@ private class Importer(val config: ImportConfig) {
                 importOrder = importOrder
             )
 
+        }
+
+        private fun List<OrganizationCounterReadingRecord>.toOrganizations(
+            orgStructureUnits: List<OrganizationStructureUnit>,
+            readingTime: LocalDateTime
+        ): List<Organization> {
+            val organizationsWithOneCounter = filter { it.group == null }
+                .map {
+                    it.toOrganizationWithCounter(orgStructureUnits, readingTime)
+                }
+            val organizationsWithManyCounters = filter { it.group != null }
+                .groupBy { it.group!! }
+                .map { entry ->
+                    entry.value.toOrganizationWithCounters(orgStructureUnits, readingTime)
+                }
+            return organizationsWithOneCounter + organizationsWithManyCounters
         }
 
         private fun OrganizationCounterReadingRecord.toOrganizationWithCounter(

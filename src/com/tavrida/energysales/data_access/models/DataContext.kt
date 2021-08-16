@@ -1,9 +1,9 @@
 package com.tavrida.energysales.data_access.models
 
-import com.tavrida.energysales.data_access.dbmodel.tables.OrganizationsTable
-import com.tavrida.energysales.data_access.dbmodel.tables.CounterReadingsTable
-import com.tavrida.energysales.data_access.dbmodel.tables.CountersTable
-import com.tavrida.energysales.data_access.dbmodel.tables.OrganizationStructureUnits
+import com.tavrida.energysales.data_access.tables.OrganizationsTable
+import com.tavrida.energysales.data_access.tables.CounterReadingsTable
+import com.tavrida.energysales.data_access.tables.CountersTable
+import com.tavrida.energysales.data_access.tables.OrganizationStructureUnits
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -156,7 +156,7 @@ class DataContext(val db: Database) : IDataContext {
                 serialNumber = it[t.serialNumber],
                 organizationId = it[t.organizationId].value,
                 K = it[t.K],
-                readings = readings.filter { it.counterId == counterId },
+                readings = readings.filter { it.counterId == counterId }.toMutableList(),
                 comment = it[t.comment],
                 importOrder = it[t.importOrder]
             )

@@ -1,8 +1,8 @@
 package com.tavrida.energysales.energy_distribution
 
 import com.tavrida.energysales.api.data_contract.CounterReadingItem
-import com.tavrida.energysales.data_access.dbmodel.tables.CounterReadingsTable
-import com.tavrida.energysales.data_access.dbmodel.tables.CountersTable
+import com.tavrida.energysales.data_access.tables.CounterReadingsTable
+import com.tavrida.energysales.data_access.tables.CountersTable
 import com.tavrida.energysales.data_access.models.*
 import com.tavrida.utils.*
 import org.jetbrains.exposed.sql.*

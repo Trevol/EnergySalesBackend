@@ -1,6 +1,6 @@
 package database_creation
 
-import com.tavrida.energysales.data_access.dbmodel.tables.allTables
+import com.tavrida.energysales.data_access.tables.allTables
 import database_creation.utils.deleteFileInDir
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils

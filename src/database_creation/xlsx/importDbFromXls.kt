@@ -52,7 +52,7 @@ private fun List<OrganizationsXlsReader.Record>.toOrganizations(
             serialNumber = rec.serialNumber,
             organizationId = -1,
             K = rec.K,
-            readings = listOf(
+            readings = mutableListOf(
                 CounterReading(
                     id = -1,
                     counterId = -1,

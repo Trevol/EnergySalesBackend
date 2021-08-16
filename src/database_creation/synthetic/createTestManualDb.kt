@@ -62,7 +62,7 @@ private fun testData(): List<Organization> {
         serialNumber = "111111",
         organizationId = -1,
         K = 1.0,
-        readings = listOf(reading_21_05_01, reading_21_06_01, reading_21_06_30),
+        readings = mutableListOf(reading_21_05_01, reading_21_06_01, reading_21_06_30),
         comment = "",
         importOrder = 1
     )

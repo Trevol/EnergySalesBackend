@@ -12,7 +12,7 @@ data class Counter(
     val serialNumber: String,
     val organizationId: Int,
     val K: Double,
-    val readings: List<CounterReading>,
+    val readings: MutableList<CounterReading>,
     val comment: String? = null,
     val importOrder: Int
 ) {
