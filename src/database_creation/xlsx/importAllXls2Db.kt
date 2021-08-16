@@ -8,6 +8,8 @@ import database_creation.xlsx.reader.OrganizationsWithStructureXlsReader
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import database_creation.utils.println
+import database_creation.xlsx.OrganizationChecker.check
+import database_creation.xlsx.OrganizationChecker.checkSerialNumberDuplicates
 import java.io.File
 import java.time.LocalDateTime
 import java.time.Month
@@ -77,12 +79,12 @@ private class Importer(val config: ImportConfig) {
                 time to OrganizationsWithStructureXlsReader.readOrganizations(
                     readingsFile,
                     firstRowContainsHeader = true
-                )
+                ).also { it.checkSerialNumberDuplicates() }
             }
             .forEach { (readingTime, orgCounterReadingRecs) ->
                 val currentOrganizations = orgCounterReadingRecs.toOrganizations(orgStructureUnits, readingTime)
-                currentOrganizations.checkNameDuplicates()
-                mergeOrganizationsReadings(resultingOrganizations, currentOrganizations)
+                currentOrganizations.check()
+                mergeOrganizationsReadings2(resultingOrganizations, currentOrganizations)
             }
 
         return OrganizationsAndStructure(resultingOrganizations, orgStructureUnits)
@@ -113,14 +115,34 @@ private class Importer(val config: ImportConfig) {
                 }
             }
         }
-        resultingOrganizations.checkNameDuplicates()
+        resultingOrganizations.check()
     }
 
     fun mergeOrganizationsReadings2(
         resultingOrganizations: MutableList<Organization>,
         currentOrganizations: List<Organization>
     ) {
+        val subsequentMerge = resultingOrganizations.isNotEmpty()
+        fun String.log() {
+            if (subsequentMerge) { //
+                this.println()
+            }
+        }
 
+        "----------------".log()
+
+        for (currentOrg in currentOrganizations) {
+            // find organization by serialNumber
+            // or resultingOrganizations.findMatchingOrganization(currentOrg)
+            val matchedOrg = resultingOrganizations.bySerialNumber()
+            if (matchedOrg != null) {
+                // report (name, importOrder, serialNumber, counter.notes)  if name or
+                // add reading (in chronological order!!!!)
+            } else {
+                // add org to resultingOrganizations
+            }
+        }
+        resultingOrganizations.check()
         TODO("Start with newer file (contains new organizations), but readings insert in chronological order (from older to newer)")
     }
 
@@ -138,17 +160,11 @@ private class Importer(val config: ImportConfig) {
         }
     }
 
-    companion object {
-        fun List<Organization>.checkNameDuplicates() {
-            val duplicatedNames = groupBy { it.name }
-                .filter { it.value.size > 1 }
-                .map { it.key }
-            if (duplicatedNames.isNotEmpty()) {
-                throw Exception("Organizations with duplicated names found: $duplicatedNames")
-            }
-        }
 
+    companion object {
         fun List<OrganizationStructureUnit>.byId(id: Int) = first { it.id == id }
+        fun List<Organization>.bySerialNumber(serialNumber: String) =
+            firstOrNull { org -> org.counters.any { it.serialNumber == serialNumber } }
 
         private fun OrganizationCounterReadingRecord.toCounter(
             readingTime: LocalDateTime
