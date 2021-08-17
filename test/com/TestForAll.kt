@@ -33,10 +33,8 @@ class TestForAll {
 
     @Test
     fun listShouldBeSorted() {
-        val d = listOf(
-            listOf(1 to 2, 3 to 4),
-            listOf(11 to 22, 33 to 44, 55 to 66)
-        )
-        d.println()
+        (listOf(1, 2, 3) == listOf(1, 2, 3)).println()
+        (listOf(1, 2, 3) == listOf(1, 2, 3, 4)).println()
+        (listOf(1, 2, 3) == listOf(1, 3, 2)).println()
     }
 }

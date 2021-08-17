@@ -132,9 +132,13 @@ private class Importer(val config: ImportConfig) {
         "----------------".log()
 
         for (currentOrg in currentOrganizations) {
+            checkIsTrue(currentOrg.counters.size >= 1)
+            for (currentCounter in currentOrg.counters) {
+
+            }
             // find organization by serialNumber
             // or resultingOrganizations.findMatchingOrganization(currentOrg)
-            val matchedOrg = resultingOrganizations.bySerialNumber()
+            val matchedOrg = resultingOrganizations.bySerialNumber("TODO")
             if (matchedOrg != null) {
                 // report (name, importOrder, serialNumber, counter.notes)  if name or
                 // add reading (in chronological order!!!!)
@@ -146,6 +150,32 @@ private class Importer(val config: ImportConfig) {
         TODO("Start with newer file (contains new organizations), but readings insert in chronological order (from older to newer)")
     }
 
+    private data class OrganizationsMatchResult(
+        val matched: Organization,
+        val current: Organization,
+        val warning: String?
+    ) {
+        data class CounterMatchResult(val matched: Counter, val current: Counter)
+
+        val matchedCounters: List<CounterMatchResult> get() = _matchedCounters
+        private val _matchedCounters: MutableList<CounterMatchResult> = mutableListOf()
+
+        fun matchCounters(matched: Counter, current: Counter) =
+            _matchedCounters.add(CounterMatchResult(matched, current))
+    }
+
+    private fun List<Organization>.findMatchedOrganization(currentOrg: Organization): OrganizationsMatchResult? {
+        //поиск по набору счетчиков
+        //частичное совпадение счетчиков - выкидывать ошибку
+        //отслеживать - соврадение по имени и по примечанию счетчика
+        fun List<Counter>.isEqual(other: List<Counter>): Boolean {
+            return size == other.size && map { it.serialNumber }.sorted() == other.map { it.serialNumber }.sorted()
+        }
+
+        val matchedOrg = firstOrNull { it.counters.isEqual(currentOrg.counters) }
+
+        TODO()
+    }
 
     private fun DataContext.saveOrgStructure(orgStructureUnits: List<OrganizationStructureUnit>) {
         transaction(this.db) {
