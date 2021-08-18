@@ -1,12 +1,26 @@
-package database_creation.xlsx
+package com.tavrida.energysales.importData
 
 import com.tavrida.energysales.data_access.models.Organization
 import database_creation.xlsx.reader.OrganizationsWithStructureXlsReader
+import io.kotest.matchers.collections.shouldBeMonotonicallyIncreasing
+import io.kotest.matchers.collections.shouldBeSorted
+import io.kotest.matchers.collections.shouldBeSortedWith
+import io.kotest.matchers.collections.shouldNotBeEmpty
 
 object OrganizationChecker {
     fun List<Organization>.check() {
         checkNameDuplicates()
         checkSerialNumberDuplicates()
+        checkReadingChronologicalOrder()
+    }
+
+    private fun List<Organization>.checkReadingChronologicalOrder() {
+        forEach {
+            it.counters.forEach {
+                it.readings.shouldNotBeEmpty()
+                it.readings.map { it.readingTime }.shouldBeMonotonicallyIncreasing()
+            }
+        }
     }
 
     private fun List<Organization>.checkNameDuplicates() {
@@ -29,7 +43,7 @@ object OrganizationChecker {
     }
 
     @JvmName("checkSerialNumberDuplicatesOnListOfRecords")
-    fun List<OrganizationsWithStructureXlsReader.OrganizationCounterReadingRecord>.checkSerialNumberDuplicates(){
+    fun List<OrganizationsWithStructureXlsReader.OrganizationCounterReadingRecord>.checkSerialNumberDuplicates() {
         val duplicates = groupBy { it.serialNumber }
             .filter { it.value.size > 1 }
             .map { it.key }

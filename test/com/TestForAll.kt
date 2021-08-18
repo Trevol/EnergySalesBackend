@@ -2,11 +2,13 @@ package com
 
 import database_creation.utils.println
 import io.kotest.matchers.collections.beSortedWith
+import io.kotest.matchers.collections.shouldBeMonotonicallyIncreasing
 import io.kotest.matchers.collections.shouldBeSorted
 import io.kotest.matchers.collections.shouldBeSortedWith
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import org.junit.Test
+import java.time.LocalDateTime
 
 class TestForAll {
     @Test
@@ -33,8 +35,10 @@ class TestForAll {
 
     @Test
     fun listShouldBeSorted() {
-        (listOf(1, 2, 3) == listOf(1, 2, 3)).println()
-        (listOf(1, 2, 3) == listOf(1, 2, 3, 4)).println()
-        (listOf(1, 2, 3) == listOf(1, 3, 2)).println()
+        val l = mutableListOf<Int>()
+        l.add(0, 1)
+        l.add(1, 2)
+        l.println()
     }
+
 }

@@ -1,4 +1,4 @@
-package database_creation.xlsx
+package com.tavrida.energysales.importData
 
 import com.tavrida.energysales.data_access.tables.OrganizationStructureUnits
 import com.tavrida.energysales.data_access.models.*
@@ -8,8 +8,10 @@ import database_creation.xlsx.reader.OrganizationsWithStructureXlsReader
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import database_creation.utils.println
-import database_creation.xlsx.OrganizationChecker.check
-import database_creation.xlsx.OrganizationChecker.checkSerialNumberDuplicates
+import com.tavrida.energysales.importData.OrganizationChecker.check
+import com.tavrida.energysales.importData.OrganizationChecker.checkSerialNumberDuplicates
+import io.kotest.matchers.collections.shouldNotBeEmpty
+import org.junit.Test
 import java.io.File
 import java.time.LocalDateTime
 import java.time.Month
@@ -17,30 +19,32 @@ import java.time.Month
 typealias TimeAndFile = Pair<LocalDateTime, File>
 typealias OrganizationCounterReadingRecord = OrganizationsWithStructureXlsReader.OrganizationCounterReadingRecord
 
-
-fun main() {
-    val baseDir = File("./databases/xlsx/import_all")
-    val config = Importer.ImportConfig(
-        orgStructureFile = File(baseDir, "org_units.xlsx"),
-        timeToReadings = listOf(
-            LocalDateTime.of(2021, Month.JULY, 1, 11, 30, 33) to File(baseDir, "import 21.06.xlsx"),
-            LocalDateTime.of(2021, Month.JUNE, 1, 12, 22, 15) to File(baseDir, "import 21.05.xlsx")
+class ImportAllXlsToDb {
+    @Test
+    fun import() {
+        val baseDir = File("./databases/xlsx/import_all")
+        val config = Importer.ImportConfig(
+            orgStructureFile = File(baseDir, "org_units.xlsx"),
+            timeToReadings = listOf(
+                LocalDateTime.of(2021, Month.JULY, 1, 11, 30, 33) to File(baseDir, "import 21.06.xlsx"),
+                LocalDateTime.of(2021, Month.JUNE, 1, 12, 22, 15) to File(baseDir, "import 21.05.xlsx")
+            )
         )
-    )
 
-    val orgAndStruct = Importer(config).xlsToOrganizationsAndStructure()
-    orgAndStruct.structure.size.println()
-    orgAndStruct.organizations.size.println()
-    orgAndStruct.organizations.flatMap { it.counters }.size.println()
+        val orgAndStruct = Importer(config).xlsToOrganizationsAndStructure()
+        orgAndStruct.structure.size.println()
+        orgAndStruct.organizations.size.println()
+        orgAndStruct.organizations.flatMap { it.counters }.size.println()
 
-    /*val dc = dataContextWithTimestampedDb(databasesDir = "./databases", dbNameSuffix = "xls_ALL")
-    Importer(config).xlsToOrganizationsAndStructureToDb(dc)
-    dc.loadAll().run {
-        size.println()
-        flatMap { it.counters }.size.println()
-    }*/
+        /*val dc = dataContextWithTimestampedDb(databasesDir = "./databases", dbNameSuffix = "xls_ALL")
+        Importer(config).xlsToOrganizationsAndStructureToDb(dc)
+        dc.loadAll().run {
+            size.println()
+            flatMap { it.counters }.size.println()
+        }*/
+    }
+
 }
-
 
 private class Importer(val config: ImportConfig) {
     data class ImportConfig(
@@ -84,41 +88,13 @@ private class Importer(val config: ImportConfig) {
             .forEach { (readingTime, orgCounterReadingRecs) ->
                 val currentOrganizations = orgCounterReadingRecs.toOrganizations(orgStructureUnits, readingTime)
                 currentOrganizations.check()
-                mergeOrganizationsReadings2(resultingOrganizations, currentOrganizations)
+                mergeOrganizationsReadings(resultingOrganizations, currentOrganizations)
             }
 
         return OrganizationsAndStructure(resultingOrganizations, orgStructureUnits)
     }
 
     fun mergeOrganizationsReadings(
-        resultingOrganizations: MutableList<Organization>,
-        currentOrganizations: List<Organization>
-    ) {
-        val subsequentMerge = resultingOrganizations.isNotEmpty()
-        fun String.log() {
-            if (subsequentMerge) {
-                println()
-            }
-        }
-        "----------------".log()
-        for (currentOrg in currentOrganizations) {
-            val matchedOrg = resultingOrganizations.firstOrNull { it.name == currentOrg.name }
-            if (matchedOrg == null) {
-                resultingOrganizations.add(currentOrg)
-                "Organization ${currentOrg.name} added".log()
-            } else {
-                currentOrg.counters.forEach { curCounter ->
-                    checkIsTrue(curCounter.readings.size == 1)
-                    val counter = matchedOrg.counters.firstOrNull { it.serialNumber == curCounter.serialNumber }
-                        ?: TODO("Counter not found. Organization: ${matchedOrg.name}. SerialNumber: ${curCounter.serialNumber}")
-                    counter.readings.add(curCounter.readings.first())
-                }
-            }
-        }
-        resultingOrganizations.check()
-    }
-
-    fun mergeOrganizationsReadings2(
         resultingOrganizations: MutableList<Organization>,
         currentOrganizations: List<Organization>
     ) {
@@ -133,61 +109,25 @@ private class Importer(val config: ImportConfig) {
 
         for (currentOrg in currentOrganizations) {
             checkIsTrue(currentOrg.counters.size >= 1)
-            for (currentCounter in currentOrg.counters) {
-
-            }
-            // find organization by serialNumber
-            // or resultingOrganizations.findMatchingOrganization(currentOrg)
-            val matchedOrg = resultingOrganizations.bySerialNumber("TODO")
-            if (matchedOrg != null) {
-                // report (name, importOrder, serialNumber, counter.notes)  if name or
-                // add reading (in chronological order!!!!)
+            val matchResult = OrganizationsMatchResult.tryMatch(resultingOrganizations, currentOrg)
+            if (matchResult == null) {
+                resultingOrganizations.add(currentOrg)
+                "Organization ${currentOrg.name} added".log()
             } else {
-                // add org to resultingOrganizations
+                matchResult.warning?.log()
+                matchResult.matchedCounters.shouldNotBeEmpty()
+                matchResult.matchedCounters.forEach {
+                    it.matched.copyReadingsFrom(it.current)
+                }
             }
         }
         resultingOrganizations.check()
-        TODO("Start with newer file (contains new organizations), but readings insert in chronological order (from older to newer)")
     }
 
-    private data class OrganizationsMatchResult(
-        val matched: Organization,
-        val current: Organization,
-        val warning: String?
-    ) {
-        data class CounterMatchResult(val matched: Counter, val current: Counter)
-
-        val matchedCounters: List<CounterMatchResult> get() = _matchedCounters
-        private val _matchedCounters: MutableList<CounterMatchResult> = mutableListOf()
-
-        fun matchCounters(matched: Counter, current: Counter) =
-            _matchedCounters.add(CounterMatchResult(matched, current))
-    }
-
-    private fun List<Organization>.findMatchedOrganization(currentOrg: Organization): OrganizationsMatchResult? {
-        //поиск по набору счетчиков
-        //частичное совпадение счетчиков - выкидывать ошибку
-        //отслеживать - соврадение по имени и по примечанию счетчика
-        fun List<Counter>.isEqual(other: List<Counter>): Boolean {
-            return size == other.size && map { it.serialNumber }.sorted() == other.map { it.serialNumber }.sorted()
-        }
-
-        val matchedOrg = firstOrNull { it.counters.isEqual(currentOrg.counters) }
-        if (matchedOrg == null) {
-            TODO("частичное совпадение счетчиков - выкидывать ошибку")
-            TODO("отслеживать - соврадение по имени и по примечанию счетчика")
-            return null
-        }
-        return OrganizationsMatchResult(matched = matchedOrg, current = currentOrg, warning = null)
-            .also {
-                // Set matched counters
-                for (matchedCounter in matchedOrg.counters) {
-                    val currentCounter = currentOrg.counters.first { it.serialNumber == matchedCounter.serialNumber }
-                    it.matchCounters(matchedCounter, currentCounter)
-                }
-                TODO("warning при различии в имени/примечании")
-            }
-        TODO()
+    fun Counter.copyReadingsFrom(from: Counter) {
+        // TODO("Start with newer file (contains new organizations), but readings insert in chronological order (from older to newer)")
+        //add reading (in chronological order!!!!)
+        readings.addAll(0, from.readings)
     }
 
     private fun DataContext.saveOrgStructure(orgStructureUnits: List<OrganizationStructureUnit>) {
@@ -206,8 +146,6 @@ private class Importer(val config: ImportConfig) {
 
     companion object {
         fun List<OrganizationStructureUnit>.byId(id: Int) = first { it.id == id }
-        fun List<Organization>.bySerialNumber(serialNumber: String) =
-            firstOrNull { org -> org.counters.any { it.serialNumber == serialNumber } }
 
         private fun OrganizationCounterReadingRecord.toCounter(
             readingTime: LocalDateTime
@@ -286,6 +224,75 @@ private class Importer(val config: ImportConfig) {
         }
     }
 }
+
+private data class OrganizationsMatchResult(
+    val matched: Organization,
+    val current: Organization,
+    val matchedCounters: List<CounterMatchResult>,
+    val warning: String?
+) {
+    data class CounterMatchResult(val matched: Counter, val current: Counter)
+
+    companion object {
+        fun tryMatch(
+            resultingOrganizations: MutableList<Organization>,
+            currentOrg: Organization
+        ): OrganizationsMatchResult? {
+            resultingOrganizations.forEach { matchedOrg ->
+                val countersMatch = matchCounters(matchedOrg, currentOrg)
+                if (countersMatch.isNotEmpty()) {
+                    var warning: String? = null
+                    val countersMatchWithCommentDiff =
+                        countersMatch.filter { it.current.comment != it.matched.comment }
+                            .map { "[${it.matched.comment}] <-> [${it.current.comment}]" }
+                    if (matchedOrg.name != currentOrg.name || countersMatchWithCommentDiff.isNotEmpty())
+                        warning = "Org.Name or counters.comment diff. ${matchedOrg.name} <-> ${currentOrg.name}. " +
+                                "$countersMatchWithCommentDiff"
+                    return OrganizationsMatchResult(matchedOrg, currentOrg, countersMatch, warning)
+                }
+            }
+            resultingOrganizations.forEach { matchedOrg ->
+                if (matchedOrg.name == currentOrg.name) {
+                    // совпадение по имени или по примечанию счетчика
+                    throw Exception("${matchedOrg.name}: Нет совпадения по счетчикам, но есть совпадение по имени")
+                }
+                /*val counterWithCommentMatch = matchedOrg.counters.firstOrNull { matchedCounter ->
+                    currentOrg.counters.any { it.comment == matchedCounter.comment }
+                }
+                if (counterWithCommentMatch != null) {
+                    throw Exception("${matchedOrg.name} <-> ${currentOrg.name}: нет совпадения по Sn, но есть совпадение по counter.comment: $counterWithCommentMatch")
+                }*/
+            }
+            return null
+        }
+
+        private fun matchCounters(
+            matchedOrg: Organization,
+            currentOrg: Organization
+        ): List<CounterMatchResult> {
+            val result = mutableListOf<CounterMatchResult>()
+            matchedOrg.counters.forEach { matchingCounter ->
+                val currentCounter = currentOrg.counters.bySerialNumber(matchingCounter.serialNumber)
+                if (currentCounter != null) {
+                    result.add(CounterMatchResult(matchingCounter, currentCounter))
+                }
+            }
+            if (result.isEmpty()) {
+                return result
+            }
+            val partialMatching = matchedOrg.counters.size != currentOrg.counters.size ||
+                    result.size != matchedOrg.counters.size
+            if (partialMatching) {
+                throw Exception("Partial counter matching detected. Matching org: ${matchedOrg.name}. Current org: ${currentOrg.name}")
+            }
+            return result
+        }
+
+        private fun List<Counter>.bySerialNumber(serialNumber: String) =
+            firstOrNull { it.serialNumber == serialNumber }
+    }
+}
+
 
 fun TODO_ITEMS() {
     /*
