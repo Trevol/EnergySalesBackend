@@ -173,7 +173,20 @@ private class Importer(val config: ImportConfig) {
         }
 
         val matchedOrg = firstOrNull { it.counters.isEqual(currentOrg.counters) }
-
+        if (matchedOrg == null) {
+            TODO("частичное совпадение счетчиков - выкидывать ошибку")
+            TODO("отслеживать - соврадение по имени и по примечанию счетчика")
+            return null
+        }
+        return OrganizationsMatchResult(matched = matchedOrg, current = currentOrg, warning = null)
+            .also {
+                // Set matched counters
+                for (matchedCounter in matchedOrg.counters) {
+                    val currentCounter = currentOrg.counters.first { it.serialNumber == matchedCounter.serialNumber }
+                    it.matchCounters(matchedCounter, currentCounter)
+                }
+                TODO("warning при различии в имени/примечании")
+            }
         TODO()
     }
 
