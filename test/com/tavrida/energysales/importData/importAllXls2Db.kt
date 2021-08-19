@@ -10,6 +10,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import database_creation.utils.println
 import com.tavrida.energysales.importData.OrganizationChecker.check
 import com.tavrida.energysales.importData.OrganizationChecker.checkSerialNumberDuplicates
+import database_creation.DbInstance
+import database_creation.utils.dataContextWithTimestampedDb
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import org.junit.Test
 import java.io.File
@@ -34,17 +36,21 @@ class ImportAllXlsToDb {
             )
         )
 
-        val orgAndStruct = Importer(config).xlsToOrganizationsAndStructure()
+        /*val orgAndStruct = Importer(config).xlsToOrganizationsAndStructure()
         orgAndStruct.structure.size.println()
         orgAndStruct.organizations.size.println()
-        orgAndStruct.organizations.flatMap { it.counters }.size.println()
+        orgAndStruct.organizations.flatMap { it.counters }.size.println()*/
 
-        /*val dc = dataContextWithTimestampedDb(databasesDir = "./databases", dbNameSuffix = "xls_ALL")
+        val dc = DbInstance(baseDir, "ENERGY_SALES_xls_ALL")
+            .get(recreate = true)
+            .let { DataContext(it) }
+        // val dc = dataContextWithTimestampedDb(databasesDir = "./databases", dbNameSuffix = "xls_ALL")
+
         Importer(config).xlsToOrganizationsAndStructureToDb(dc)
         dc.loadAll().run {
             size.println()
             flatMap { it.counters }.size.println()
-        }*/
+        }
     }
 
 }
