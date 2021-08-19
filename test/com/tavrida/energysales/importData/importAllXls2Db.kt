@@ -28,7 +28,9 @@ class ImportAllXlsToDb {
             timeToReadings = listOf(
                 LocalDateTime.of(2021, Month.JULY, 1, 11, 30, 33) to File(baseDir, "import 21.06.xlsx"),
                 LocalDateTime.of(2021, Month.JUNE, 1, 12, 22, 15) to File(baseDir, "import 21.05.xlsx"),
-                LocalDateTime.of(2021, Month.APRIL, 29, 11, 45, 33) to File(baseDir, "import 21.04.xlsx")
+                LocalDateTime.of(2021, Month.APRIL, 29, 11, 45, 33) to File(baseDir, "import 21.04.xlsx"),
+                LocalDateTime.of(2021, Month.APRIL, 1, 10, 51, 1) to
+                        File(baseDir, "import 21.03_copy_paste_from_21.04.xlsx")
             )
         )
 
