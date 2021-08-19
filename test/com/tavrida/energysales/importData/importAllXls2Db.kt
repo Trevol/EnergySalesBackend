@@ -80,6 +80,7 @@ private class Importer(val config: ImportConfig) {
         config.timeToReadings
             .sortedByDescending { (time, readingsFile) -> time } // сначала обрабатываются новые файлы (актуальные организации)
             .map { (time, readingsFile) ->
+                "Importing: $time <-> $readingsFile".println()
                 time to OrganizationsWithStructureXlsReader.readOrganizations(
                     readingsFile,
                     firstRowContainsHeader = true
