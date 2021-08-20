@@ -1,0 +1,16 @@
+.fit-content {
+    width: 1%;
+    /*max-width: 1%;*/
+    white-space: nowrap;
+}
+
+.ed-table th {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.table > thead > tr > th {
+    background-color: rgb(247, 247, 247);
+}

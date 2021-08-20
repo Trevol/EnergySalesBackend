@@ -1,14 +1,14 @@
-.box {
+.es-box {
     display: flex;
     flex-flow: column;
     height: 100%;
 }
 
-.box .row {
+.es-box .es-row {
     /*border: 1px dotted grey;*/
 }
 
-.box .row.header {
+.es-box .es-row.header {
     flex: 0 1 auto;
     /* The above is shorthand for:
     flex-grow: 0,
@@ -17,12 +17,12 @@
     */
 }
 
-.box .row.content {
+.es-box .es-row.content {
     flex: 1 1 auto;
     overflow-y: auto
 }
 
-.box .row.footer {
+.es-box .es-row.footer {
     flex: 0 1 auto;
 }
 
