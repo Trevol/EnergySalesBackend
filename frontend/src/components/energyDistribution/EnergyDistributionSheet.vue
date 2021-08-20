@@ -14,7 +14,7 @@
       @cell-prepared="cellPrepared">
     <DxPaging :enabled="false"/>
     <DxSorting mode="none"/>
-    <DxScrolling mode="virtual"/>
+    <DxScrolling mode="standard"/>
 
     <DxMasterDetail
         :enabled="true"
