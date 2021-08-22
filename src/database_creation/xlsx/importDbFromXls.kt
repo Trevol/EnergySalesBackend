@@ -30,7 +30,7 @@ fun main() {
     }
 
     transaction(dc) {
-        dc.loadAllOrganizations().size.println()
+        dc.selectAllOrganizations().size.println()
     }
 }
 

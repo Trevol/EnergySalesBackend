@@ -19,6 +19,12 @@ class EnergyDistributionApi {
             .then(r => r.data)
     }
 
+    async energyDistributionV2(monthOfYear) {
+        //wrap value to {monthOfYear: monthOfYear} to correctly send null value
+        return await this._api.post("v2", {monthOfYear})
+            .then(r => r.data)
+    }
+
     async counterEnergyConsumptionDetails(counterId) {
         const conf = {
             params: {

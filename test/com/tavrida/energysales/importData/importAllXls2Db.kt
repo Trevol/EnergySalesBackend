@@ -46,7 +46,7 @@ class ImportAllXlsToDb {
         // val dc = dataContextWithTimestampedDb(databasesDir = "./databases", dbNameSuffix = "xls_ALL")
 
         Importer(config).xlsToOrganizationsAndStructureToDb(dc)
-        dc.loadAllOrganizations().run {
+        dc.selectAllOrganizations().run {
             size.println()
             flatMap { it.counters }.size.println()
         }

@@ -137,7 +137,7 @@ class CounterReadingUIController(private val dataContext: DataContext) {
 
         private fun DataContext.loadReadings(): List<CounterReadingRecord> = let { dc ->
             transaction(dc) {
-                dc.loadAllOrganizations()
+                dc.selectAllOrganizations()
                     .flatMap { organization ->
                         organization.counters.map { counter ->
                             toRecord(organization, counter)

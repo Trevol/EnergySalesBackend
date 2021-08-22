@@ -1,5 +1,6 @@
 package com.tavrida.energysales.energy_distribution
 
+import com.tavrida.energysales.energy_distribution.v2.EnergyDistributionServiceV2
 import com.tavrida.utils.di.getCallScoped
 import com.tavrida.utils.ktor.respondTo
 import io.ktor.application.*
@@ -23,9 +24,17 @@ fun Route.energyDistributionRouting() {
             }
         }
 
-        route("/counter-energy-consumption-details"){
-            get{
+        route("/counter-energy-consumption-details") {
+            get {
                 energyDistributionService().counterEnergyConsumptionDetails(call.parameters["id"]!!.toInt())
+                    .respondTo(call)
+            }
+        }
+
+        route("/v2") {
+            post {
+                call.receive<MonthOfYearWrapped>()
+                    .let { energyDistributionServiceV2().energyDistribution(it.monthOfYear) }
                     .respondTo(call)
             }
         }
@@ -38,3 +47,6 @@ private data class MonthOfYearWrapped(val monthOfYear: MonthOfYear?)
 
 private fun PipelineContext<Unit, ApplicationCall>.energyDistributionService() =
     call.getCallScoped<EnergyDistributionService>()
+
+private fun PipelineContext<Unit, ApplicationCall>.energyDistributionServiceV2() =
+    call.getCallScoped<EnergyDistributionServiceV2>()

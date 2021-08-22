@@ -106,7 +106,7 @@ private fun insertAll(dbDir: String, dbName: String, organizations: List<Organiz
     }
 
     transaction(dc) {
-        val allOrganizations = dc.loadAllOrganizations()
+        val allOrganizations = dc.selectAllOrganizations()
         allOrganizations.size.log()
     }
 }

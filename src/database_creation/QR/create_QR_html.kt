@@ -19,7 +19,7 @@ fun main() {
         .let { DataContext(it) }
 
     val organizations = transaction(dc) {
-        dc.loadAllOrganizations()
+        dc.selectAllOrganizations()
     }
     val counters = organizations.flatMap { it.counters }.sortedBy { it.importOrder }
 
