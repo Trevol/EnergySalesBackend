@@ -12,7 +12,7 @@ class EnergyDistributionServiceImpl(private val dataContext: DataContext) : Ener
 
     override fun energyDistribution(monthOfYear: MonthOfYear?): EnergyDistributionData {
         val monthOfYear = monthOfYear ?: recentMonth()
-        val counterItems = dataContext.loadAll()
+        val counterItems = dataContext.loadAllOrganizations()
             .flatMap { org -> org.counters.map { org to it } }
             .toCounterItems(monthOfYear)
         return EnergyDistributionData(

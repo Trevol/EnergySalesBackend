@@ -89,7 +89,7 @@ private fun insertAll(dbDir: String, dbName: String, organizations: List<Organiz
     }
 
     transaction(dc) {
-        val allOrganizations = dc.loadAll()
+        val allOrganizations = dc.loadAllOrganizations()
         allOrganizations.size.log()
     }
 }

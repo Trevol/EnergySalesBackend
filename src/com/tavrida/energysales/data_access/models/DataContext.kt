@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 interface IDataContext {
-    fun loadAll(): List<Organization>
+    fun loadAllOrganizations(): List<Organization>
     fun updateReading(reading: CounterReading)
     fun createReading(newReading: CounterReading)
     fun updateSyncData(unsynchronized: List<CounterReading>)
@@ -66,7 +66,7 @@ class DataContext(val db: Database) : IDataContext {
         }
     }
 
-    override fun loadAll() = transaction(db) {
+    override fun loadAllOrganizations() = transaction(db) {
         val organizationRows = OrganizationsTable.selectAll()
             .orderBy(OrganizationsTable.importOrder)
             .toList()

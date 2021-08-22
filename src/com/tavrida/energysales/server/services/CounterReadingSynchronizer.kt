@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 class CounterReadingSynchronizer(private val dataContext: DataContext) {
 
     fun getRecentData(): List<OrganizationData> {
-        return dataContext.loadAll()
+        return dataContext.loadAllOrganizations()
             .map { it.toOrganizationData() }
     }
 
@@ -50,7 +50,7 @@ class CounterReadingSynchronizer(private val dataContext: DataContext) {
     }
 
     private companion object {
-        private fun DataContext.loadCounters() = loadAll().flatMap { it.counters }.associateBy { it.id }
+        private fun DataContext.loadCounters() = loadAllOrganizations().flatMap { it.counters }.associateBy { it.id }
 
         fun List<CounterReadingItem>.checkCounters(counters: Map<Int, Counter>) =
             onEach {

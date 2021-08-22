@@ -11,7 +11,6 @@ import database_creation.utils.println
 import com.tavrida.energysales.importData.OrganizationChecker.check
 import com.tavrida.energysales.importData.OrganizationChecker.checkSerialNumberDuplicates
 import database_creation.DbInstance
-import database_creation.utils.dataContextWithTimestampedDb
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import org.junit.Test
 import java.io.File
@@ -47,7 +46,7 @@ class ImportAllXlsToDb {
         // val dc = dataContextWithTimestampedDb(databasesDir = "./databases", dbNameSuffix = "xls_ALL")
 
         Importer(config).xlsToOrganizationsAndStructureToDb(dc)
-        dc.loadAll().run {
+        dc.loadAllOrganizations().run {
             size.println()
             flatMap { it.counters }.size.println()
         }
