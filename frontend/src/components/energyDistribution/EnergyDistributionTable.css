@@ -18,6 +18,11 @@
 .parent-organization {
     font-weight: bold;
 }
-.parent-organization > td{
+
+.parent-organization > td {
     border-width: 0;
+}
+
+td.organization-name {
+    vertical-align: middle;
 }

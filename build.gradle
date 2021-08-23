@@ -85,5 +85,5 @@ dependencies {
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
-    testImplementation "io.kotest:kotest-assertions-core:$kotestVersion"
+    implementation "io.kotest:kotest-assertions-core:$kotestVersion"
 }

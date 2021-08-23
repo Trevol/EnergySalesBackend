@@ -24,6 +24,7 @@ abstract class EnergyDistributionDataItem(val itemType: EnergyDistributionItemTy
 
 @Serializable
 data class EnergyDistributionToplevelUnit(
+    val id: Int,
     val name: String,
     val total: Double,
     val organizations: List<EnergyDistributionOrganizationItem>

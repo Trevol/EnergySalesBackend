@@ -2,21 +2,108 @@ package com.tavrida.energysales.energy_distribution.v2
 
 import com.tavrida.energysales.api.data_contract.CounterReadingItem
 import com.tavrida.energysales.data_access.models.DataContext
+import com.tavrida.energysales.data_access.models.Organization
+import com.tavrida.energysales.data_access.models.OrganizationStructureUnit
+import com.tavrida.energysales.data_access.models.transaction
+import com.tavrida.energysales.data_access.tables.CounterReadingsTable
 import com.tavrida.energysales.energy_distribution.*
+import org.jetbrains.exposed.sql.max
+import org.jetbrains.exposed.sql.min
+import org.jetbrains.exposed.sql.selectAll
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
 class EnergyDistributionServiceV2Impl(private val dataContext: DataContext) : EnergyDistributionServiceV2 {
 
-    override fun energyDistribution(monthOfYear: MonthOfYear?): EnergyDistributionResult {
-        dataContext.selectAllOrganizations()
-        dataContext.selectOrganizationStructureUnits()
+    override fun energyDistribution(monthOfYear: MonthOfYear?) =
+        EnergyDistribution(
+            monthOfYear = monthOfYear ?: recentMonth(),
+            orgStructureUnits = dataContext.selectOrganizationStructureUnits(),
+            organizations = dataContext.selectAllOrganizations()
+        ).result()
 
-        // TODO("Not yet implemented")
-        return Synthetic.energyDistributionResult(monthOfYear)
+    private fun recentMonth() = monthRange().end
+
+    private fun monthRange(): MonthOfYearRange {
+        //end: текущий месяц независимо от имеющихся данных (LocalDate.now())??
+        //     или анализировать последний месяц в имеющихся показаниях???
+        return transaction(dataContext) {
+            val CRT = CounterReadingsTable
+            val (start, end) = CRT.slice(CRT.readingTime.min(), CRT.readingTime.max())
+                .selectAll().first()
+                .let {
+                    it[CRT.readingTime.min()]?.toLocalDate() to it[CRT.readingTime.max()]?.toLocalDate()
+                }
+            val now = LocalDate.now()
+            MonthOfYearRange(
+                start = (start ?: now).toMonthOfYear(),
+                end = (end ?: now).toMonthOfYear(),
+                lastWithReadings = null
+            )
+        }
     }
 
+}
+
+private class EnergyDistribution(
+    val monthOfYear: MonthOfYear,
+    val orgStructureUnits: List<OrganizationStructureUnit>,
+    val organizations: List<Organization>
+) {
+    fun result(): EnergyDistributionResult {
+        val toplevelUnits = calculateToplevelUnits(monthOfYear, orgStructureUnits, organizations)
+        return EnergyDistributionResult(
+            month = monthOfYear,
+            prevMonth = monthOfYear.prevMonth(),
+            toplevelUnits = toplevelUnits
+        )
+    }
+
+    private companion object {
+        fun List<OrganizationStructureUnit>.byId(orgUnitId: Int) = first { it.id == orgUnitId }
+        fun List<EnergyDistributionOrganizationItem>.totalConsumption() =
+            sumOf { it.counters.sumOf { it.consumptionByMonth?.consumption ?: 0.0 } }
+
+        fun calculateToplevelUnits(
+            month: MonthOfYear,
+            orgStructureUnits: List<OrganizationStructureUnit>,
+            organizations: List<Organization>
+        ): List<EnergyDistributionToplevelUnit> {
+            //м.б. пока без гонки за сортировкой по counter.importOrder??
+            val orgStructureToOrgs = organizations.groupBy { it.orgStructureUnitId }
+            val toplevelUnits = orgStructureToOrgs
+                .map { (orgUnitId, organizations) ->
+                    val orgUnit = orgStructureUnits.byId(orgUnitId)
+                    val orgItems = organizations.map { it.toOrgItem(month) }
+                    EnergyDistributionToplevelUnit(
+                        id = orgUnit.id,
+                        name = orgUnit.name,
+                        total = orgItems.totalConsumption(),
+                        organizations = orgItems
+                    )
+                }
+            // TODO: include non leaf nodes (root and intermediate) with total aggregation
+            return toplevelUnits
+        }
+
+        private fun Organization.toOrgItem(month: MonthOfYear): EnergyDistributionOrganizationItem {
+            val it = this
+            return EnergyDistributionOrganizationItem(
+                id = it.id,
+                name = it.name,
+                counters = it.counters.map {
+                    EnergyDistributionCounterConsumption(
+                        id = it.id,
+                        sn = it.serialNumber,
+                        K = it.K.toInt(),
+                        comment = it.comment,
+                        consumptionByMonth = it.consumptionByMonth(month)
+                    )
+                }
+            )
+        }
+    }
 }
 
 private object Synthetic {
@@ -35,6 +122,7 @@ private object Synthetic {
         numOfCounters: Int
     ): EnergyDistributionToplevelUnit {
         return EnergyDistributionToplevelUnit(
+            id = i,
             name = "Top level $i",
             total = 12345.68,
             organizations = listOf(
