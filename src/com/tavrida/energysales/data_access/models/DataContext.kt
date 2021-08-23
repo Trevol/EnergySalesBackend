@@ -9,13 +9,14 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 interface IDataContext {
     fun selectAllOrganizations(): List<Organization>
+    fun selectOrganizationStructureUnits(): List<OrganizationStructureUnit>
     fun updateReading(reading: CounterReading)
     fun createReading(newReading: CounterReading)
     fun updateSyncData(unsynchronized: List<CounterReading>)
 }
 
 class DataContext(val db: Database) : IDataContext {
-    fun selectOrganizationStructureUnits() = transaction(db) {
+    override fun selectOrganizationStructureUnits() = transaction(db) {
         val t = OrganizationStructureUnits
         OrganizationStructureUnits.selectAll().map {
             OrganizationStructureUnit(

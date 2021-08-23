@@ -33,31 +33,20 @@
       <template v-for="org in topUnit.organizations" :key="org.id">
         <template v-for="(counter, i) in org.counters" :key="counter.id">
           <tr>
-            <td v-if="i===0" class="fit-content" rowspan="2">{{ org.name }}</td>
+            <td v-if="i===0" class="fit-content" :rowspan="org.counters.length">{{ org.name }}</td>
             <td>{{ counter.consumptionByMonth.startingReading?.reading }}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>{{ counter.consumptionByMonth.endingReading?.reading }}</td>
+            <td>{{ counter.consumptionByMonth.readingDelta }}</td>
+            <td>{{ counter.consumptionByMonth.consumption }}</td>
+            <td>{{ counter.consumptionByMonth.continuousPowerFlow }}</td>
+            <td>{{ counter.K }}</td>
+            <td>{{ counter.sn }}</td>
+            <td>{{ counter.comment }}</td>
           </tr>
         </template>
 
       </template>
     </template>
-    <!--    <tr v-for="it in consumptionPerCounters" v-bind:key="it.id">
-          <td class="fit-content">{{ it.organization.name }}</td>
-          <td>{{ it.consumptionByMonth.startingReading?.reading }}</td>
-          <td>{{ it.consumptionByMonth.endingReading?.reading }}</td>
-          <td>{{ it.consumptionByMonth.readingDelta }}</td>
-          <td>{{ it.consumptionByMonth.consumption }}</td>
-          <td>{{ it.consumptionByMonth.continuousPowerFlow }}</td>
-          <td class="fit-content">{{ it.K }}</td>
-          <td class="fit-content">{{ it.sn }}</td>
-          <td>{{ it.comment }}</td>
-        </tr>-->
 
     </tbody>
 

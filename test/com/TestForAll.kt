@@ -1,18 +1,9 @@
 package com
 
 import database_creation.utils.println
-import io.kotest.matchers.collections.beSortedWith
-import io.kotest.matchers.collections.shouldBeMonotonicallyIncreasing
-import io.kotest.matchers.collections.shouldBeSorted
-import io.kotest.matchers.collections.shouldBeSortedWith
-import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.junit.Test
-import java.time.LocalDateTime
+import kotlin.random.Random
 
 class TestForAll {
     @Test
@@ -43,5 +34,32 @@ class TestForAll {
         l.add(0, 1)
         l.add(1, 2)
         l.println()
+    }
+
+    @Test
+    fun `groups of sorted list should be sorted`() {
+        val rnd = Random(System.nanoTime())
+
+        data class Item(val order: Int, val value: Int)
+
+        fun sortedItems(): List<Item> {
+            return (1..20).map { Item(it, it / 5) }
+        }
+
+        fun rndItems(): List<Item> {
+            return sortedItems().sortedBy { rnd.nextInt() }
+        }
+
+        rndItems().groupBy { it.value }.forEach { (value, items) ->
+            value.println()
+            items.forEach { it.println() }
+            "-----".println()
+        }
+        "===============================".println()
+        sortedItems().groupBy { it.value }.forEach { (value, items) ->
+            value.println()
+            items.forEach { it.println() }
+            "-----".println()
+        }
     }
 }
