@@ -1,5 +1,5 @@
 <template>
-  <DxTabPanel height="100%" :selected-index="2">
+  <DxTabPanel height="100%" :selected-index="3">
 
     <dx-item title="Распределение электроэнергии">
       <template #default>
@@ -29,13 +29,13 @@
       <template #default>
         Тут всякое
       </template>
-    </dx-item>
+    </dx-item>-->
 
     <dx-item title="Эксперименты">
       <template #default>
         <Experiments/>
       </template>
-    </dx-item>-->
+    </dx-item>
 
   </DxTabPanel>
 

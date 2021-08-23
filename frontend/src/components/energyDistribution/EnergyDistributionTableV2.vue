@@ -32,7 +32,7 @@
 
       <template v-for="org in topUnit.organizations" :key="org.id">
         <template v-for="(counter, i) in org.counters" :key="counter.id">
-          <tr>
+          <tr v-on:click="alert('click!!!')">
             <td v-if="i===0" class="fit-content organization-name" :rowspan="org.counters.length">{{ org.name }}</td>
             <td>{{ counter.consumptionByMonth.startingReading?.reading }}</td>
             <td>{{ counter.consumptionByMonth.endingReading?.reading }}</td>

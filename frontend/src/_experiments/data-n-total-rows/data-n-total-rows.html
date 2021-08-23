@@ -50,7 +50,7 @@
             <td>123.45</td>
         </tr>
 
-        <tr>
+        <tr @dblclick.prevent.stop="onDblClick">
             <th scope="row">2</th>
             <td :rowspan="rowspan">Jacob</td>
             <td>Thornton</td>
@@ -72,12 +72,22 @@
 </body>
 <script>
     const load = () => {
-        console.log("load event detected!");
         let app = Vue.createApp({
             data() {
                 return {
                     items: [{name: 'a'}, {name: 'b'}],
                     rowspan: 2
+                }
+            },
+            methods: {
+                onClick() {
+                    alert("Click!!!!")
+                },
+                onDblClick(e) {
+                    console.log('Double click.', 'event:', e)
+                    e.preventDefault()
+                    e.stopPropagation()
+                    alert("Double click!!!")
                 }
             }
         })
