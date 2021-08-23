@@ -17,7 +17,7 @@
 
     <tbody>
 
-    <template v-for="topUnit in toplevelUnits" v-bind:key="topUnit.id">
+    <template v-for="topUnit in toplevelUnits" :key="topUnit.id">
       <tr class="parent-organization">
         <td class="fit-content">{{ topUnit.name }}</td>
         <td></td>
@@ -31,17 +31,20 @@
       </tr>
 
       <template v-for="org in topUnit.organizations" :key="org.id">
-        <tr>
-          <td class="fit-content">{{ org.name }}</td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
+        <template v-for="(counter, i) in org.counters" :key="counter.id">
+          <tr>
+            <td v-if="i===0" class="fit-content" rowspan="2">{{ org.name }}</td>
+            <td>{{ counter.consumptionByMonth.startingReading?.reading }}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </template>
+
       </template>
     </template>
     <!--    <tr v-for="it in consumptionPerCounters" v-bind:key="it.id">
