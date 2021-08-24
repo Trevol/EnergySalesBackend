@@ -62,16 +62,15 @@ private class EnergyDistribution(
 
     private companion object {
         fun List<OrganizationStructureUnit>.byId(orgUnitId: Int) = first { it.id == orgUnitId }
-        /*fun List<EnergyDistributionOrganizationItem>.totalConsumption() =
-            sumOf { it.counters.sumOf { it.consumptionByMonth.consumption ?: 0.0 } }*/
 
         fun List<EnergyDistributionOrganizationItem>.totalConsumption() =
-            flatMap { it.counters }.fold(null as Double?) { total, c ->
-                if (c.consumptionByMonth.consumption == null)
-                    total
-                else
-                    (total ?: 0.0) + c.consumptionByMonth.consumption
-            }
+            flatMap { it.counters }
+                .fold(null as Double?) { total, c ->
+                    if (c.consumptionByMonth.consumption == null)
+                        total
+                    else
+                        (total ?: 0.0) + c.consumptionByMonth.consumption
+                }
 
         fun calculateToplevelUnits(
             month: MonthOfYear,
@@ -86,7 +85,7 @@ private class EnergyDistribution(
                     val orgItems = organizations.map { it.toOrgItem(month) }
                     EnergyDistributionToplevelUnit(
                         id = orgUnit.id,
-                        name = orgUnit.name,
+                        name = orgUnit.hierarchicalName(orgStructureUnits),
                         total = orgItems.totalConsumption(),
                         organizations = orgItems
                     )
@@ -94,6 +93,24 @@ private class EnergyDistribution(
             // TODO: include non leaf nodes (root and intermediate) with total aggregation
             return toplevelUnits
         }
+
+        private fun OrganizationStructureUnit.hierarchicalName(allUnits: List<OrganizationStructureUnit>) =
+            pathFromRoot(allUnits).joinToString(" / ") { it.name }
+
+        private fun OrganizationStructureUnit.pathToRoot(allUnits: List<OrganizationStructureUnit>): Iterable<OrganizationStructureUnit> {
+            return sequence {
+                var current = this@pathToRoot
+                yield(current)
+                while (current.parentId != null) {
+                    current = allUnits.byId(current.parentId!!)
+                    yield(current)
+                }
+            }.asIterable()
+        }
+
+        private fun OrganizationStructureUnit.pathFromRoot(allUnits: List<OrganizationStructureUnit>) =
+            pathToRoot(allUnits).reversed()
+
 
         private fun Organization.toOrgItem(month: MonthOfYear): EnergyDistributionOrganizationItem {
             val it = this
