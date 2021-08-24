@@ -62,8 +62,16 @@ private class EnergyDistribution(
 
     private companion object {
         fun List<OrganizationStructureUnit>.byId(orgUnitId: Int) = first { it.id == orgUnitId }
+        /*fun List<EnergyDistributionOrganizationItem>.totalConsumption() =
+            sumOf { it.counters.sumOf { it.consumptionByMonth.consumption ?: 0.0 } }*/
+
         fun List<EnergyDistributionOrganizationItem>.totalConsumption() =
-            sumOf { it.counters.sumOf { it.consumptionByMonth?.consumption ?: 0.0 } }
+            flatMap { it.counters }.fold(null as Double?) { total, c ->
+                if (c.consumptionByMonth.consumption == null)
+                    total
+                else
+                    (total ?: 0.0) + c.consumptionByMonth.consumption
+            }
 
         fun calculateToplevelUnits(
             month: MonthOfYear,

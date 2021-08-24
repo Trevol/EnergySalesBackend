@@ -17,7 +17,10 @@
 
     <tbody>
 
-    <template v-for="topUnit in toplevelUnits" :key="topUnit.name+topUnit.id">
+    <template v-for="(topUnit, j) in toplevelUnits" :key="topUnit.name+topUnit.id">
+      <tr v-if="j!==0" class="delimiter">
+        <td colspan="9">d</td>
+      </tr>
       <tr class="parent-organization">
         <td class="fit-content">{{ topUnit.name }}</td>
         <td></td>

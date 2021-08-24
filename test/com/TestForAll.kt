@@ -37,29 +37,27 @@ class TestForAll {
     }
 
     @Test
-    fun `groups of sorted list should be sorted`() {
-        val rnd = Random(System.nanoTime())
-
-        data class Item(val order: Int, val value: Int)
-
-        fun sortedItems(): List<Item> {
-            return (1..20).map { Item(it, it / 5) }
+    fun `sum of nullable values`() {
+        data class Item(val value: Double?) {
+            constructor(value: Int?) : this(value?.toDouble())
         }
 
-        fun rndItems(): List<Item> {
-            return sortedItems().sortedBy { rnd.nextInt() }
-        }
+        val items = listOf(Item(1), Item(2), Item(3), Item(4), Item(null as Double?), Item(5))
+        // val items = listOf(Item(null), Item(null), Item(null), Item(null), Item(null), Item(null))
+        // val items = listOf<Item>()
 
-        rndItems().groupBy { it.value }.forEach { (value, items) ->
-            value.println()
-            items.forEach { it.println() }
-            "-----".println()
+        val r = items.map { it.value }.reduceOrNull { acc, i ->
+            if (i == null)
+                acc
+            else (acc ?: 0.0) + i
         }
-        "===============================".println()
-        sortedItems().groupBy { it.value }.forEach { (value, items) ->
-            value.println()
-            items.forEach { it.println() }
-            "-----".println()
+        r.println()
+
+        val f = items.fold(null as Double?) { acc, item ->
+            if (item.value == null)
+                acc
+            else (acc ?: 0.0) + item.value
         }
+        f.println()
     }
 }
