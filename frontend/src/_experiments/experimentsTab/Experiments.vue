@@ -4,12 +4,12 @@
     <button @click="showDialog=true">
       Show Dialog
     </button>
-    <modal v-if="showDialog" width="500px" @close="showDialog=false">
+    <modal v-if="showDialog" width="50%" @close="showDialog=false">
       <template #header>
-        <h3>Dialog Header</h3>
+        <h6>Dialog Header</h6>
       </template>
       <template #body>
-        {{ dialogData }}
+        <some-dialog-body :data="dialogData"/>
       </template>
     </modal>
   </div>
@@ -17,11 +17,12 @@
 
 <script>
 import Modal from "@/components/common/Modal";
+import SomeDialogBody from "@/_experiments/experimentsTab/SomeDialogBody";
 
 export default {
   name: "Experiments",
   components: {
-    Modal
+    Modal, SomeDialogBody
   },
   data() {
     return {

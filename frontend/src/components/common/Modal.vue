@@ -6,22 +6,25 @@
         <div class="es-modal-container" :style="'width:'+width">
 
           <div class="es-modal-header">
-            <slot name="header">
-            </slot>
+            <slot name="header"/>
           </div>
 
           <div class="es-modal-body">
-            <slot name="body">
-            </slot>
+            <slot name="body"/>
           </div>
 
           <div class="es-modal-footer">
-            <slot name="footer">
+            <slot name="footer"/>
+          </div>
+
+          <div class="es-modal-buttons">
+            <slot name="buttons">
               <button class="es-modal-default-button" @click="$emit('close')">
                 OK
               </button>
             </slot>
           </div>
+
         </div>
       </div>
     </div>
@@ -32,8 +35,8 @@
 <script>
 export default {
   name: "Modal",
-  props:{
-    width:{
+  props: {
+    width: {
       type: String,
       default: "300px"
     }
@@ -80,8 +83,11 @@ export default {
   margin: 20px 0;
 }
 
-.es-modal-default-button {
-  display: block;
+/*.es-modal-default-button {*/
+/*  display: block;*/
+/*  margin-top: 1rem;*/
+/*}*/
+.es-modal-buttons{
   margin-top: 1rem;
 }
 

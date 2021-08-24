@@ -49,7 +49,7 @@ import DxTabPanel, {DxItem} from 'devextreme-vue/tab-panel'
 import EnergyDistributionPage from "@/pages/EnergyDistributionPage";
 import EnergyDistributionPage2 from "@/pages/EnergyDistributionPage2";
 import EnergyDistributionPage3 from "@/pages/EnergyDistributionPage3";
-import Experiments from "@/pages/Experiments";
+import Experiments from "@/_experiments/experimentsTab/Experiments";
 
 export default {
   components: {
