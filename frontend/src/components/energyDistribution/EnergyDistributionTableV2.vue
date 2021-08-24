@@ -32,7 +32,7 @@
 
       <template v-for="org in topUnit.organizations" :key="org.id">
         <template v-for="(counter, i) in org.counters" :key="counter.id">
-          <tr v-on:click="alert('click!!!')">
+          <tr @click.alt="selectedCounter = counter">
             <td v-if="i===0" class="fit-content organization-name" :rowspan="org.counters.length">{{ org.name }}</td>
             <td>{{ counter.consumptionByMonth.startingReading?.reading }}</td>
             <td>{{ counter.consumptionByMonth.endingReading?.reading }}</td>
@@ -51,18 +51,35 @@
     </tbody>
 
   </table>
+
+  <modal v-if="selectedCounter !== null" width="50%" @close="selectedCounter=null">
+    <template #body>
+      <counter-details :counter-info="selectedCounter"/>
+    </template>
+  </modal>
+
 </template>
 
 <script>
 import "@/assets/bootstrap.min.css"
 import "./EnergyDistributionTable.css"
+import Modal from "@/components/common/Modal";
+import CounterDetails from "@/components/energyDistribution/CounterDetails";
 
 export default {
   name: "EnergyDistributionTable",
+  components: {
+    Modal, CounterDetails
+  },
   props: {
     energyDistributionData: {
       type: Object,
       required: true
+    }
+  },
+  data() {
+    return {
+      selectedCounter: null
     }
   },
   computed: {

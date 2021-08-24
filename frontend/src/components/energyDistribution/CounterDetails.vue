@@ -19,7 +19,7 @@
         <dx-column data-field="continuousPowerFlow" caption="НПМ (квт)" width="auto"/>
         <dx-column data-field="reading.readingTime" caption="Когда" width="auto"/>
         <dx-column data-field="reading.user" caption="Кто" width="auto"/>
-        <dx-column data-field="reading.comment" caption="Примечание" width="auto"/>
+        <dx-column data-field="reading.comment" caption="Примечание"/>
 
       </dx-data-grid>
     </div>
