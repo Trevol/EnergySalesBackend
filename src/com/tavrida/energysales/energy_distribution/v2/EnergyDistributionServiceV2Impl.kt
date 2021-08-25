@@ -19,7 +19,7 @@ class EnergyDistributionServiceV2Impl(private val dataContext: DataContext) : En
     override fun energyDistribution(monthOfYear: MonthOfYear?) =
         EnergyDistribution(
             monthOfYear = monthOfYear ?: recentMonth(),
-            orgStructureUnits = dataContext.selectOrganizationStructureUnits(),
+            allOrgStructureUnits = dataContext.selectOrganizationStructureUnits(),
             organizations = dataContext.selectAllOrganizations()
         ).result()
 
@@ -48,11 +48,11 @@ class EnergyDistributionServiceV2Impl(private val dataContext: DataContext) : En
 
 private class EnergyDistribution(
     val monthOfYear: MonthOfYear,
-    val orgStructureUnits: List<OrganizationStructureUnit>,
+    val allOrgStructureUnits: List<OrganizationStructureUnit>,
     val organizations: List<Organization>
 ) {
     fun result(): EnergyDistributionResult {
-        val toplevelUnits = calculateToplevelUnits(monthOfYear, orgStructureUnits, organizations)
+        val toplevelUnits = calculateToplevelUnits(monthOfYear, allOrgStructureUnits, organizations)
         return EnergyDistributionResult(
             month = monthOfYear,
             prevMonth = monthOfYear.prevMonth(),
@@ -62,6 +62,7 @@ private class EnergyDistribution(
 
     private companion object {
         fun List<OrganizationStructureUnit>.byId(orgUnitId: Int) = first { it.id == orgUnitId }
+        fun List<EnergyDistributionToplevelUnit>.byId(orgUnitId: Int) = firstOrNull { it.id == orgUnitId }
 
         fun List<EnergyDistributionOrganizationItem>.totalConsumption() =
             flatMap { it.counters }
@@ -74,24 +75,47 @@ private class EnergyDistribution(
 
         fun calculateToplevelUnits(
             month: MonthOfYear,
-            orgStructureUnits: List<OrganizationStructureUnit>,
+            allOrgStructureUnits: List<OrganizationStructureUnit>,
             organizations: List<Organization>
         ): List<EnergyDistributionToplevelUnit> {
             //м.б. пока без гонки за сортировкой по counter.importOrder??
             val orgStructureToOrgs = organizations.groupBy { it.orgStructureUnitId }
-            val toplevelUnits = orgStructureToOrgs
+            val leafUnits = orgStructureToOrgs
                 .map { (orgUnitId, organizations) ->
-                    val orgUnit = orgStructureUnits.byId(orgUnitId)
+                    val orgUnit = allOrgStructureUnits.byId(orgUnitId)
                     val orgItems = organizations.map { it.toOrgItem(month) }
                     EnergyDistributionToplevelUnit(
                         id = orgUnit.id,
-                        name = orgUnit.hierarchicalName(orgStructureUnits),
+                        name = orgUnit.hierarchicalName(allOrgStructureUnits),
                         total = orgItems.totalConsumption(),
                         organizations = orgItems
                     )
                 }
-            // TODO: include non leaf nodes (root and intermediate) with total aggregation
-            return toplevelUnits
+            return calculateNonLeafNodes(leafUnits, allOrgStructureUnits)
+        }
+
+        private fun calculateNonLeafNodes(
+            leafUnits: List<EnergyDistributionToplevelUnit>,
+            allOrgStructureUnits: List<OrganizationStructureUnit>
+        ): List<EnergyDistributionToplevelUnit> {
+            val result = mutableListOf<EnergyDistributionToplevelUnit>()
+
+            for (leafUnit in leafUnits) {
+                //prepend each item in pathFromRoot
+                for (someUnit in allOrgStructureUnits.byId(leafUnit.id).pathFromRoot(allOrgStructureUnits)){
+                    result.byId(someUnit.id).also {
+                        if(it == null){ //not exist in result -> simply add leaf
+
+                        }else{
+
+                        }
+                    }
+                }
+            }
+            return result
+
+            return leafUnits
+            TODO("include non leaf nodes (root and intermediate) with total aggregation")
         }
 
         private fun OrganizationStructureUnit.hierarchicalName(allUnits: List<OrganizationStructureUnit>) =

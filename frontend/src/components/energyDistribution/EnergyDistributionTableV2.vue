@@ -35,7 +35,7 @@
 
       <template v-for="org in topUnit.organizations" :key="org.id">
         <template v-for="(counter, i) in org.counters" :key="counter.id">
-          <tr @click.alt="selectedCounter = counter">
+          <tr @click.alt="selectCounter(counter)" @dblclick="selectCounter(counter)">
             <td v-if="i===0" class="fit-content organization-name" :rowspan="org.counters.length">{{ org.name }}</td>
             <td>{{ counter.consumptionByMonth.startingReading?.reading }}</td>
             <td>{{ counter.consumptionByMonth.endingReading?.reading }}</td>
@@ -83,6 +83,11 @@ export default {
   data() {
     return {
       selectedCounter: null
+    }
+  },
+  methods: {
+    selectCounter(counter) {
+      this.selectedCounter = counter
     }
   },
   computed: {
