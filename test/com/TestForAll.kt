@@ -2,6 +2,9 @@ package com
 
 import database_creation.utils.println
 import io.kotest.matchers.shouldBe
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.junit.Test
 import kotlin.random.Random
 
@@ -46,18 +49,16 @@ class TestForAll {
         // val items = listOf(Item(null), Item(null), Item(null), Item(null), Item(null), Item(null))
         // val items = listOf<Item>()
 
-        val r = items.map { it.value }.reduceOrNull { acc, i ->
-            if (i == null)
-                acc
-            else (acc ?: 0.0) + i
-        }
-        r.println()
-
         val f = items.fold(null as Double?) { acc, item ->
             if (item.value == null)
                 acc
             else (acc ?: 0.0) + item.value
         }
         f.println()
+    }
+
+    @Test
+    fun drop0Test() {
+        listOf(1, 2, 3).drop(1) shouldBe listOf(2, 3)
     }
 }

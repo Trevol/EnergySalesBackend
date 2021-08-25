@@ -7,6 +7,8 @@ import com.tavrida.energysales.data_access.models.OrganizationStructureUnit
 import com.tavrida.energysales.data_access.models.transaction
 import com.tavrida.energysales.data_access.tables.CounterReadingsTable
 import com.tavrida.energysales.energy_distribution.*
+import com.tavrida.utils.orDefault
+import com.tavrida.utils.orZero
 import org.jetbrains.exposed.sql.max
 import org.jetbrains.exposed.sql.min
 import org.jetbrains.exposed.sql.selectAll
@@ -98,24 +100,44 @@ private class EnergyDistribution(
             leafUnits: List<EnergyDistributionToplevelUnit>,
             allOrgStructureUnits: List<OrganizationStructureUnit>
         ): List<EnergyDistributionToplevelUnit> {
-            val result = mutableListOf<EnergyDistributionToplevelUnit>()
+            val resultDataUnits = mutableListOf<EnergyDistributionToplevelUnit>()
 
-            for (leafUnit in leafUnits) {
-                //prepend each item in pathFromRoot
-                for (someUnit in allOrgStructureUnits.byId(leafUnit.id).pathFromRoot(allOrgStructureUnits)){
-                    result.byId(someUnit.id).also {
-                        if(it == null){ //not exist in result -> simply add leaf
+            for (leafDataUnit in leafUnits) {
+                val pathFromRoot = allOrgStructureUnits.byId(leafDataUnit.id)
+                    .pathToRoot(allOrgStructureUnits)
+                    .drop(1) //without leaf unit
+                    .asReversed() //pathToRoot -> asReversed -> pathFromRoot
 
-                        }else{
-
+                for (pathUnit in pathFromRoot) {
+                    val pathDataUnitInResult = resultDataUnits.byId(pathUnit.id)
+                    if (pathDataUnitInResult == null) { //not exist in result -> simply add to result
+                        //check in leafUnits - pathUnit may group organizations
+                        val pathDataUnitInLeafs = leafUnits.byId(pathUnit.id)
+                        if (pathDataUnitInLeafs == null) {
+                            resultDataUnits.add(
+                                EnergyDistributionToplevelUnit(
+                                    id = pathUnit.id,
+                                    name = pathUnit.hierarchicalName(allOrgStructureUnits),
+                                    total = leafDataUnit.total,
+                                    organizations = listOf()
+                                )
+                            )
                         }
+                        else{
+                            pathDataUnitInLeafs.total = pathDataUnitInLeafs.total.orZero() + leafDataUnit.total.orZero()
+                            resultDataUnits.add(
+                                pathDataUnitInLeafs
+                            )
+                        }
+                    } else {
+                        pathDataUnitInResult.total = pathDataUnitInResult.total.orZero() + leafDataUnit.total.orZero()
                     }
                 }
+                resultDataUnits.add(leafDataUnit)
             }
-            return result
 
-            return leafUnits
-            TODO("include non leaf nodes (root and intermediate) with total aggregation")
+            return resultDataUnits
+            // TODO("include non leaf nodes (root and intermediate) with total aggregation")
         }
 
         private fun OrganizationStructureUnit.hierarchicalName(allUnits: List<OrganizationStructureUnit>) =
