@@ -36,17 +36,31 @@ class ImportAllXlsToDb {
             )
         )
 
-        /*val orgAndStruct = Importer(config).xlsToOrganizationsAndStructure()
+        val orgAndStruct = Importer(config).xlsToOrganizationsAndStructure()
         orgAndStruct.structure.size.println()
         orgAndStruct.organizations.size.println()
-        orgAndStruct.organizations.flatMap { it.counters }.size.println()*/
+        orgAndStruct.organizations.flatMap { it.counters }.size.println()
+
+        //уберем пока: [Баяндин Д.А.] 111111 Вафли
+        //появился и пропал в июне без потребления, но приводит к ошибке импорта (duplicate importOrder)
+        orgAndStruct.organizations.removeIf {
+            it.name == "Баяндин Д.А." && it.counters.size == 1 &&
+                    it.counters[0].serialNumber == "111111" &&
+                    it.counters[0].comment == "Вафли"
+        }.also { removed ->
+            if (!removed) {
+                throw Exception("!!!! Not found (not removed): [Баяндин Д.А.] 111111 Вафли")
+            }
+        }
+
+        // return
 
         val dc = DbInstance(baseDir, "ENERGY_SALES_xls_ALL")
             .get(recreate = true)
             .let { DataContext(it) }
-        // val dc = dataContextWithTimestampedDb(databasesDir = "./databases", dbNameSuffix = "xls_ALL")
 
-        Importer(config).xlsToOrganizationsAndStructureToDb(dc)
+        dc.save(orgAndStruct)
+
         dc.selectAllOrganizations().run {
             size.println()
             flatMap { it.counters }.size.println()
@@ -55,26 +69,41 @@ class ImportAllXlsToDb {
 
 }
 
+private fun DataContext.save(organizationsAndStructure: Importer.OrganizationsAndStructure) {
+    also {
+        transaction(this) {
+            it.saveOrgStructure(organizationsAndStructure.structure)
+            it.insertAll(organizationsAndStructure.organizations)
+        }
+    }
+}
+
+private fun DataContext.saveOrgStructure(orgStructureUnits: List<OrganizationStructureUnit>) {
+    transaction(this.db) {
+        orgStructureUnits.forEach { u ->
+            OrganizationStructureUnits.insert {
+                it[id] = u.id
+                it[name] = u.name
+                it[parentId] = u.parentId
+                it[comment] = u.comment
+            }
+        }
+    }
+}
+
 private class Importer(val config: ImportConfig) {
     data class ImportConfig(
         val orgStructureFile: File,
         val timeToReadings: List<TimeAndFile>
     )
 
-    fun xlsToOrganizationsAndStructureToDb(dataContext: DataContext) {
+    /*fun xlsToOrganizationsAndStructureToDb(dataContext: DataContext) {
         val organizationsAndStructure = xlsToOrganizationsAndStructure()
         dataContext.save(organizationsAndStructure)
-    }
-
-    private fun DataContext.save(organizationsAndStructure: OrganizationsAndStructure) {
-        transaction(this) {
-            this@save.saveOrgStructure(organizationsAndStructure.structure)
-            this@save.insertAll(organizationsAndStructure.organizations)
-        }
-    }
+    }*/
 
     data class OrganizationsAndStructure(
-        val organizations: List<Organization>,
+        val organizations: MutableList<Organization>,
         val structure: List<OrganizationStructureUnit>
     )
 
@@ -138,19 +167,6 @@ private class Importer(val config: ImportConfig) {
         // TODO("Start with newer file (contains new organizations), but readings insert in chronological order (from older to newer)")
         //add reading (in chronological order!!!!)
         readings.addAll(0, from.readings)
-    }
-
-    private fun DataContext.saveOrgStructure(orgStructureUnits: List<OrganizationStructureUnit>) {
-        transaction(this.db) {
-            orgStructureUnits.forEach { u ->
-                OrganizationStructureUnits.insert {
-                    it[id] = u.id
-                    it[name] = u.name
-                    it[parentId] = u.parentId
-                    it[comment] = u.comment
-                }
-            }
-        }
     }
 
 
