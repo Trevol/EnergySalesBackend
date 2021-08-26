@@ -17,7 +17,7 @@
 
     <tbody>
 
-    <template v-for="(topUnit, j) in toplevelUnits" :key="topUnit.name+topUnit.id">
+    <template v-for="(topUnit, j) in toplevelUnits" :key="topUnit.id">
       <tr v-if="j!==0" class="delimiter">
         <td colspan="9">d</td>
       </tr>

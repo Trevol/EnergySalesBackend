@@ -9,6 +9,7 @@ import com.tavrida.energysales.data_access.tables.CounterReadingsTable
 import com.tavrida.energysales.energy_distribution.*
 import com.tavrida.utils.orDefault
 import com.tavrida.utils.orZero
+import com.tavrida.utils.round3
 import org.jetbrains.exposed.sql.max
 import org.jetbrains.exposed.sql.min
 import org.jetbrains.exposed.sql.selectAll
@@ -72,7 +73,7 @@ private class EnergyDistribution(
                     if (c.consumptionByMonth.consumption == null)
                         total
                     else
-                        (total ?: 0.0) + c.consumptionByMonth.consumption
+                        ((total ?: 0.0) + c.consumptionByMonth.consumption).round3()
                 }
 
         fun calculateToplevelUnits(
@@ -122,15 +123,16 @@ private class EnergyDistribution(
                                     organizations = listOf()
                                 )
                             )
-                        }
-                        else{
-                            pathDataUnitInLeafs.total = pathDataUnitInLeafs.total.orZero() + leafDataUnit.total.orZero()
+                        } else {
+                            // pathDataUnitInLeafs.total = pathDataUnitInLeafs.total.orZero() + leafDataUnit.total.orZero()
+                            pathDataUnitInLeafs.total = sumUnitTotals(pathDataUnitInLeafs.total, leafDataUnit.total)
                             resultDataUnits.add(
                                 pathDataUnitInLeafs
                             )
                         }
                     } else {
-                        pathDataUnitInResult.total = pathDataUnitInResult.total.orZero() + leafDataUnit.total.orZero()
+                        // pathDataUnitInResult.total = pathDataUnitInResult.total.orZero() + leafDataUnit.total.orZero()
+                        pathDataUnitInResult.total = sumUnitTotals(pathDataUnitInResult.total, leafDataUnit.total)
                     }
                 }
                 resultDataUnits.add(leafDataUnit)
@@ -139,6 +141,10 @@ private class EnergyDistribution(
             return resultDataUnits
             // TODO("include non leaf nodes (root and intermediate) with total aggregation")
         }
+
+        private fun sumUnitTotals(pathUnitTotal: Double?, leafUnitTotal: Double?) =
+            if (pathUnitTotal == null && leafUnitTotal == null) null
+            else (pathUnitTotal.orZero() + leafUnitTotal.orZero()).round3()
 
         private fun OrganizationStructureUnit.hierarchicalName(allUnits: List<OrganizationStructureUnit>) =
             pathFromRoot(allUnits).joinToString(" / ") { it.name }

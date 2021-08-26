@@ -1,7 +1,7 @@
 <template>
-  <DxTabPanel height="100%" :selected-index="3">
+  <DxTabPanel height="100%" :selected-index="0">
 
-    <dx-item title="Распределение электроэнергии">
+<!--    <dx-item title="Распределение электроэнергии v0">
       <template #default>
         <energy-distribution-page/>
       </template>
@@ -11,9 +11,9 @@
       <template #default>
         <energy-distribution-page2/>
       </template>
-    </dx-item>
+    </dx-item>-->
 
-    <dx-item title="Распределение электроэнергии v3">
+    <dx-item title="Распределение электроэнергии">
       <template #default>
         <energy-distribution-page3/>
       </template>
@@ -31,11 +31,11 @@
       </template>
     </dx-item>-->
 
-    <dx-item title="Эксперименты">
+<!--    <dx-item title="Эксперименты">
       <template #default>
         <Experiments/>
       </template>
-    </dx-item>
+    </dx-item>-->
 
   </DxTabPanel>
 
@@ -49,11 +49,12 @@ import DxTabPanel, {DxItem} from 'devextreme-vue/tab-panel'
 import EnergyDistributionPage from "@/pages/EnergyDistributionPage";
 import EnergyDistributionPage2 from "@/pages/EnergyDistributionPage2";
 import EnergyDistributionPage3 from "@/pages/EnergyDistributionPage3";
-import Experiments from "@/_experiments/experimentsTab/Experiments";
+// import Experiments from "@/_experiments/experimentsTab/Experiments";
 
 export default {
   components: {
-    DxTabPanel, DxItem, EnergyDistributionPage, EnergyDistributionPage2, EnergyDistributionPage3, Experiments
+    DxTabPanel, DxItem, EnergyDistributionPage, EnergyDistributionPage2, EnergyDistributionPage3,
+    // Experiments
   }
 }
 </script>
