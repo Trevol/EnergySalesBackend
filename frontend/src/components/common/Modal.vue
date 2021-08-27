@@ -3,7 +3,7 @@
   <transition name="modal">
     <div class="es-modal-mask">
       <div class="es-modal-wrapper">
-        <div class="es-modal-container" :style="'width:'+width">
+        <div class="es-modal-container" :style="modalContainerStyle">
 
           <div class="es-modal-header">
             <slot name="header"/>
@@ -39,6 +39,15 @@ export default {
     width: {
       type: String,
       default: "300px"
+    },
+    height:{
+      type: String,
+      default: "auto"
+    }
+  },
+  computed:{
+    modalContainerStyle(){
+      return `width:${this.width};height:${this.height};`
     }
   }
 }

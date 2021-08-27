@@ -55,7 +55,7 @@
 
   </table>
 
-  <modal v-if="selectedCounter !== null" width="70%" @close="selectedCounter=null">
+  <modal v-if="selectedCounter !== null" width="70%" height="400px" @close="selectedCounter=null">
     <template #body>
       <counter-details :counter-info="selectedCounter"/>
     </template>
@@ -67,7 +67,7 @@
 import "@/assets/bootstrap.min.css"
 import "./EnergyDistributionTable.css"
 import Modal from "@/components/common/Modal";
-import CounterDetails from "@/components/energyDistribution/CounterDetails";
+import CounterDetails from "@/components/energyDistribution/details/CounterDetails";
 
 export default {
   name: "EnergyDistributionTable",
