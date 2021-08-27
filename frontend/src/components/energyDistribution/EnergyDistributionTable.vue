@@ -16,38 +16,83 @@
     </thead>
 
     <tbody>
-    <tr v-for="it in consumptionPerCounters" v-bind:key="it.id">
-      <td class="fit-content">{{ it.organization.name }}</td>
-      <td>{{ it.consumptionByMonth.startingReading?.reading }}</td>
-      <td>{{ it.consumptionByMonth.endingReading?.reading }}</td>
-      <td>{{ it.consumptionByMonth.readingDelta }}</td>
-      <td>{{ it.consumptionByMonth.consumption }}</td>
-      <td>{{ it.consumptionByMonth.continuousPowerFlow }}</td>
-      <td class="fit-content">{{ it.K }}</td>
-      <td class="fit-content">{{ it.sn }}</td>
-      <td>{{ it.comment }}</td>
-    </tr>
+
+    <template v-for="(topUnit, j) in toplevelUnits" :key="topUnit.id">
+      <tr v-if="j!==0" class="delimiter">
+        <td colspan="9">d</td>
+      </tr>
+      <tr class="parent-organization">
+        <td class="fit-content">{{ topUnit.name }}</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>{{ topUnit.total }}</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+
+      <template v-for="org in topUnit.organizations" :key="org.id">
+        <template v-for="(counter, i) in org.counters" :key="counter.id">
+          <tr @click.alt="selectCounter(counter)" @dblclick="selectCounter(counter)">
+            <td v-if="i===0" class="fit-content organization-name" :rowspan="org.counters.length">{{ org.name }}</td>
+            <td>{{ counter.consumptionByMonth.startingReading?.reading }}</td>
+            <td>{{ counter.consumptionByMonth.endingReading?.reading }}</td>
+            <td>{{ counter.consumptionByMonth.readingDelta }}</td>
+            <td>{{ counter.consumptionByMonth.consumption }}</td>
+            <td>{{ counter.consumptionByMonth.continuousPowerFlow }}</td>
+            <td>{{ counter.K }}</td>
+            <td>{{ counter.sn }}</td>
+            <td>{{ counter.comment }}</td>
+          </tr>
+        </template>
+
+      </template>
+    </template>
 
     </tbody>
 
   </table>
+
+  <modal v-if="selectedCounter !== null" width="50%" @close="selectedCounter=null">
+    <template #body>
+      <counter-details :counter-info="selectedCounter"/>
+    </template>
+  </modal>
+
 </template>
 
 <script>
 import "@/assets/bootstrap.min.css"
 import "./EnergyDistributionTable.css"
+import Modal from "@/components/common/Modal";
+import CounterDetails from "@/components/energyDistribution/CounterDetails";
 
 export default {
   name: "EnergyDistributionTable",
+  components: {
+    Modal, CounterDetails
+  },
   props: {
     energyDistributionData: {
       type: Object,
       required: true
     }
   },
+  data() {
+    return {
+      selectedCounter: null
+    }
+  },
+  methods: {
+    selectCounter(counter) {
+      this.selectedCounter = counter
+    }
+  },
   computed: {
-    consumptionPerCounters() {
-      return this.energyDistributionData?.perCounters;
+    toplevelUnits() {
+      return this.energyDistributionData?.toplevelUnits;
     }
   }
 }

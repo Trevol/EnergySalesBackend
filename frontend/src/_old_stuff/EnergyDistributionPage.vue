@@ -1,3 +1,4 @@
+<!--
 <template>
 
   <div class="es-box">
@@ -26,15 +27,15 @@
 
     </div>
     <div class="es-row content">
-      <energy-distribution-table :energy-distribution-data="energyDistributionData"/>
+      <energy-distribution-sheet :energy-distribution-data="energyDistributionData"/>
     </div>
   </div>
 
 </template>
 
 <script>
-import "./EnergyDistributionPage.css"
-import EnergyDistributionTable from "@/components/energyDistribution/EnergyDistributionTable";
+import "../pages/EnergyDistributionPage.css"
+import EnergyDistributionSheet from "@/_old_stuff/EnergyDistributionSheet";
 import DxToolbar, {DxItem as DxToolbarItem} from 'devextreme-vue/toolbar';
 import DxSelectBox from 'devextreme-vue/select-box'
 import energyDistributionApi from "@/js/energyDistribition/api/EnergyDistributionApi";
@@ -42,9 +43,9 @@ import {uri} from "@/js/common/utils/urlUtils";
 import {backendRootUri} from "@/js/appSettings";
 
 export default {
-  name: "EnergyDistributionPage2",
+  name: "EnergyDistributionPage",
   components: {
-    EnergyDistributionTable,
+    EnergyDistributionSheet,
     DxToolbar, DxToolbarItem,
     DxSelectBox
   },
@@ -83,4 +84,4 @@ export default {
     this.months = months
   }
 }
-</script>
+</script>-->

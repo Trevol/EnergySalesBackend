@@ -1,3 +1,4 @@
+<!--
 <template>
   <DxDataGrid
       :data-source="items"
@@ -49,4 +50,4 @@ export default {
 
 <style scoped>
 
-</style>
+</style>-->

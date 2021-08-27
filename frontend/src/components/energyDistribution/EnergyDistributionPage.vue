@@ -26,7 +26,7 @@
 
     </div>
     <div class="es-row content">
-      <energy-distribution-table-v2 :energy-distribution-data="energyDistributionData"/>
+      <energy-distribution-table :energy-distribution-data="energyDistributionData"/>
     </div>
   </div>
 
@@ -34,7 +34,7 @@
 
 <script>
 import "./EnergyDistributionPage.css"
-import EnergyDistributionTableV2 from "@/components/energyDistribution/EnergyDistributionTableV2";
+import EnergyDistributionTable from "@/components/energyDistribution/EnergyDistributionTable";
 import DxToolbar, {DxItem as DxToolbarItem} from 'devextreme-vue/toolbar';
 import DxSelectBox from 'devextreme-vue/select-box'
 import energyDistributionApi from "@/js/energyDistribition/api/EnergyDistributionApi";
@@ -42,9 +42,9 @@ import {uri} from "@/js/common/utils/urlUtils";
 import {backendRootUri} from "@/js/appSettings";
 
 export default {
-  name: "EnergyDistributionPage3",
+  name: "EnergyDistributionPage",
   components: {
-    EnergyDistributionTableV2,
+    EnergyDistributionTable,
     DxToolbar, DxToolbarItem,
     DxSelectBox
   },

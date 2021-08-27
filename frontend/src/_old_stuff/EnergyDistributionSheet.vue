@@ -1,3 +1,4 @@
+<!--
 <template>
   <DxDataGrid
       :data-source="consumptionPerCounters"
@@ -122,4 +123,4 @@ export default {
 .orgHasSeveralCounters {
   background-color: #dfefed !important;
 }
-</style>
+</style>-->
