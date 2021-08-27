@@ -4,7 +4,7 @@
     <button @click="showDialog=true">
       Show Dialog
     </button>
-    <modal v-if="showDialog" width="50%" @close="showDialog=false">
+    <modal v-if="showDialog" width="50%" height="400px" @close="showDialog=false">
       <template #header>
         <h6>Dialog Header</h6>
       </template>

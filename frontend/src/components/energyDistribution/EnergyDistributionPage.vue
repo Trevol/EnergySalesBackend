@@ -1,6 +1,6 @@
 <template>
 
-  <div class="es-box">
+  <div class="es-box" style="height: 100%">
     <div class="es-row header toolbar">
 
       <dx-toolbar style="padding: 0 0">

@@ -7,11 +7,11 @@
       </template>
     </dx-item>
 
-<!--    <dx-item title="Эксперименты">
+    <dx-item title="Эксперименты">
       <template #default>
         <Experiments/>
       </template>
-    </dx-item>-->
+    </dx-item>
 
   </dx-tab-panel>
 
@@ -23,13 +23,13 @@ import "@fortawesome/fontawesome-free/css/all.css"
 import "./App.css"
 import DxTabPanel, {DxItem} from 'devextreme-vue/tab-panel'
 import EnergyDistributionPage from "@/components/energyDistribution/EnergyDistributionPage";
-// import Experiments from "@/_experiments/experimentsTab/Experiments";
+import Experiments from "@/_experiments/experimentsTab/Experiments";
 
 export default {
   components: {
     DxTabPanel, DxItem,
     EnergyDistributionPage,
-    // Experiments
+    Experiments
   }
 }
 </script>

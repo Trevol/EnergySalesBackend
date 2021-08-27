@@ -27,8 +27,6 @@
         }
 
         .modal-container {
-            width: 300px;
-
             margin: 0px auto;
             padding: 20px 30px;
             background-color: #fff;
@@ -74,6 +72,34 @@
             -webkit-transform: scale(1.1);
             transform: scale(1.1);
         }
+        /*-------------------------------------------*/
+        .es-box {
+            display: flex;
+            flex-flow: column;
+        }
+
+        .es-box .es-row {
+            /*border: 1px dotted grey;*/
+        }
+
+        .es-box .es-row.header {
+            flex: 0 1 auto;
+            /* The above is shorthand for:
+            flex-grow: 0,
+            flex-shrink: 1,
+            flex-basis: auto
+            */
+        }
+
+        .es-box .es-row.content {
+            flex: 1 1 auto;
+            overflow-y: auto
+        }
+
+        .es-box .es-row.footer {
+            flex: 0 1 auto;
+        }
+        /*-------------------------------------------*/
     </style>
 </head>
 <body>
@@ -83,21 +109,21 @@
     <transition name="modal">
         <div class="modal-mask">
             <div class="modal-wrapper">
-                <div class="modal-container">
+                <div class="modal-container es-box" style="width: 90%; height: 300px;">
 
-                    <div class="modal-header">
+                    <div class="modal-header es-row header">
                         <slot name="header">
                             default header
                         </slot>
                     </div>
 
-                    <div class="modal-body">
+                    <div class="modal-body es-row content">
                         <slot name="body">
                             default body
                         </slot>
                     </div>
 
-                    <div class="modal-footer">
+                    <div class="modal-footer es-row footer">
                         <slot name="footer">
                             default footer
                             <button class="modal-default-button" @click="$emit('close')">

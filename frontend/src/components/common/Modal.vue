@@ -3,21 +3,17 @@
   <transition name="modal">
     <div class="es-modal-mask">
       <div class="es-modal-wrapper">
-        <div class="es-modal-container" :style="modalContainerStyle">
+        <div class="es-modal-container es-box" :style="modalContainerStyle">
 
-          <div class="es-modal-header">
+          <div class="es-modal-header es-row header">
             <slot name="header"/>
           </div>
 
-          <div class="es-modal-body">
+          <div class="es-modal-body es-row content">
             <slot name="body"/>
           </div>
 
-          <div class="es-modal-footer">
-            <slot name="footer"/>
-          </div>
-
-          <div class="es-modal-buttons">
+          <div class="es-modal-buttons es-row footer">
             <slot name="buttons">
               <button class="es-modal-default-button" @click="$emit('close')">
                 OK

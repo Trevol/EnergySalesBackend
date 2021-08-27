@@ -6,7 +6,7 @@
     </dx-item>
 
     <dx-item title="Граф потребления">
-      1423412341234
+      <energy-consumption-graph :consumption-data="[1, 2, 3]"/>
     </dx-item>
 
   </dx-tab-panel>
@@ -15,10 +15,12 @@
 <script>
 import DxTabPanel, {DxItem} from 'devextreme-vue/tab-panel'
 import CounterReadingsHistory from "@/components/energyDistribution/details/CounterReadingsHistory";
+import EnergyConsumptionGraph from "@/components/energyDistribution/details/EnergyConsumptionGraph";
 
 export default {
   name: "CounterDetails",
   components: {
+    EnergyConsumptionGraph,
     CounterReadingsHistory,
     DxTabPanel, DxItem
   },
