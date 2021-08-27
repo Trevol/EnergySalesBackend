@@ -55,7 +55,7 @@
 
   </table>
 
-  <modal v-if="selectedCounter !== null" width="50%" @close="selectedCounter=null">
+  <modal v-if="selectedCounter !== null" width="70%" @close="selectedCounter=null">
     <template #body>
       <counter-details :counter-info="selectedCounter"/>
     </template>

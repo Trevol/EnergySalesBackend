@@ -66,7 +66,7 @@ export default {
   /*width: 300px;*/
 
   margin: 0px auto;
-  padding: 20px 30px;
+  padding: 10px 20px;
   background-color: #fff;
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
@@ -80,7 +80,7 @@ export default {
 }*/
 
 .es-modal-body {
-  margin: 20px 0;
+  margin: 10px 0;
 }
 
 /*.es-modal-default-button {*/
