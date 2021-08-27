@@ -1,4 +1,4 @@
-package com.tavrida.energysales.api.data_contract
+package com.tavrida.energysales.api.mobile.data_contract
 
 import com.tavrida.utils.serializers.LocalDateIso8601Serializer
 import kotlinx.serialization.Serializable

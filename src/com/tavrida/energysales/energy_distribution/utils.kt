@@ -1,6 +1,6 @@
 package com.tavrida.energysales.energy_distribution
 
-import com.tavrida.energysales.api.data_contract.CounterReadingItem
+import com.tavrida.energysales.api.mobile.data_contract.CounterReadingItem
 import com.tavrida.energysales.data_access.models.Counter
 import com.tavrida.energysales.data_access.models.CounterReading
 import com.tavrida.utils.div

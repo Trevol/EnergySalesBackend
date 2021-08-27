@@ -1,6 +1,6 @@
 package com.tavrida.energysales.energy_distribution.v2
 
-import com.tavrida.energysales.api.data_contract.CounterReadingItem
+import com.tavrida.energysales.api.mobile.data_contract.CounterReadingItem
 import com.tavrida.energysales.data_access.models.DataContext
 import com.tavrida.energysales.data_access.models.Organization
 import com.tavrida.energysales.data_access.models.OrganizationStructureUnit

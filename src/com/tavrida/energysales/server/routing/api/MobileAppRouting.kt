@@ -1,6 +1,6 @@
 package com.tavrida.energysales.server.routing.api
 
-import com.tavrida.energysales.api.data_contract.CounterReadingItem
+import com.tavrida.energysales.api.mobile.data_contract.CounterReadingItem
 import com.tavrida.energysales.server.services.CounterReadingSynchronizer
 import com.tavrida.utils.di.getCallScoped
 import com.tavrida.utils.ktor.respondTo

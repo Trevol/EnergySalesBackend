@@ -1,6 +1,6 @@
 package com.tavrida.energysales.server
 
-import com.tavrida.energysales.api.client.CounterReadingSyncApiClient
+import com.tavrida.energysales.api.mobile.client.CounterReadingSyncApiClient
 import com.tavrida.energysales.data_access.DatabaseInstance
 import com.tavrida.energysales.di.ApplicationCallScopeName
 import com.tavrida.energysales.di.backendServicesContainer

@@ -1,4 +1,4 @@
-package com.tavrida.energysales.api.data_contract
+package com.tavrida.energysales.api.mobile.data_contract
 
 import kotlinx.serialization.Serializable
 

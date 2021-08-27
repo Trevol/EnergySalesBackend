@@ -1,6 +1,6 @@
 package com.tavrida.energysales.server.routing.api
 
-import com.tavrida.energysales.api.data_contract.HelloResponse
+import com.tavrida.energysales.api.mobile.data_contract.HelloResponse
 import io.ktor.application.*
 import io.ktor.response.*
 import io.ktor.routing.*
