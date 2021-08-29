@@ -6,7 +6,12 @@ import kotlinx.serialization.Serializable
 
 interface EnergyDistributionServiceV2 {
     fun energyDistribution(monthOfYear: MonthOfYear?): EnergyDistributionResult
+    fun counterEnergyConsumptionByMonths(counterId: Int): List<EnergyConsumptionByMonth>
+    fun unitEnergyConsumptionByMonths(orgStructureUnitId: Int): List<EnergyConsumptionByMonth>
 }
+
+@Serializable
+data class EnergyConsumptionByMonth(val month: MonthOfYear, val consumption: Double)
 
 @Serializable
 data class EnergyDistributionResult(

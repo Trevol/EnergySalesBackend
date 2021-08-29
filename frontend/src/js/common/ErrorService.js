@@ -12,8 +12,12 @@ class ErrorService {
     }
 
     vueAppError(err, vm, info) {
-        notify(`${err}  ${info}`)
-        console.log(err, info)
+        if (err.message === "this._renderer is null"){
+            //TODO: fix cause of this error and remove this branch
+            return null
+        }
+        notify(`vueAppError. ${err}  ${info}`)
+        console.log("vueAppError", err, info)
     }
 }
 

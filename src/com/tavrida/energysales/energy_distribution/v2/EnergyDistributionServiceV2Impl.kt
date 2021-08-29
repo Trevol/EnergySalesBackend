@@ -47,6 +47,17 @@ class EnergyDistributionServiceV2Impl(private val dataContext: DataContext) : En
         }
     }
 
+    override fun counterEnergyConsumptionByMonths(counterId: Int): List<EnergyConsumptionByMonth> {
+        return listOf(
+            EnergyConsumptionByMonth(MonthOfYear(1, 2021), 333.56),
+            EnergyConsumptionByMonth(MonthOfYear(2, 2021), 444.56),
+            EnergyConsumptionByMonth(MonthOfYear(3, 2021), 555.78)
+        )
+    }
+
+    override fun unitEnergyConsumptionByMonths(orgStructureUnitId: Int): List<EnergyConsumptionByMonth> {
+        TODO()
+    }
 }
 
 private class EnergyDistribution(

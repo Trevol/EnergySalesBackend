@@ -14,7 +14,7 @@
     <dx-column data-field="readingDelta" caption="Разница" width="auto"/>
     <dx-column data-field="consumption" caption="Потребление" width="auto"/>
     <dx-column data-field="continuousPowerFlow" caption="НПМ (квт)" width="auto"/>
-    <dx-column data-field="reading.readingTime" caption="Когда" width="auto"/>
+    <dx-column data-field="reading.readingTime" caption="Когда" width="auto" data-type="dateTime"/>
     <dx-column data-field="reading.user" caption="Кто" width="auto"/>
     <dx-column data-field="reading.comment" caption="Примечание"/>
 

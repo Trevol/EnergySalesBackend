@@ -37,6 +37,22 @@ fun Route.energyDistributionRouting() {
                     .let { energyDistributionServiceV2().energyDistribution(it.monthOfYear) }
                     .respondTo(call)
             }
+
+            route("/counter-energy-consumption-by-months") {
+                get {
+                    energyDistributionServiceV2()
+                        .counterEnergyConsumptionByMonths(counterId = call.parameters["counterId"]!!.toInt())
+                        .respondTo(call)
+                }
+            }
+
+            route("/unit-energy-consumption-by-months") {
+                get {
+                    energyDistributionServiceV2()
+                        .unitEnergyConsumptionByMonths(orgStructureUnitId = call.parameters["orgStructureUnitId"]!!.toInt())
+                        .respondTo(call)
+                }
+            }
         }
     }
 }

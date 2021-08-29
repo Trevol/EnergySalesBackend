@@ -33,6 +33,24 @@ class EnergyDistributionApi {
         }
         return await this._api.get("counter-energy-consumption-details", conf).then(r => r.data)
     }
+
+    async counterEnergyConsumptionByMonths(counterId) {
+        const conf = {
+            params: {
+                counterId
+            }
+        }
+        return await this._api.get("v2/counter-energy-consumption-by-months", conf).then(r => r.data)
+    }
+
+    async unitEnergyConsumptionByMonths(orgStructureUnitId) {
+        const conf = {
+            params: {
+                orgStructureUnitId
+            }
+        }
+        return await this._api.get("v2/unit-energy-consumption-by-months", conf).then(r => r.data)
+    }
 }
 
 const energyDistributionApi = new EnergyDistributionApi(uri(backendRootUri, "/api/energy-distribution"))
