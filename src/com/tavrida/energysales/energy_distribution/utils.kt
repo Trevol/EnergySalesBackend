@@ -7,6 +7,7 @@ import com.tavrida.utils.div
 import com.tavrida.utils.minus
 import com.tavrida.utils.round3
 import com.tavrida.utils.times
+import database_creation.utils.checkIsTrue
 import java.time.LocalDate
 
 
@@ -24,11 +25,30 @@ fun Counter.consumptionByMonth(month: MonthOfYear, daysDelta: Int = 7): CounterE
     )
 }
 
-fun readingDelta(startingReading: CounterReadingItem?, endingReading: CounterReadingItem?) =
-    (endingReading?.reading - startingReading?.reading)?.round3()
+fun readingDelta(startingReading: CounterReadingItem?, endingReading: CounterReadingItem?): Double? {
+    if (endingReading == null || startingReading == null) {
+        return null
+    }
+    if (endingReading.reading < startingReading.reading) {
+        return readingDeltaWithCycle(startingReading.reading, endingReading.reading)
+    }
+    return (endingReading.reading - startingReading.reading).round3()
+}
 
-fun readingDelta(startingReading: CounterReading?, endingReading: CounterReading?) =
-    (endingReading?.reading - startingReading?.reading)?.round3()
+fun readingDelta(startingReading: CounterReading?, endingReading: CounterReading?): Double? {
+    if (endingReading == null || startingReading == null) {
+        return null
+    }
+    if (endingReading.reading < startingReading.reading) {
+        return readingDeltaWithCycle(startingReading.reading, endingReading.reading)
+    }
+    return (endingReading.reading - startingReading.reading).round3()
+}
+
+fun readingDeltaWithCycle(startingReading: Double, endingReading: Double): Double {
+    checkIsTrue(startingReading > endingReading)
+    TODO("Not yet implemented")
+}
 
 fun consumption(
     startingReading: CounterReadingItem?,
