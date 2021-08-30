@@ -1,5 +1,6 @@
 package com.tavrida.energysales.server
 
+import com.tavrida.energysales.data_access.models.DataContext
 import com.tavrida.energysales.data_access.tables.OrganizationStructureUnits
 import database_creation.DbInstance
 import database_creation.utils.println
@@ -34,5 +35,15 @@ class OrgStructureDbTest {
 
             OrganizationStructureUnits.selectAll().toList().println()
         }
+    }
+
+    @Test
+    fun organizationsByOrgUnit(){
+        val dbDir = File("./databases/")
+        val db = DbInstance(dbDir, "ENERGY_SALES_xls_ALL").get(recreate = false)
+        val dc = DataContext(db)
+        val orgs = dc.selectOrganizations(1, recursive = true) //4 - Корпус2  1 - Муссон
+        orgs.size.println()
+        dc.selectAllOrganizations().size.println()
     }
 }

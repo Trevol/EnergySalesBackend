@@ -21,7 +21,7 @@
       <tr v-if="j!==0" class="delimiter">
         <td colspan="9">d</td>
       </tr>
-      <tr class="parent-organization">
+      <tr class="parent-organization" @click.alt="selectOrgUnit(topUnit)" @dblclick="selectOrgUnit(topUnit)">
         <td class="fit-content">{{ topUnit.name }}</td>
         <td></td>
         <td></td>
@@ -55,9 +55,18 @@
 
   </table>
 
-  <modal v-if="selectedCounter !== null" width="70%" height="500px" @close="selectedCounter=null">
+  <modal v-if="selectedCounter !== null" width="70%" height="500px" @close="selectCounter(null)">
     <template #body>
       <counter-details :counter-info="selectedCounter"/>
+    </template>
+  </modal>
+
+  <modal v-if="selectedOrgUnit !== null" width="70%" height="500px" @close="selectOrgUnit(null)">
+    <template #header>
+      <h6>{{ selectedOrgUnit.name }}</h6>
+    </template>
+    <template #body>
+      <org-unit-details :org-unit-info="selectedOrgUnit"/>
     </template>
   </modal>
 
@@ -68,10 +77,12 @@ import "@/assets/bootstrap.min.css"
 import "./EnergyDistributionTable.css"
 import Modal from "@/components/common/Modal";
 import CounterDetails from "@/components/energyDistribution/details/CounterDetails";
+import OrgUnitDetails from "@/components/energyDistribution/details/OrgUnitDetails";
 
 export default {
   name: "EnergyDistributionTable",
   components: {
+    OrgUnitDetails,
     Modal, CounterDetails
   },
   props: {
@@ -82,12 +93,16 @@ export default {
   },
   data() {
     return {
-      selectedCounter: null
+      selectedCounter: null,
+      selectedOrgUnit: null
     }
   },
   methods: {
     selectCounter(counter) {
       this.selectedCounter = counter
+    },
+    selectOrgUnit(orgUnit) {
+      this.selectedOrgUnit = orgUnit
     }
   },
   computed: {

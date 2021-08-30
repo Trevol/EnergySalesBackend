@@ -27,9 +27,18 @@ fun Counter.consumptionByMonth(month: MonthOfYear, daysDelta: Int = 7): CounterE
 fun readingDelta(startingReading: CounterReadingItem?, endingReading: CounterReadingItem?) =
     (endingReading?.reading - startingReading?.reading)?.round3()
 
+fun readingDelta(startingReading: CounterReading?, endingReading: CounterReading?) =
+    (endingReading?.reading - startingReading?.reading)?.round3()
+
 fun consumption(
     startingReading: CounterReadingItem?,
     endingReading: CounterReadingItem?,
+    K: Double
+) = (readingDelta(startingReading, endingReading) * K)?.round3()
+
+fun consumption(
+    startingReading: CounterReading?,
+    endingReading: CounterReading?,
     K: Double
 ) = (readingDelta(startingReading, endingReading) * K)?.round3()
 

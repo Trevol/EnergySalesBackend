@@ -1,15 +1,13 @@
 package com.tavrida.energysales.energy_distribution.v2
 
 import com.tavrida.energysales.api.mobile.data_contract.CounterReadingItem
-import com.tavrida.energysales.data_access.models.DataContext
-import com.tavrida.energysales.data_access.models.Organization
-import com.tavrida.energysales.data_access.models.OrganizationStructureUnit
-import com.tavrida.energysales.data_access.models.transaction
+import com.tavrida.energysales.data_access.models.*
 import com.tavrida.energysales.data_access.tables.CounterReadingsTable
 import com.tavrida.energysales.energy_distribution.*
 import com.tavrida.utils.orDefault
 import com.tavrida.utils.orZero
 import com.tavrida.utils.round3
+import database_creation.utils.checkIsTrue
 import org.jetbrains.exposed.sql.max
 import org.jetbrains.exposed.sql.min
 import org.jetbrains.exposed.sql.selectAll
@@ -48,17 +46,60 @@ class EnergyDistributionServiceV2Impl(private val dataContext: DataContext) : En
     }
 
     override fun counterEnergyConsumptionByMonths(counterId: Int): List<EnergyConsumptionByMonth> {
-        return listOf(
-            EnergyConsumptionByMonth(MonthOfYear(1, 2021), 333.56),
-            EnergyConsumptionByMonth(MonthOfYear(2, 2021), 444.56),
-            EnergyConsumptionByMonth(MonthOfYear(3, 2021), 555.78)
-        )
+        val counter = dataContext.selectCounter(counterId)
+        return counter.energyConsumptionByMonths()
     }
 
     override fun unitEnergyConsumptionByMonths(orgStructureUnitId: Int): List<EnergyConsumptionByMonth> {
-        TODO()
+        val organizations = dataContext.selectOrganizations(orgStructureUnitId, recursive = true)
+        return organizations.energyConsumptionByMonths()
     }
 }
+
+private fun Counter.energyConsumptionByMonths(): List<EnergyConsumptionByMonth> {
+    return sequence {
+        readings.sortedBy { it.readingTime }
+            .forEachIndexed { index, currentReading ->
+                val prevReading = if (index == 0) null else readings[index - 1]
+                val month = month(prevReading, currentReading)
+                val consumption = consumption(prevReading, currentReading, K)
+                if (month != null && consumption != null) {
+                    yield(EnergyConsumptionByMonth(month, consumption))
+                }
+            }
+    }.toList()
+}
+
+private fun month(startingReading: CounterReading?, endingReading: CounterReading): MonthOfYear? {
+    if (startingReading == null) {
+        return null
+    }
+    val startDate = startingReading.readingTime.toLocalDate()
+    val endDate = endingReading.readingTime.toLocalDate()
+    return month(startDate, endDate)
+}
+
+private fun month(startDate: LocalDate, endDate: LocalDate): MonthOfYear {
+    checkIsTrue(startDate < endDate)
+    checkIsTrue(endDate.dayOfMonth >= 25 || endDate.dayOfMonth <= 5)
+    // TODO: check days between startDate and endDate
+    return if (endDate.dayOfMonth >= 25) { //end of month
+        endDate.toMonthOfYear()
+    } else { //start of month - so navigate to prevMonth
+        endDate.minusMonths(1).toMonthOfYear()
+    }
+}
+
+private fun List<Organization>.energyConsumptionByMonths(): List<EnergyConsumptionByMonth> {
+    val monthToConsumption = mutableMapOf<MonthOfYear, Double>()
+    flatMap { it.counters }.flatMap { it.energyConsumptionByMonths() }
+        .forEach { (month, consumption) ->
+            monthToConsumption[month] = ((monthToConsumption[month] ?: 0.0) + consumption).round3()
+        }
+    return monthToConsumption.map { (month, consumption) -> EnergyConsumptionByMonth(month, consumption) }
+        .sortedBy { it.month }
+}
+
 
 private class EnergyDistribution(
     val monthOfYear: MonthOfYear,

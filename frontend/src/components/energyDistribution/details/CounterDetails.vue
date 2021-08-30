@@ -15,14 +15,12 @@
 <script>
 import DxTabPanel, {DxItem} from 'devextreme-vue/tab-panel'
 import CounterReadingsHistory from "@/components/energyDistribution/details/CounterReadingsHistory";
-import EnergyConsumptionGraph from "@/components/energyDistribution/details/EnergyConsumptionGraph";
 import CounterConsumptionGraph from "@/components/energyDistribution/details/CounterConsumptionGraph";
 
 export default {
   name: "CounterDetails",
   components: {
     CounterConsumptionGraph,
-    EnergyConsumptionGraph,
     CounterReadingsHistory,
     DxTabPanel, DxItem
   },

@@ -7,11 +7,11 @@
       </template>
     </dx-item>
 
-    <dx-item title="Эксперименты">
+<!--    <dx-item title="Эксперименты">
       <template #default>
         <Experiments/>
       </template>
-    </dx-item>
+    </dx-item>-->
 
   </dx-tab-panel>
 
