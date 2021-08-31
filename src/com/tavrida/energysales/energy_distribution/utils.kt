@@ -51,12 +51,10 @@ fun readingDeltaWithCycle(startingReading: Double, endingReading: Double): Doubl
     checkIsTrue(startingReading > endingReading)
     val startingIntPart = startingReading.toLong().toString()
     val endingIntPart = endingReading.toLong().toString()
-    try {
-        checkIsTrue(startingIntPart[0] == '9')
-        checkIsTrue(startingIntPart.length > endingIntPart.length)
-    } catch (e: Exception) {
-        throw e
-    }
+
+    checkIsTrue(startingIntPart[0] == '9')
+    checkIsTrue(startingIntPart.length > endingIntPart.length)
+
     // 97210 - start
     //  1204 - end
     //     1 - length diff
