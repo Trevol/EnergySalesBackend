@@ -14,7 +14,7 @@ import saveQrImage
 
 fun main() {
     // return
-    val dc = DbInstance("./databases/", "ENERGY_SALES_MOBILE")
+    val dc = DbInstance("./databases/", "ENERGY_SALES_xls_ALL")
         .get(recreate = false)
         .let { DataContext(it) }
 
@@ -25,6 +25,7 @@ fun main() {
 
     val size = 256
     val qrCodeWriter = QRCodeWriter()
+
     counters.forEach {
         val bits = qrCodeWriter.encode(it, size)
         saveQrImage(bits, "html/${it.serialNumber}.png")

@@ -3,6 +3,7 @@ package com.tavrida.energysales.server.services
 import com.tavrida.energysales.data_access.tables.CounterReadingsTable
 import com.tavrida.energysales.data_access.models.*
 import com.tavrida.energysales.api.mobile.data_contract.*
+import com.tavrida.energysales.energy_distribution.energyConsumptionByMonths
 import com.tavrida.utils.log
 import org.jetbrains.exposed.sql.insertAndGetId
 import java.time.LocalDate
@@ -76,8 +77,9 @@ private fun Counter.toCounterData(): CounterData {
         id = id,
         serialNumber = serialNumber,
         organizationId = organizationId,
-        K = K,
+        K = K.toInt(),
         prevReading = prevReadingData(),
+        consumptionHistory = energyConsumptionByMonths(),
         comment = comment,
         importOrder = importOrder
     )
