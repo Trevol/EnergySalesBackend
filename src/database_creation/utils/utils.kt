@@ -49,7 +49,7 @@ fun timestampedDb(
 
 inline fun checkNotEmpty(value: String) {
     if (value.isEmpty()) {
-        throw AssertionError("value is empty")
+        throw Exception("value is empty")
     }
 }
 
@@ -58,7 +58,7 @@ inline fun String.checkNotEmpty() = checkNotEmpty(this)
 
 inline fun <T> checkNotEmpty(value: Collection<T>) {
     if (value.isEmpty()) {
-        throw AssertionError("value is empty")
+        throw Exception("value is empty")
     }
 }
 
@@ -67,6 +67,6 @@ inline fun <T> Collection<T>.checkNotEmpty() = checkNotEmpty(this)
 
 inline fun checkIsTrue(value: Boolean){
     if (!value){
-        throw AssertionError("value should be true")
+        throw Exception("value should be true")
     }
 }

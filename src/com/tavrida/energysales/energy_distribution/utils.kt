@@ -4,10 +4,10 @@ import com.tavrida.energysales.api.mobile.data_contract.CounterReadingItem
 import com.tavrida.energysales.data_access.models.Counter
 import com.tavrida.energysales.data_access.models.CounterReading
 import com.tavrida.utils.div
-import com.tavrida.utils.minus
 import com.tavrida.utils.round3
 import com.tavrida.utils.times
 import database_creation.utils.checkIsTrue
+import java.lang.Exception
 import java.time.LocalDate
 
 
@@ -25,6 +25,8 @@ fun Counter.consumptionByMonth(month: MonthOfYear, daysDelta: Int = 7): CounterE
     )
 }
 
+private fun readingDelta(starting: Double, ending: Double) = (ending - starting).round3()
+
 fun readingDelta(startingReading: CounterReadingItem?, endingReading: CounterReadingItem?): Double? {
     if (endingReading == null || startingReading == null) {
         return null
@@ -32,7 +34,7 @@ fun readingDelta(startingReading: CounterReadingItem?, endingReading: CounterRea
     if (endingReading.reading < startingReading.reading) {
         return readingDeltaWithCycle(startingReading.reading, endingReading.reading)
     }
-    return (endingReading.reading - startingReading.reading).round3()
+    return readingDelta(startingReading.reading, endingReading.reading)
 }
 
 fun readingDelta(startingReading: CounterReading?, endingReading: CounterReading?): Double? {
@@ -42,12 +44,46 @@ fun readingDelta(startingReading: CounterReading?, endingReading: CounterReading
     if (endingReading.reading < startingReading.reading) {
         return readingDeltaWithCycle(startingReading.reading, endingReading.reading)
     }
-    return (endingReading.reading - startingReading.reading).round3()
+    return readingDelta(startingReading.reading, endingReading.reading)
 }
 
 fun readingDeltaWithCycle(startingReading: Double, endingReading: Double): Double {
     checkIsTrue(startingReading > endingReading)
-    TODO("Not yet implemented")
+    val startingIntPart = startingReading.toLong().toString()
+    val endingIntPart = endingReading.toLong().toString()
+    try {
+        checkIsTrue(startingIntPart[0] == '9')
+        checkIsTrue(startingIntPart.length > endingIntPart.length)
+    } catch (e: Exception) {
+        throw e
+    }
+    // 97210 - start
+    //  1204 - end
+    //     1 - length diff
+    //    10 - should prefix with 10 10~1
+    //101204
+    val prefix = power10(startingIntPart.length - endingIntPart.length).toString()
+
+    val correctedEndingReading = (prefix + endingReading.toString()).toDouble()
+    return readingDelta(startingReading, correctedEndingReading)
+}
+
+object power10 {
+    private val powersOf10 = arrayOf(
+        1, 10, 100, 1000, 10_000, 100_000,
+        1000_000, 10_000_000, 100_000_000,
+        1000_000_000, 10_000_000_000
+    )
+
+    operator fun invoke(power: Int): Long {
+        return powersOf10[power]
+        /*checkIsTrue(pow > 0)
+        var result = 10L
+        for (i in 1 until pow) {
+            result *= 10
+        }
+        return result*/
+    }
 }
 
 fun consumption(
