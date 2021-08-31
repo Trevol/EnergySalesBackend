@@ -191,7 +191,6 @@ private class EnergyDistribution(
             }
 
             return resultDataUnits
-            // TODO("include non leaf nodes (root and intermediate) with total aggregation")
         }
 
         private fun sumUnitTotals(pathUnitTotal: Double?, leafUnitTotal: Double?) =

@@ -59,7 +59,7 @@ fun readingDeltaWithCycle(startingReading: Double, endingReading: Double): Doubl
     //  1204 - end
     //     1 - length diff
     //    10 - should prefix with 10 10~1
-    //101204
+    //101204 - result
     val prefix = power10(startingIntPart.length - endingIntPart.length).toString()
 
     val correctedEndingReading = (prefix + endingReading.toString()).toDouble()
@@ -73,14 +73,15 @@ object power10 {
         1000_000_000, 10_000_000_000
     )
 
-    operator fun invoke(power: Int): Long {
-        return powersOf10[power]
-        /*checkIsTrue(pow > 0)
+    operator fun invoke(power: Int) = powersOf10[power]
+
+    private fun old_invoke(power: Int): Long {
+        checkIsTrue(power > 0)
         var result = 10L
-        for (i in 1 until pow) {
+        for (i in 1 until power) {
             result *= 10
         }
-        return result*/
+        return result
     }
 }
 
