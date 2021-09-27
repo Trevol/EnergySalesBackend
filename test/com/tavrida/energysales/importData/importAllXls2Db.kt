@@ -27,6 +27,7 @@ class ImportAllXlsToDb {
         val config = Importer.ImportConfig(
             orgStructureFile = File(baseDir, "org_units.xlsx"),
             timeToReadings = listOf(
+                LocalDateTime.of(2021, Month.SEPTEMBER, 1, 11, 21, 15) to File(baseDir, "import 21.08.xlsx"),
                 LocalDateTime.of(2021, Month.AUGUST, 2, 9, 55, 41) to File(baseDir, "import 21.07.xlsx"),
                 LocalDateTime.of(2021, Month.JULY, 1, 11, 30, 33) to File(baseDir, "import 21.06.xlsx"),
                 LocalDateTime.of(2021, Month.JUNE, 1, 12, 22, 15) to File(baseDir, "import 21.05.xlsx"),
@@ -37,23 +38,29 @@ class ImportAllXlsToDb {
         )
 
         val orgAndStruct = Importer(config).xlsToOrganizationsAndStructure()
+
+        //check organizations: duplicated importOrder
+        "==== Duplicated Organization.importOrder:".println()
+        orgAndStruct.organizations
+            .groupBy { it.importOrder }
+            .filter { (_, items) -> items.size > 1 }
+            .forEach { (importOrder, organizations) ->
+                "$importOrder   ->  ${organizations.map { it.name }.joinToString()}".println()
+            }
+        //check counters: duplicated importOrder
+        "==== Duplicated Counter.importOrder:".println()
+        orgAndStruct.organizations
+            .flatMap { it.counters }
+            .groupBy { it.importOrder }
+            .filter { (_, items) -> items.size > 1 }
+            .forEach { (importOrder, counters) ->
+                "$importOrder   ->  ${counters.map { it.serialNumber }.joinToString()}".println()
+            }
+
+
         orgAndStruct.structure.size.println()
         orgAndStruct.organizations.size.println()
         orgAndStruct.organizations.flatMap { it.counters }.size.println()
-
-        //уберем пока: [Баяндин Д.А.] 111111 Вафли
-        //появился и пропал в июне без потребления, но приводит к ошибке импорта (duplicate importOrder)
-        orgAndStruct.organizations.removeIf {
-            it.name == "Баяндин Д.А." && it.counters.size == 1 &&
-                    it.counters[0].serialNumber == "111111" &&
-                    it.counters[0].comment == "Вафли"
-        }.also { removed ->
-            if (!removed) {
-                throw Exception("!!!! Not found (not removed): [Баяндин Д.А.] 111111 Вафли")
-            }
-        }
-
-        // return
 
         val dc = DbInstance(baseDir, "ENERGY_SALES_xls_ALL")
             .get(recreate = true)
@@ -138,28 +145,34 @@ private class Importer(val config: ImportConfig) {
         currentOrganizations: List<Organization>
     ) {
         val subsequentMerge = resultingOrganizations.isNotEmpty()
-        fun String.log() {
-            if (subsequentMerge) { //
-                this.println()
-            }
-        }
+        fun String.log() = this.println()
 
         "----------------".log()
+        val mostRecentFileMerge = !subsequentMerge
+        if (mostRecentFileMerge) {
+            "----- 1st merge -------".log()
+            resultingOrganizations.addAll(currentOrganizations)
+        } else {
 
-        for (currentOrg in currentOrganizations) {
-            checkIsTrue(currentOrg.counters.size >= 1)
-            val matchResult = OrganizationsMatchResult.tryMatch(resultingOrganizations, currentOrg)
-            if (matchResult == null) {
-                resultingOrganizations.add(currentOrg)
-                "Organization ${currentOrg.name} added".log()
-            } else {
-                matchResult.warning?.log()
-                matchResult.matchedCounters.shouldNotBeEmpty()
-                matchResult.matchedCounters.forEach {
-                    it.matched.copyReadingsFrom(it.current)
+            "----- Subsequent merge -------".log()
+            for (currentOrg in currentOrganizations) {
+                checkIsTrue(currentOrg.counters.isNotEmpty())
+                val matchResult = OrganizationsMatchResult.tryMatch(resultingOrganizations, currentOrg)
+                if (matchResult == null) {
+                    //TODO: mark org as closed. But merge counter readings and save to DB. Mobile app should skip closed orgs
+                    "At subsequent merge found new organization ${currentOrg.importOrder}:${currentOrg.name}. Skip it as deleted"
+                        .log()
+                } else {
+                    matchResult.warning?.log()
+                    matchResult.matchedCounters.shouldNotBeEmpty()
+                    matchResult.matchedCounters.forEach {
+                        it.matched.copyReadingsFrom(it.current)
+                    }
                 }
             }
+
         }
+
         resultingOrganizations.check()
     }
 
